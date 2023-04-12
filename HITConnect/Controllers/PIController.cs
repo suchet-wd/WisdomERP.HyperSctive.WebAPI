@@ -18,7 +18,7 @@ namespace HITConnect.Controllers
             return new string[] { "String1", "String2" };
         }
 
-        [HttpGet]
+        [HttpPost]
         [Route("api/RcPI/")]
         public HttpResponseMessage RcPI()
         {

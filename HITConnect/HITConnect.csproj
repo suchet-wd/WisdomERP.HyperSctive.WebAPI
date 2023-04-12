@@ -170,6 +170,7 @@
     <Compile Include="App_Data\Class\RefreshResultJSON.cs" />
     <Compile Include="App_Data\Class\RequireHttpsAttribute.cs" />
     <Compile Include="App_Data\Class\SQLConn.cs" />
+    <Compile Include="App_Data\Class\UserAuthen.cs" />
     <Compile Include="App_Data\Class\UDocument.cs" />
     <Compile Include="App_Data\Class\UFuncs.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
@@ -214,7 +215,6 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Models\User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -268,7 +268,9 @@
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Models\" />
+  </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
   </ItemGroup>
