@@ -25,6 +25,8 @@ namespace HITConnect.Controllers
             " ISNULL(PIDocDNAmt, 0) AS PIDocDNAmt, ISNULL(PIDocSurchargeAmt, 0) AS PIDocSurchargeAmt, ISNULL(PIDocNetAmt, 0) AS PIDocNetAmt, " +
             " ISNULL(Note, '') AS Note, ISNULL(FTStateClose, '') AS FTStateClose, ISNULL(FTStateHasFile, '') AS FTStateHasFile " +
             " , ISNULL(DATALENGTH(FTFileRef), -1) AS FTFileRef ";
+        //" , ISNULL(DATALENGTH(FTFileRef), -1) AS FTFileRef ";
+        //SELECT FTFileRef from[DB_VENDER].dbo.POPayment FOR XML PATH(''), BINARY BASE64
 
         // GET api/values
         public IEnumerable<string> Get()
@@ -34,7 +36,8 @@ namespace HITConnect.Controllers
 
         [HttpGet]
         [Route("api/CheckPayment/")]
-        public HttpResponseMessage CheckPayment(string idRq, string pwdRq, string tokenRq, string startRq = null, string endRq = null, string PIRq = null, string PORq = null)
+        public HttpResponseMessage CheckPayment(HITConnect.Payment pmRq)
+        //public HttpResponseMessage CheckPayment(string idRq, string pwdRq, string tokenRq, string startRq = null, string endRq = null, string PIRq = null, string PORq = null)
         {
             string _Qry = "";
             int status = 0;
@@ -46,86 +49,111 @@ namespace HITConnect.Controllers
             dts.Columns.Add("Status", typeof(string));
             dts.Columns.Add("Token", typeof(string));
             dts.Columns.Add("Message", typeof(string));
-            WSM.Conn.SQLConn Cnn = new WSM.Conn.SQLConn();
 
-            _Qry += " SELECT V.Pwd, V.VanderMailLogIn, ATK.DataKey " +
-                " FROM [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.VenderUser AS V  " +
-                " LEFT JOIN [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.AuthenKeys AS ATK ON ATK.VanderMailLogIn = V.VanderMailLogIn  " +
-                " WHERE V.VanderMailLogIn = '" + idRq + "'";
-            dt = Cnn.GetDataTable(_Qry, WSM.Conn.DB.DataBaseName.DB_VENDER);
-
-            if (dt != null)
-            { // REMOVE TOKEN FROM AuthenKeys
-                _Qry = "DELETE FROM [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.AuthenKeys WHERE VanderMailLogIn = '" + idRq + "'";
-
-                if (Cnn.ExecuteOnly(_Qry, WSM.Conn.DB.DataBaseName.DB_VENDER))
+            if (Convert.ToDateTime(pmRq.startDate) <= Convert.ToDateTime(pmRq.endDate))
+            {
+                token = "";
+                try
                 {
-                    _Qry = columnList + " FROM [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.POPayment ";
 
-                    if (startRq != null && endRq != null)
-                    {
-                        _Qry += " WHERE PaymentDate BETWEEN '" + startRq + "' AND '" + endRq + "' ";
-                        if (PIRq != null && PORq == null)
+                    WSM.Conn.SQLConn Cnn = new WSM.Conn.SQLConn();
+
+                    _Qry += " SELECT V.Pwd, V.VanderMailLogIn, ATK.DataKey " +
+                        " FROM [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.VenderUser AS V  " +
+                        " LEFT JOIN [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.AuthenKeys AS ATK ON ATK.VanderMailLogIn = V.VanderMailLogIn  " +
+                        " WHERE V.VanderMailLogIn = '" + pmRq.id + "'";
+                    dt = Cnn.GetDataTable(_Qry, WSM.Conn.DB.DataBaseName.DB_VENDER);
+                    
+                    if (dt != null)
+                    { // REMOVE TOKEN FROM AuthenKeys
+                        _Qry = "DELETE FROM [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.AuthenKeys WHERE VanderMailLogIn = '" + pmRq.id + "'";
+
+                        if (Cnn.ExecuteOnly(_Qry, WSM.Conn.DB.DataBaseName.DB_VENDER))
                         {
-                            _Qry += " AND PINo = '" + PIRq + "' ";
-                        }
-                        if (PORq != null && PIRq == null)
-                        {
-                            _Qry += " AND PONo = '" + PORq + "'";
-                        }
-                    }
-                    else if (startRq == null || endRq == null)
-                    {
-                        if (PIRq != null && PORq == null)
-                        {
-                            _Qry += " WHERE PINo = '" + PIRq + "' ";
-                        }
-                        if (PORq != null && PIRq == null)
-                        {
-                            _Qry += " WHERE PONo = '" + PORq + "'";
-                        }
-                        if (PORq != null && PIRq != null)
-                        {
-                            _Qry += " WHERE PONo = '" + PORq + "'  OR PINo = '" + PIRq + "' ";
+                            _Qry = columnList + " FROM [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.POPayment ";
+
+                            if (pmRq.startDate != null && pmRq.endDate != null)
+                            {
+                                _Qry += " WHERE PaymentDate BETWEEN '" + pmRq.startDate + "' AND '" + pmRq.endDate + "' ";
+                                if (pmRq.PI != null && pmRq.PO == null)
+                                {
+                                    _Qry += " AND PINo = '" + pmRq.PI + "' ";
+                                }
+                                if (pmRq.PI == null && pmRq.PO != null)
+                                {
+                                    _Qry += " AND PONo = '" + pmRq.PO + "'";
+                                }
+                            }
+                            else if (pmRq.startDate == null || pmRq.endDate == null)
+                            {
+                                if (pmRq.PI != null && pmRq.PO == null)
+                                {
+                                    _Qry += " WHERE PINo = '" + pmRq.PI + "' ";
+                                }
+                                if (pmRq.PO != null && pmRq.PI == null)
+                                {
+                                    _Qry += " WHERE PONo = '" + pmRq.PO + "'";
+                                }
+                                if (pmRq.PO != null && pmRq.PI != null)
+                                {
+                                    _Qry += " WHERE PONo = '" + pmRq.PO + "'  OR PINo = '" + pmRq.PI + "' ";
+                                }
+                                else
+                                {
+                                    status = 2;
+                                    msgError = "Please check start date and end date!!!";
+                                }
+                            }
+
+                            if (status == 0)
+                                dt = Cnn.GetDataTable(_Qry, WSM.Conn.DB.DataBaseName.DB_VENDER);
+
+                            if (status != 2)
+                            {
+                                foreach (DataRow row in dt.Rows)
+                                {
+                                    if (Convert.ToBase64String((byte[])row["FTFileRef"]) != "-1")
+                                    {
+                                        row["FTFileRef"] = Convert.ToBase64String((byte[])row["FTFileRef"]);
+                                    }
+                                    else
+                                    {
+                                        row["FTFileRef"] = "";
+                                    }
+                                }
+                                dts = dt;
+                                
+                                status = 1;
+                                msgError = "Successful";
+                            }
+                            else
+                            {
+                                dts.Rows.Add(new Object[] { status, token, msgError });
+                            }
                         }
                         else
                         {
-                            token = "";
                             status = 2;
-                            msgError = "Please check start date and end date!!!";
+                            msgError = "Token is invalid!!!";
                         }
-                    }
-
-                    if (status == 0)
-                        dt = Cnn.GetDataTable(_Qry, WSM.Conn.DB.DataBaseName.DB_VENDER);
-
-                    if (status != 2)
-                    {
-                        dts = dt;
-                        token = "";
-                        status = 1;
-                        msgError = "Successful";
                     }
                     else
                     {
-                        dts.Rows.Add(new Object[] { status, token, msgError });
+                        status = 2;
+                        msgError = "Please check Username and Password";
                     }
-                }
-                else
-                {
-                    token = "";
-                    status = 2;
-                    msgError = "Token is invalid!!!";
-                }
-            }
-            else
-            {
-                token = "";
-                status = 2;
-                msgError = "Please check Username and Password";
-            }
 
-            jsondata = JsonConvert.SerializeObject(dts);
+                    jsondata = JsonConvert.SerializeObject(dts);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                }
+            } else
+            {
+                status = 2;
+                msgError = "Start Date must be lower than End Date";
+            }
             return new HttpResponseMessage { Content = new StringContent(jsondata, System.Text.Encoding.UTF8, "application/json") };
         }
 

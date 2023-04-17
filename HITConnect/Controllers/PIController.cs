@@ -32,8 +32,15 @@ namespace HITConnect.Controllers
             dts.Columns.Add("Status", typeof(string));
             dts.Columns.Add("Token", typeof(string));
             dts.Columns.Add("Message", typeof(string));
-            WSM.Conn.SQLConn Cnn = new WSM.Conn.SQLConn();
+            try
+            {
+                WSM.Conn.SQLConn Cnn = new WSM.Conn.SQLConn();
 
+            }
+            catch(Exception ex)
+            {
+
+            }
             dts.Rows.Add(new Object[] { status, token, msgError });
             jsondata = JsonConvert.SerializeObject(dts);
             //string jsondata = (valid) ? JsonConvert.SerializeObject(dts) : "NOT FOUND";

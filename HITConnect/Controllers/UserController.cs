@@ -22,31 +22,32 @@ namespace HITConnect.Controllers
         [Route("api/GetToken/")]
         public HttpResponseMessage GetToken([FromBody] UserAuthen value)
         {
+            /*
+            UserAuthen Udata;
             try
             {
-                /*
-                UserAuthen Udata;
-                try
-                {
-                    string JsonValue = value.ToString();
-                    Udata = JsonConvert.DeserializeObject<UserAuthen>(JsonValue);
-                }
-                catch
-                {
-                    Udata = new UserAuthen() { id = "", pwd = "", token = "", status = "", venderCode = "" };
-                }
-                */
-                string _Qry = "";
-                int statecheck = 0;
-                string msgError = "";
-                string token = "";
-                string jsondata = "";
-                DataTable dt = null;
-                DataTable dts = new DataTable();
-                dts.Columns.Add("id", typeof(string));
-                dts.Columns.Add("Status", typeof(string));
-                dts.Columns.Add("Token", typeof(string));
-                dts.Columns.Add("Message", typeof(string));
+                string JsonValue = value.ToString();
+                Udata = JsonConvert.DeserializeObject<UserAuthen>(JsonValue);
+            }
+            catch
+            {
+                Udata = new UserAuthen() { id = "", pwd = "", token = "", status = "", venderCode = "" };
+            }
+            */
+            string _Qry = "";
+            int statecheck = 0;
+            string msgError = "";
+            string token = "";
+            string jsondata = "";
+            DataTable dt = null;
+            DataTable dts = new DataTable();
+            dts.Columns.Add("id", typeof(string));
+            dts.Columns.Add("Status", typeof(string));
+            dts.Columns.Add("Token", typeof(string));
+            dts.Columns.Add("Message", typeof(string));
+
+            try
+            {
                 WSM.Conn.SQLConn Cnn = new WSM.Conn.SQLConn();
 
                 _Qry += " SELECT V.Pwd AS pwd, V.VanderMailLogIn AS VanderMailLogIn " +
@@ -101,22 +102,23 @@ namespace HITConnect.Controllers
                     statecheck = 2;
                     msgError = "Please check User and Password!!!";
                 }
-                dts.Rows.Add(new Object[] { value.id, statecheck, token, msgError });
-                jsondata = JsonConvert.SerializeObject(dts);
-                //string jsondata = (valid) ? JsonConvert.SerializeObject(dts) : "NOT FOUND";
-                if (statecheck == 1)
-                {
-                    return new HttpResponseMessage { StatusCode = HttpStatusCode.Accepted, Content = new StringContent(jsondata, System.Text.Encoding.UTF8, "application/json") };
-                    //return new HttpResponseMessage { StatusCode = HttpStatusCode.Accepted, Content = new StringContent("{" + (char)34 + "Status" + (char)34 + ": " + (char)34 + "1" + (char)34 + "," + (char)34 + "Refer" + (char)34 + ": " + (char)34 + "" + (char)34 + "}", System.Text.Encoding.UTF8, "application/json") };
-                }
-                else
-                {
-                    return new HttpResponseMessage { StatusCode = HttpStatusCode.NotAcceptable, Content = new StringContent("{" + (char)34 + "Status" + (char)34 + ": " + (char)34 + "0" + (char)34 + "," + (char)34 + "Refer" + (char)34 + ": " + (char)34 + msgError + (char)34 + "}", System.Text.Encoding.UTF8, "application/json") };
-                }
+
             }
             catch (Exception ex)
             {
                 return new HttpResponseMessage { StatusCode = HttpStatusCode.NotAcceptable, Content = new StringContent("{" + (char)34 + "Status" + (char)34 + ": " + (char)34 + "0" + (char)34 + "," + (char)34 + "Refer" + (char)34 + ": " + (char)34 + ex.Message + (char)34 + "}", System.Text.Encoding.UTF8, "application/json") };
+            }
+            dts.Rows.Add(new Object[] { value.id, statecheck, token, msgError });
+            jsondata = JsonConvert.SerializeObject(dts);
+            //string jsondata = (valid) ? JsonConvert.SerializeObject(dts) : "NOT FOUND";
+            if (statecheck == 1)
+            {
+                return new HttpResponseMessage { StatusCode = HttpStatusCode.Accepted, Content = new StringContent(jsondata, System.Text.Encoding.UTF8, "application/json") };
+                //return new HttpResponseMessage { StatusCode = HttpStatusCode.Accepted, Content = new StringContent("{" + (char)34 + "Status" + (char)34 + ": " + (char)34 + "1" + (char)34 + "," + (char)34 + "Refer" + (char)34 + ": " + (char)34 + "" + (char)34 + "}", System.Text.Encoding.UTF8, "application/json") };
+            }
+            else
+            {
+                return new HttpResponseMessage { StatusCode = HttpStatusCode.NotAcceptable, Content = new StringContent("{" + (char)34 + "Status" + (char)34 + ": " + (char)34 + "0" + (char)34 + "," + (char)34 + "Refer" + (char)34 + ": " + (char)34 + msgError + (char)34 + "}", System.Text.Encoding.UTF8, "application/json") };
             }
         }
 
@@ -125,32 +127,32 @@ namespace HITConnect.Controllers
         [Route("api/CheckToken/")]
         public HttpResponseMessage CheckToken([FromBody] UserAuthen value)
         {
+
+            /*
+            UserAuthen Udata;
             try
             {
-                /*
-                UserAuthen Udata;
-                try
-                {
-                    string JsonValue = value.ToString();
-                    Udata = JsonConvert.DeserializeObject<UserAuthen>(JsonValue);
-                }
-                catch
-                {
-                    Udata = new UserAuthen() { id = "", pwd = "", token = "", status = "", venderCode = "" };
-                }
-                */
-                string _Qry = "";
-                string jsondata = "";
-                string msgError = "";
-                string token = "";
-                int statecheck = 0;
-                int countdtPO = 0;
-                DataTable dt = null;
-                DataTable dtPO = new DataTable();
-                DataTable dts = new DataTable();
-                dts.Columns.Add("Status", typeof(string));
-                dts.Columns.Add("Token", typeof(string));
-                dts.Columns.Add("Message", typeof(string));
+                string JsonValue = value.ToString();
+                Udata = JsonConvert.DeserializeObject<UserAuthen>(JsonValue);
+            }
+            catch
+            {
+                Udata = new UserAuthen() { id = "", pwd = "", token = "", status = "", venderCode = "" };
+            }
+            */
+            string _Qry = "";
+            string jsondata = "";
+            string msgError = "";
+            string token = "";
+            int statecheck = 0;
+            DataTable dt = null;
+            DataTable dtPO = new DataTable();
+            DataTable dts = new DataTable();
+            dts.Columns.Add("Status", typeof(string));
+            dts.Columns.Add("Token", typeof(string));
+            dts.Columns.Add("Message", typeof(string));
+            try
+            {
                 WSM.Conn.SQLConn Cnn = new WSM.Conn.SQLConn();
 
                 _Qry += " SELECT V.Pwd, V.VanderMailLogIn, ATK.DataKey, VUP.VanderGrp " +
@@ -167,14 +169,9 @@ namespace HITConnect.Controllers
 
                     if (Cnn.ExecuteOnly(_Qry, WSM.Conn.DB.DataBaseName.DB_VENDER))
                     {
+                        token = "";
                         _Qry = "";
-                        /*  Fields Not Send JSON
-                         * [FTDataKey],[FTDateCreate],
-                         * ,[StateAcknowledge],[AcknowledgeBy]" +
-                            ",[AcknowledgeDate],[AcknowledgeTime],[StateAcknowledgeLock],[StateClose],[T2_Confirm_Ship_Date],[T2_Confirm_Price]" +
-                            ",[T2_Confirm_Quantity],[T2_Confirm_OrderNo],[T2_Confirm_PO_Date],[T2_Confirm_By],[Estimatedeldate],[Actualdeldate]" +
-                            ",[InvoiceNo],[RcvQty],[RcvDate],[StateRead] 
-                         * */
+                        /*  Fields Not Send JSON  [FTDataKey],[FTDateCreate],  */
 
                         _Qry += "SELECT ISNULL(VenderCode, '') AS VenderCode ,ISNULL(VendorName, '') AS VendorName ,ISNULL(VendorLocation, '') AS VendorLocation ,ISNULL(FactoryCode, '') AS FactoryCode ,ISNULL(PONo, '') AS PONo ,ISNULL(PODate, '') AS PODate " +
                             " ,ISNULL(Shipto, '') AS Shipto ,ISNULL(GarmentShipmentDestination, '') AS GarmentShipmentDestination ,ISNULL(MatrClass, '') AS MatrClass ,ISNULL(ItemSeq, 0) AS ItemSeq ,ISNULL(POItemCode, '') AS POItemCode ,ISNULL(MatrCode, '') AS MatrCode ,ISNULL(UPCCOMBOIM, '') AS UPCCOMBOIM ,ISNULL(ContentCode, '') AS ContentCode " +
@@ -194,7 +191,6 @@ namespace HITConnect.Controllers
                             " FROM [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].[dbo].[POToVender] AS POV " +
                             " WHERE POV.vendercode = '" + value.venderCode + "'AND POV.StateAcknowledge = 0";
                         dtPO = Cnn.GetDataTable(_Qry, WSM.Conn.DB.DataBaseName.DB_VENDER);
-                        countdtPO = dtPO.Rows.Count;
 
                         if (dtPO != null)
                         {
@@ -202,9 +198,7 @@ namespace HITConnect.Controllers
                             _Qry = "DECLARE @TotalRow int =0 " +
                                 "DECLARE @TotalEff int = 0 " +
                                 "DECLARE @TotalStamp int = 0 " +
-                                "DECLARE @User nvarchar(50) = 'Admin' " +
-                                "DECLARE @Vender nvarchar(50) = 'Admin' " +
-                                "DECLARE @Date varchar(8) = Convert(varchar(10), Getdate(), 111) " +
+                                "DECLARE @Date varchar(10) = Convert(varchar(10), Getdate(), 111) " +
                                 "DECLARE @Time varchar(10) = Convert(varchar(8), Getdate(), 114) " +
                                 "DECLARE @Message nvarchar(500) = '' ";
 
@@ -239,7 +233,10 @@ namespace HITConnect.Controllers
                                 "[ChinasizeMatrixtype],[EAGERPItemNumber],[CompoundColororCCIMfor2in1CCIM],[CPO],[BhasaIndonesiaProductBrand]," +
                                 "[SAFCODE],[Youthorder],[NFCproduct],[NeckneckopeningX2],[ChestbodywidthX2],[CenterBackbodylength]," +
                                 "[WaistwaistrelaxedInseam],[PackQuantityQTYPERSELLINGUNIT],[Fabriccode],[PRODUCTDESCRIPTION]," +
-                                "[PRODUCTCODEDESCRIPTION],[GARMENTSTYLEFIELD],[INSEAMSTYLE]) ";
+                                "[PRODUCTCODEDESCRIPTION],[GARMENTSTYLEFIELD],[INSEAMSTYLE], " +
+                                "[StateAcknowledge],[AcknowledgeBy],[AcknowledgeDate],[AcknowledgeTime], " +
+                                "[StateAcknowledgeLock],[StateClose],[T2_Confirm_Price],[T2_Confirm_Quantity],[T2_Confirm_OrderNo]," +
+                                "[T2_Confirm_PO_Date],[T2_Confirm_By],[Estimatedeldate],[Actualdeldate],[InvoiceNo],[RcvQty],[RcvDate],[StateRead] )";
                             _Qry += " SELECT ISNULL(FTDataKey, '') AS FTDataKey, ISNULL(FTDateCreate, '') AS FTDateCreate, " +
                                 "ISNULL(VenderCode, ''), ISNULL(VendorName, '') AS VendorName, ISNULL(VendorLocation, '') AS VendorLocation, " +
                                 "ISNULL(FactoryCode, '') AS FactoryCode, ISNULL(PONo, '') AS PONo, ISNULL(PODate, '') AS PODate, " +
@@ -284,21 +281,31 @@ namespace HITConnect.Controllers
                                 "ISNULL(WaistwaistrelaxedInseam, '') AS WaistwaistrelaxedInseam, " +
                                 "ISNULL(PackQuantityQTYPERSELLINGUNIT, 0) AS PackQuantityQTYPERSELLINGUNIT, ISNULL(Fabriccode, '') AS Fabriccode, " +
                                 "ISNULL(PRODUCTDESCRIPTION, '') AS PRODUCTDESCRIPTION, ISNULL(PRODUCTCODEDESCRIPTION, '') AS PRODUCTCODEDESCRIPTION," +
-                                "ISNULL(GARMENTSTYLEFIELD, '') AS GARMENTSTYLEFIELD, ISNULL(INSEAMSTYLE, '') AS INSEAMSTYLE " +
+                                "ISNULL(GARMENTSTYLEFIELD, '') AS GARMENTSTYLEFIELD, ISNULL(INSEAMSTYLE, '') AS INSEAMSTYLE, " +
+                                // Update Stamp in POToVender_ACK
+                                "1 AS StateAcknowledge, '" + value.id + "' AS AcknowledgeBy, @DATE AS AcknowledgeDate, @TIME AS AcknowledgeTime, " +
+                                "ISNULL(StateAcknowledgeLock, '') AS StateAcknowledgeLock, ISNULL(StateClose, '') AS StateClose, " +
+                                "ISNULL( T2_Confirm_Price, 0 ) AS T2_Confirm_Price, ISNULL(T2_Confirm_Quantity, 0) AS T2_Confirm_Quantity, " +
+                                "ISNULL(T2_Confirm_OrderNo, '') AS T2_Confirm_OrderNo, ISNULL(T2_Confirm_PO_Date, '') AS T2_Confirm_PO_Date, " +
+                                "ISNULL(T2_Confirm_By, '') AS T2_Confirm_By, ISNULL(Estimatedeldate, '') AS Estimatedeldate, " +
+                                "ISNULL(Actualdeldate, '') AS Actualdeldate, ISNULL(InvoiceNo, '') AS InvoiceNo, ISNULL(RcvQty, 0) AS RcvQty, " +
+                                "ISNULL(RcvDate, '') AS RcvDate, ISNULL(StateRead, '') AS StateRead " +
                                 "FROM [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.POToVender AS POV " +
                                 "WHERE POV.vendercode = '" + value.venderCode + "' AND POV.StateAcknowledge = 0";
+
 
                             _Qry += " SELECT @TotalEff=@@ROWCOUNT ";
 
 
-                            _Qry += " UPDATE[" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.POToVender  SET StateAcknowledge = 1";
-                            _Qry += ", AcknowledgeBy = '" + value.id + "' , AcknowledgeDate = " + HITConnect.UFuncs.FormatDateDB +
-                                ", AcknowledgeTime = " + HITConnect.UFuncs.FormatTimeDB + " ";
-                            _Qry += " WHERE vendercode = '" + value.venderCode + "'AND StateAcknowledge = 0";
+                            _Qry += " UPDATE[" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.POToVender SET StateAcknowledge = 1 ";
+                            _Qry += ", AcknowledgeBy = '" + value.id + "' , AcknowledgeDate = @DATE, AcknowledgeTime = @TIME ";
+                            _Qry += " WHERE vendercode = '" + value.venderCode + "' AND StateAcknowledge = 0 ";
+
+
                             _Qry += " SELECT @TotalStamp=@@ROWCOUNT ";
 
                             //_Qry += " SELECT @TotalRow AS TotalRows, @TotalEff AS TotalEffect , @USER AS UserName, @Vender AS Vender , @DATE + @TIME AS DateTime,@Message AS Msg ";
-                            _Qry += "IF (@TotalRow = @TotalEff) AND  (@TotalRow = @TotalStamp)";
+                            _Qry += "IF (@TotalEff = @TotalStamp)";
                             _Qry += "   BEGIN ";
                             _Qry += "       COMMIT TRANSACTION ";
                             _Qry += "   END ";
@@ -318,34 +325,27 @@ namespace HITConnect.Controllers
 
                             if (Cnn.ExecuteOnly(_Qry, WSM.Conn.DB.DataBaseName.DB_VENDER))
                             {
-
-                                token = "";
                                 statecheck = 1;
                                 msgError = "Successful!!!";
 
                             }
                             else
                             {
-                                token = "";
                                 statecheck = 2;
                                 msgError = "Process Not Successful!!!";
                             }
                         }
                         else
                         {
-                            token = "";
-                            statecheck = 1;
-                            msgError = "Successful [No new PO]";
+                            statecheck = 2;
+                            msgError = "Please check connection!!!";
                         }
                     }
                     else
                     {
-                        token = "";
                         statecheck = 2;
                         msgError = "Cannot Remove Token!!!";
                     }
-                    //string jsondata = (valid) ? JsonConvert.SerializeObject(dtPO) : "NOT FOUND";
-                    //string jsondata = JsonConvert.SerializeObject(dtPO);
                 }
                 else
                 {
@@ -353,30 +353,26 @@ namespace HITConnect.Controllers
                     statecheck = 2;
                     msgError = "Token / Vender Group is invalid!!!";
                 }
-
-                dts.Rows.Add(new Object[] { statecheck, token, msgError });
-                if (statecheck == 1)
-                {
-                    jsondata = JsonConvert.SerializeObject(dtPO);
-                }
-                else
-                {
-                    jsondata = JsonConvert.SerializeObject(dts);
-                }
-                if (statecheck == 1)
-                {
-                    return new HttpResponseMessage { StatusCode = HttpStatusCode.Accepted, Content = new StringContent(jsondata, System.Text.Encoding.UTF8, "application/json") };
-                }
-                else
-                {
-                    return new HttpResponseMessage { StatusCode = HttpStatusCode.NotAcceptable, Content = new StringContent("{" + (char)34 + "Status" + (char)34 + ": " + (char)34 + "0" + (char)34 + "," + (char)34 + "Refer" + (char)34 + ": " + (char)34 + msgError + (char)34 + "}", System.Text.Encoding.UTF8, "application/json") };
-                }
             }
             catch (Exception ex)
             {
                 return new HttpResponseMessage { StatusCode = HttpStatusCode.NotAcceptable, Content = new StringContent("{" + (char)34 + "Status" + (char)34 + ": " + (char)34 + "0" + (char)34 + "," + (char)34 + "Refer" + (char)34 + ": " + (char)34 + ex.Message + (char)34 + "}", System.Text.Encoding.UTF8, "application/json") };
             }
+
+            dts.Rows.Add(new Object[] { statecheck, token, msgError });
+            if (statecheck == 1)
+            {
+                jsondata = JsonConvert.SerializeObject(dtPO);
+                return new HttpResponseMessage { StatusCode = HttpStatusCode.Accepted, Content = new StringContent(jsondata, System.Text.Encoding.UTF8, "application/json") };
+            }
+            else
+            {
+                jsondata = JsonConvert.SerializeObject(dts);
+                return new HttpResponseMessage { StatusCode = HttpStatusCode.NotAcceptable, Content = new StringContent("{" + (char)34 + "Status" + (char)34 + ": " + (char)34 + "0" + (char)34 + "," + (char)34 + "Refer" + (char)34 + ": " + (char)34 + msgError + (char)34 + "}", System.Text.Encoding.UTF8, "application/json") };
+            }
         }
+
+
         /*
         // GET api/values/5
         public string Get(int id)
