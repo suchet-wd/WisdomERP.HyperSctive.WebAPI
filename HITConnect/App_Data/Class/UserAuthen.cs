@@ -11,7 +11,7 @@ namespace HITConnect
         public string id { get; set; }
         public string pwd { get; set; }
         public string token { get; set; }
-        public string status { get; set; }
+        public string statecheck { get; set; }
         public string venderCode { get; set; }
 
     }

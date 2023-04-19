@@ -14,7 +14,7 @@ namespace HITConnect.Controllers
         {
             return new string[] { "value1", "value2" };
         }
-
+        /*
         // GET api/values/5
         public string Get(int id)
         {
@@ -35,5 +35,6 @@ namespace HITConnect.Controllers
         public void Delete(int id)
         {
         }
+        */
     }
 }

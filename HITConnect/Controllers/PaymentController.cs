@@ -34,45 +34,48 @@ namespace HITConnect.Controllers
             return new string[] { "String1", "String2" };
         }
 
-        [HttpGet]
+
+        //public HttpResponseMessage CheckPayment(string idRq, string pwdRq, string tokenRq, string startRq = null, string endRq = null, string PIRq = null, string PORq = null)
+
+        [HttpPost]
         [Route("api/CheckPayment/")]
         public HttpResponseMessage CheckPayment(HITConnect.Payment pmRq)
-        //public HttpResponseMessage CheckPayment(string idRq, string pwdRq, string tokenRq, string startRq = null, string endRq = null, string PIRq = null, string PORq = null)
         {
             string _Qry = "";
-            int status = 0;
+            int statecheck = 0;
             string msgError = "";
-            string token = "";
+            //string token = "";
             string jsondata = "";
             DataTable dt = null;
             DataTable dts = new DataTable();
             dts.Columns.Add("Status", typeof(string));
-            dts.Columns.Add("Token", typeof(string));
+            //dts.Columns.Add("Token", typeof(string));
             dts.Columns.Add("Message", typeof(string));
 
-            if (Convert.ToDateTime(pmRq.startDate) <= Convert.ToDateTime(pmRq.endDate))
+            //token = "";
+            try
             {
-                token = "";
-                try
-                {
 
-                    WSM.Conn.SQLConn Cnn = new WSM.Conn.SQLConn();
+                WSM.Conn.SQLConn Cnn = new WSM.Conn.SQLConn();
 
-                    _Qry += " SELECT V.Pwd, V.VanderMailLogIn, ATK.DataKey " +
-                        " FROM [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.VenderUser AS V  " +
-                        " LEFT JOIN [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.AuthenKeys AS ATK ON ATK.VanderMailLogIn = V.VanderMailLogIn  " +
-                        " WHERE V.VanderMailLogIn = '" + pmRq.id + "'";
-                    dt = Cnn.GetDataTable(_Qry, WSM.Conn.DB.DataBaseName.DB_VENDER);
-                    
-                    if (dt != null)
-                    { // REMOVE TOKEN FROM AuthenKeys
-                        _Qry = "DELETE FROM [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.AuthenKeys WHERE VanderMailLogIn = '" + pmRq.id + "'";
+                _Qry += " SELECT V.Pwd, V.VanderMailLogIn, ATK.DataKey " +
+                    " FROM [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.VenderUser AS V  " +
+                    " LEFT JOIN [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.AuthenKeys AS ATK ON ATK.VanderMailLogIn = V.VanderMailLogIn  " +
+                    " WHERE V.VanderMailLogIn = '" + pmRq.id + "'";
+                dt = Cnn.GetDataTable(_Qry, WSM.Conn.DB.DataBaseName.DB_VENDER);
 
-                        if (Cnn.ExecuteOnly(_Qry, WSM.Conn.DB.DataBaseName.DB_VENDER))
+                if (dt != null)
+                { // REMOVE TOKEN FROM AuthenKeys
+                    _Qry = "DELETE FROM [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.AuthenKeys WHERE VanderMailLogIn = '" + pmRq.id + "'";
+
+                    if (Cnn.ExecuteOnly(_Qry, WSM.Conn.DB.DataBaseName.DB_VENDER))
+                    {
+
+                        _Qry = columnList + " FROM [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.POPayment ";
+
+                        if (pmRq.startDate != null && pmRq.endDate != null)
                         {
-                            _Qry = columnList + " FROM [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.POPayment ";
-
-                            if (pmRq.startDate != null && pmRq.endDate != null)
+                            if (Convert.ToDateTime(pmRq.startDate) <= Convert.ToDateTime(pmRq.endDate))
                             {
                                 _Qry += " WHERE PaymentDate BETWEEN '" + pmRq.startDate + "' AND '" + pmRq.endDate + "' ";
                                 if (pmRq.PI != null && pmRq.PO == null)
@@ -83,78 +86,88 @@ namespace HITConnect.Controllers
                                 {
                                     _Qry += " AND PONo = '" + pmRq.PO + "'";
                                 }
-                            }
-                            else if (pmRq.startDate == null || pmRq.endDate == null)
+                            } else
                             {
-                                if (pmRq.PI != null && pmRq.PO == null)
-                                {
-                                    _Qry += " WHERE PINo = '" + pmRq.PI + "' ";
-                                }
-                                if (pmRq.PO != null && pmRq.PI == null)
-                                {
-                                    _Qry += " WHERE PONo = '" + pmRq.PO + "'";
-                                }
-                                if (pmRq.PO != null && pmRq.PI != null)
-                                {
-                                    _Qry += " WHERE PONo = '" + pmRq.PO + "'  OR PINo = '" + pmRq.PI + "' ";
-                                }
-                                else
-                                {
-                                    status = 2;
-                                    msgError = "Please check start date and end date!!!";
-                                }
+                                statecheck = 2;
+                                msgError = "Start Date must be lower than End Date";
                             }
-
-                            if (status == 0)
-                                dt = Cnn.GetDataTable(_Qry, WSM.Conn.DB.DataBaseName.DB_VENDER);
-
-                            if (status != 2)
+                            
+                        }
+                        else if (pmRq.startDate == null || pmRq.endDate == null)
+                        {
+                            if (pmRq.PI != null && pmRq.PO == null)
                             {
-                                foreach (DataRow row in dt.Rows)
-                                {
-                                    if (Convert.ToBase64String((byte[])row["FTFileRef"]) != "-1")
-                                    {
-                                        row["FTFileRef"] = Convert.ToBase64String((byte[])row["FTFileRef"]);
-                                    }
-                                    else
-                                    {
-                                        row["FTFileRef"] = "";
-                                    }
-                                }
-                                dts = dt;
-                                
-                                status = 1;
-                                msgError = "Successful";
+                                _Qry += " WHERE PINo = '" + pmRq.PI + "' ";
+                            }
+                            if (pmRq.PO != null && pmRq.PI == null)
+                            {
+                                _Qry += " WHERE PONo = '" + pmRq.PO + "'";
+                            }
+                            if (pmRq.PO != null && pmRq.PI != null)
+                            {
+                                _Qry += " WHERE PONo = '" + pmRq.PO + "'  OR PINo = '" + pmRq.PI + "' ";
                             }
                             else
                             {
-                                dts.Rows.Add(new Object[] { status, token, msgError });
+                                statecheck = 2;
+                                msgError = "Please check start date and end date!!!";
                             }
+                        }
+
+                        if (statecheck == 0)
+                            dt = Cnn.GetDataTable(_Qry, WSM.Conn.DB.DataBaseName.DB_VENDER);
+
+                        if (statecheck != 2)
+                        {
+                            foreach (DataRow row in dt.Rows)
+                            {
+                                if (Convert.ToBase64String((byte[])row["FTFileRef"]) != "-1")
+                                {
+                                    row["FTFileRef"] = Convert.ToBase64String((byte[])row["FTFileRef"]);
+                                }
+                                else
+                                {
+                                    row["FTFileRef"] = "";
+                                }
+                            }
+                            dts = dt;
+
+                            statecheck = 1;
+                            msgError = "Successful";
                         }
                         else
                         {
-                            status = 2;
-                            msgError = "Token is invalid!!!";
+                            dts.Rows.Add(new Object[] { statecheck, msgError });
                         }
                     }
                     else
                     {
-                        status = 2;
-                        msgError = "Please check Username and Password";
+                        statecheck = 2;
+                        msgError = "Token is invalid!!!";
                     }
-
-                    jsondata = JsonConvert.SerializeObject(dts);
                 }
-                catch (Exception ex)
+                else
                 {
-                    Console.WriteLine(ex);
+                    statecheck = 2;
+                    msgError = "Please check Username and Password";
                 }
-            } else
-            {
-                status = 2;
-                msgError = "Start Date must be lower than End Date";
+
+                jsondata = JsonConvert.SerializeObject(dts);
             }
-            return new HttpResponseMessage { Content = new StringContent(jsondata, System.Text.Encoding.UTF8, "application/json") };
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
+            //return new HttpResponseMessage { Content = new StringContent(jsondata, System.Text.Encoding.UTF8, "application/json") };
+            if (statecheck == 1)
+            {
+                return new HttpResponseMessage { StatusCode = HttpStatusCode.Accepted, Content = new StringContent(jsondata, System.Text.Encoding.UTF8, "application/json") };
+                //return new HttpResponseMessage { StatusCode = HttpStatusCode.Accepted, Content = new StringContent("{" + (char)34 + "Status" + (char)34 + ": " + (char)34 + "1" + (char)34 + "," + (char)34 + "Refer" + (char)34 + ": " + (char)34 + "" + (char)34 + "}", System.Text.Encoding.UTF8, "application/json") };
+            }
+            else
+            {
+                return new HttpResponseMessage { StatusCode = HttpStatusCode.NotAcceptable, Content = new StringContent("{" + (char)34 + "Status" + (char)34 + ": " + (char)34 + "0" + (char)34 + "," + (char)34 + "Refer" + (char)34 + ": " + (char)34 + msgError + (char)34 + "}", System.Text.Encoding.UTF8, "application/json") };
+            }
         }
 
         /*

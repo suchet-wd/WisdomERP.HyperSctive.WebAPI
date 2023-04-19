@@ -22,18 +22,6 @@ namespace HITConnect.Controllers
         [Route("api/GetToken/")]
         public HttpResponseMessage GetToken([FromBody] UserAuthen value)
         {
-            /*
-            UserAuthen Udata;
-            try
-            {
-                string JsonValue = value.ToString();
-                Udata = JsonConvert.DeserializeObject<UserAuthen>(JsonValue);
-            }
-            catch
-            {
-                Udata = new UserAuthen() { id = "", pwd = "", token = "", status = "", venderCode = "" };
-            }
-            */
             string _Qry = "";
             int statecheck = 0;
             string msgError = "";
@@ -127,29 +115,16 @@ namespace HITConnect.Controllers
         [Route("api/CheckToken/")]
         public HttpResponseMessage CheckToken([FromBody] UserAuthen value)
         {
-
-            /*
-            UserAuthen Udata;
-            try
-            {
-                string JsonValue = value.ToString();
-                Udata = JsonConvert.DeserializeObject<UserAuthen>(JsonValue);
-            }
-            catch
-            {
-                Udata = new UserAuthen() { id = "", pwd = "", token = "", status = "", venderCode = "" };
-            }
-            */
             string _Qry = "";
             string jsondata = "";
             string msgError = "";
-            string token = "";
+            //string token = "";
             int statecheck = 0;
             DataTable dt = null;
             DataTable dtPO = new DataTable();
             DataTable dts = new DataTable();
             dts.Columns.Add("Status", typeof(string));
-            dts.Columns.Add("Token", typeof(string));
+            //dts.Columns.Add("Token", typeof(string));
             dts.Columns.Add("Message", typeof(string));
             try
             {
@@ -169,7 +144,7 @@ namespace HITConnect.Controllers
 
                     if (Cnn.ExecuteOnly(_Qry, WSM.Conn.DB.DataBaseName.DB_VENDER))
                     {
-                        token = "";
+                        //token = "";
                         _Qry = "";
                         /*  Fields Not Send JSON  [FTDataKey],[FTDateCreate],  */
 
@@ -195,12 +170,12 @@ namespace HITConnect.Controllers
                         if (dtPO != null)
                         {
                             // Remove Data from Table POToVender_ACK is StateAcknowledge in Table POToVender = 0
-                            _Qry = "DECLARE @TotalRow int =0 " +
-                                "DECLARE @TotalEff int = 0 " +
-                                "DECLARE @TotalStamp int = 0 " +
-                                "DECLARE @Date varchar(10) = Convert(varchar(10), Getdate(), 111) " +
-                                "DECLARE @Time varchar(10) = Convert(varchar(8), Getdate(), 114) " +
-                                "DECLARE @Message nvarchar(500) = '' ";
+                            _Qry = "  DECLARE @TotalRow int = 0 ";
+                            _Qry += " DECLARE @TotalEff int = 0 ";
+                            _Qry += " DECLARE @TotalStamp int = 0 ";
+                            _Qry += " DECLARE @Date varchar(10) = Convert(varchar(10), Getdate(), 111) ";
+                            _Qry += " DECLARE @Time varchar(10) = Convert(varchar(8), Getdate(), 114) ";
+                            _Qry += " DECLARE @Message nvarchar(500) = '' ";
 
                             _Qry += " BEGIN TRANSACTION ";
                             _Qry += " BEGIN TRY ";
@@ -313,6 +288,7 @@ namespace HITConnect.Controllers
                             _Qry += "   BEGIN ";
                             _Qry += "       set @Message = 'Total Row, Effect and Stamp not equal!!!' ";
                             _Qry += "       ROLLBACK TRANSACTION ";
+                            _Qry += "       RAISERROR('Total Row, Effect and Stamp not equal!!!.',16,1) ";
                             _Qry += "   END ";
                             _Qry += " END TRY ";
 
@@ -327,7 +303,6 @@ namespace HITConnect.Controllers
                             {
                                 statecheck = 1;
                                 msgError = "Successful!!!";
-
                             }
                             else
                             {
@@ -349,7 +324,6 @@ namespace HITConnect.Controllers
                 }
                 else
                 {
-                    token = "";
                     statecheck = 2;
                     msgError = "Token / Vender Group is invalid!!!";
                 }
@@ -359,7 +333,7 @@ namespace HITConnect.Controllers
                 return new HttpResponseMessage { StatusCode = HttpStatusCode.NotAcceptable, Content = new StringContent("{" + (char)34 + "Status" + (char)34 + ": " + (char)34 + "0" + (char)34 + "," + (char)34 + "Refer" + (char)34 + ": " + (char)34 + ex.Message + (char)34 + "}", System.Text.Encoding.UTF8, "application/json") };
             }
 
-            dts.Rows.Add(new Object[] { statecheck, token, msgError });
+            dts.Rows.Add(new Object[] { statecheck, msgError });
             if (statecheck == 1)
             {
                 jsondata = JsonConvert.SerializeObject(dtPO);

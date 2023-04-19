@@ -13,7 +13,6 @@ namespace HITConnect
         public string Refer2 { get; set; }
         public string Refer3 { get; set; }
         public string Refer4 { get; set; }
-
         public string Refer5 { get; set; }
 
     }
