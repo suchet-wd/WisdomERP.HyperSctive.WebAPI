@@ -33,62 +33,87 @@ namespace HITConnect.Controllers
             dts.Columns.Add("Status", typeof(string));
             dts.Columns.Add("Token", typeof(string));
             dts.Columns.Add("Message", typeof(string));
+            if (value.id == "")
+            {
+                statecheck = 2;
+                msgError = "Please check ID!!!";
+            }
+            else
+            {
+                if (value.pwd == "")
+                {
+                    statecheck = 2;
+                    msgError = "Please check password!!!";
+                }
+                else
+                {
+                    if (value.venderCode != "" && value.venderGroup != "")
+                    {
+                        statecheck = 2;
+                        msgError = "Vender Group not require!!!";
+                    }
+                }
+            }
 
             try
             {
-                WSM.Conn.SQLConn Cnn = new WSM.Conn.SQLConn();
-
-                _Qry += " SELECT V.Pwd AS pwd, V.VanderMailLogIn AS VanderMailLogIn " +
-                    " FROM [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.VenderUser AS V " +
-                    " WHERE V.VanderMailLogIn = '" + value.id + "'";
-                dt = Cnn.GetDataTable(_Qry, WSM.Conn.DB.DataBaseName.DB_VENDER);
-
-                if (dt != null && dt.Rows.Count == 1)
+                if (statecheck != 2)
                 {
-                    foreach (DataRow row in dt.Rows)
+                    WSM.Conn.SQLConn Cnn = new WSM.Conn.SQLConn();
+                    dt = HITConnect.UserAuthen.GetDTUserValidate(Cnn, value);
+                    /*_Qry += " SELECT V.Pwd AS pwd, V.VanderMailLogIn AS VanderMailLogIn , VUP.VanderGrp AS VanderGrp " +
+                        " FROM [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.VenderUser AS V " +
+                        " LEFT JOIN VenderUserPermissionCmp VUP ON V.VanderMailLogIn = VUP.VanderMailLogIn " +
+                        " WHERE V.VanderMailLogIn = '" + value.id + "' AND VUP.VanderGrp = '" + value.venderGroup + "'";
+                    dt = Cnn.GetDataTable(_Qry, WSM.Conn.DB.DataBaseName.DB_VENDER);
+                    */
+                    if (dt != null && dt.Rows.Count > 0)
                     {
-                        if (value.pwd == WSM.Conn.DB.FuncDecryptDataServer(row["pwd"].ToString()))
+                        foreach (DataRow row in dt.Rows)
                         {
-                            _Qry = "INSERT INTO [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.AuthenKeys (VanderMailLogIn, DataKey) ";
-                            _Qry += " VALUES ('" + row["VanderMailLogIn"].ToString() + "', NEWID())";
+                            if (value.pwd == WSM.Conn.DB.FuncDecryptDataServer(row["pwd"].ToString()))
+                            {
+                                _Qry = "INSERT INTO [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.AuthenKeys (VanderMailLogIn, DataKey) ";
+                                _Qry += " VALUES ('" + row["VanderMailLogIn"].ToString() + "', NEWID())";
 
-                            if (Cnn.ExecuteOnly(_Qry, WSM.Conn.DB.DataBaseName.DB_VENDER))
-                            {
-                                //token = row["pwd"].ToString();
-                                statecheck = 1;
-                                msgError = "Successful";
-                            }
-                            else
-                            {
-                                _Qry = "UPDATE [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.AuthenKeys SET DataKey = NEWID() ";
-                                _Qry += " WHERE VanderMailLogIn = '" + value.id + "'";
                                 if (Cnn.ExecuteOnly(_Qry, WSM.Conn.DB.DataBaseName.DB_VENDER))
                                 {
                                     //token = row["pwd"].ToString();
                                     statecheck = 1;
                                     msgError = "Successful";
                                 }
+                                else
+                                {
+                                    _Qry = "UPDATE [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.AuthenKeys SET DataKey = NEWID() ";
+                                    _Qry += " WHERE VanderMailLogIn = '" + value.id + "'";
+                                    if (Cnn.ExecuteOnly(_Qry, WSM.Conn.DB.DataBaseName.DB_VENDER))
+                                    {
+                                        //token = row["pwd"].ToString();
+                                        statecheck = 1;
+                                        msgError = "Successful";
+                                    }
+                                }
+                                _Qry = "SELECT DataKey FROM [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.AuthenKeys WHERE VanderMailLogIn = '" + value.id + "'";
+                                dt = Cnn.GetDataTable(_Qry, WSM.Conn.DB.DataBaseName.DB_VENDER);
+                                foreach (DataRow r in dt.Rows)
+                                {
+                                    token = r["DataKey"].ToString();
+                                }
                             }
-                            _Qry = "SELECT DataKey FROM [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.AuthenKeys WHERE VanderMailLogIn = '" + value.id + "'";
-                            dt = Cnn.GetDataTable(_Qry, WSM.Conn.DB.DataBaseName.DB_VENDER);
-                            foreach (DataRow r in dt.Rows)
+                            else
                             {
-                                token = r["DataKey"].ToString();
+                                token = "";
+                                statecheck = 2;
+                                msgError = "Password is not correct!!!";
                             }
-                        }
-                        else
-                        {
-                            token = "";
-                            statecheck = 2;
-                            msgError = "Password is not correct!!!";
                         }
                     }
-                }
-                else
-                {
-                    token = "";
-                    statecheck = 2;
-                    msgError = "Please check User and Password!!!";
+                    else
+                    {
+                        token = "";
+                        statecheck = 2;
+                        msgError = "Please check User and Password!!!";
+                    }
                 }
 
             }
@@ -106,7 +131,7 @@ namespace HITConnect.Controllers
             }
             else
             {
-                return new HttpResponseMessage { StatusCode = HttpStatusCode.NotAcceptable, Content = new StringContent("{" + (char)34 + "Status" + (char)34 + ": " + (char)34 + "0" + (char)34 + "," + (char)34 + "Refer" + (char)34 + ": " + (char)34 + msgError + (char)34 + "}", System.Text.Encoding.UTF8, "application/json") };
+                return new HttpResponseMessage { StatusCode = HttpStatusCode.NotAcceptable, Content = new StringContent("{" + (char)34 + "Status" + (char)34 + ": " + (char)34 + statecheck + (char)34 + "," + (char)34 + "Refer" + (char)34 + ": " + (char)34 + msgError + (char)34 + "}", System.Text.Encoding.UTF8, "application/json") };
             }
         }
 
@@ -118,37 +143,61 @@ namespace HITConnect.Controllers
             string _Qry = "";
             string jsondata = "";
             string msgError = "";
-            //string token = "";
             int statecheck = 0;
             DataTable dt = null;
-            DataTable dtPO = new DataTable();
             DataTable dts = new DataTable();
+            DataTable dtPO = new DataTable();
             dts.Columns.Add("Status", typeof(string));
-            //dts.Columns.Add("Token", typeof(string));
             dts.Columns.Add("Message", typeof(string));
+            WSM.Conn.SQLConn Cnn = new WSM.Conn.SQLConn();
+
+            if (value.id == "")
+            {
+                statecheck = 2;
+                msgError = "Please check ID!!!";
+            }
+            else
+            {
+                if (value.pwd == "")
+                {
+                    statecheck = 2;
+                    msgError = "Please check password!!!";
+                }
+                else
+                {
+                    if (value.venderCode == "")
+                    {
+                        statecheck = 2;
+                        msgError = "Please check vender code!!!";
+                    }
+                }
+            }
             try
             {
-                WSM.Conn.SQLConn Cnn = new WSM.Conn.SQLConn();
-
-                _Qry += " SELECT V.Pwd, V.VanderMailLogIn, ATK.DataKey, VUP.VanderGrp " +
-                    " FROM [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.VenderUser AS V  " +
-                    " LEFT JOIN [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.AuthenKeys AS ATK ON ATK.VanderMailLogIn = V.VanderMailLogIn  " +
-                    " LEFT JOIN[DB_VENDER].dbo.VenderUserPermissionCmp AS VUP ON VUP.VanderMailLogIn = V.VanderMailLogIn " +
-                    " WHERE V.VanderMailLogIn = '" + value.id + "' AND VUP.VanderGrp = '" + value.venderCode + "' ";
-                dt = Cnn.GetDataTable(_Qry, WSM.Conn.DB.DataBaseName.DB_VENDER);
-
-                if (dt != null)
+                if (statecheck != 2)
                 {
-                    // REMOVE TOKEN FROM AuthenKeys
-                    _Qry = "DELETE FROM [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.AuthenKeys WHERE VanderMailLogIn = '" + value.id + "'";
 
-                    if (Cnn.ExecuteOnly(_Qry, WSM.Conn.DB.DataBaseName.DB_VENDER))
+                    dt = HITConnect.UserAuthen.GetDTUserValidate(Cnn, value);
+                    /*
+                    _Qry += " SELECT V.Pwd, V.VanderMailLogIn, ATK.DataKey, VUP.VanderGrp " +
+                        " FROM [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.VenderUser AS V  " +
+                        " LEFT JOIN [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.AuthenKeys AS ATK ON ATK.VanderMailLogIn = V.VanderMailLogIn  " +
+                        " LEFT JOIN[DB_VENDER].dbo.VenderUserPermissionCmp AS VUP ON VUP.VanderMailLogIn = V.VanderMailLogIn " +
+                        " WHERE V.VanderMailLogIn = '" + value.id + "' AND VUP.VanderGrp = '" + value.venderCode + "' ";
+                    dt = Cnn.GetDataTable(_Qry, WSM.Conn.DB.DataBaseName.DB_VENDER);
+                    */
+                    if (dtPO != null)
                     {
+                        // REMOVE TOKEN FROM AuthenKeys
+                        //_Qry = "DELETE FROM [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.AuthenKeys WHERE VanderMailLogIn = '" + value.id + "'";
+
+                        //if (Cnn.ExecuteOnly(_Qry, WSM.Conn.DB.DataBaseName.DB_VENDER))
+                        //{
                         //token = "";
-                        _Qry = "";
+                        //_Qry = "";
                         /*  Fields Not Send JSON  [FTDataKey],[FTDateCreate],  */
 
-                        _Qry += "SELECT ISNULL(VenderCode, '') AS VenderCode ,ISNULL(VendorName, '') AS VendorName ,ISNULL(VendorLocation, '') AS VendorLocation ,ISNULL(FactoryCode, '') AS FactoryCode ,ISNULL(PONo, '') AS PONo ,ISNULL(PODate, '') AS PODate " +
+                        _Qry = " SELECT ISNULL(VenderCode, '') AS VenderCode ,ISNULL(VendorName, '') AS VendorName ,ISNULL(VendorLocation, '') AS VendorLocation ,ISNULL(FactoryCode, '') AS FactoryCode ,ISNULL(PONo, '') AS PONo ,ISNULL(PODate, '') AS PODate " +
                             " ,ISNULL(Shipto, '') AS Shipto ,ISNULL(GarmentShipmentDestination, '') AS GarmentShipmentDestination ,ISNULL(MatrClass, '') AS MatrClass ,ISNULL(ItemSeq, 0) AS ItemSeq ,ISNULL(POItemCode, '') AS POItemCode ,ISNULL(MatrCode, '') AS MatrCode ,ISNULL(UPCCOMBOIM, '') AS UPCCOMBOIM ,ISNULL(ContentCode, '') AS ContentCode " +
                             " ,ISNULL(CareCode, '') AS CareCode ,ISNULL(Color, '') AS Color ,ISNULL(ColorName, '') AS ColorName ,ISNULL(GCW, '') AS GCW ,ISNULL(Size, '') AS Size ,ISNULL(SizeMatrix, '') AS SizeMatrix ,ISNULL(Currency, '') AS Currency ,ISNULL(Price, 0) AS Price ,ISNULL(Quantity, 0) AS Quantity ,ISNULL(QtyUnit, '') AS QtyUnit ,ISNULL(DeliveryDate, '') AS DeliveryDate " +
                             " ,ISNULL(Season, '') AS Season ,ISNULL(Custporef, '') AS Custporef ,ISNULL(Buy, '') AS Buy ,ISNULL(BuyNo, '') AS BuyNo ,ISNULL(Category, '') AS Category ,ISNULL(Program, '') AS Program ,ISNULL(SubProgram, '') AS SubProgram ,ISNULL(StyleNo, '') AS StyleNo ,ISNULL(StyleName, '') AS StyleName ,ISNULL(POMatching1, '') AS POMatching1 " +
@@ -315,22 +364,27 @@ namespace HITConnect.Controllers
                             statecheck = 2;
                             msgError = "Please check connection!!!";
                         }
+                        /*}
+                        else
+                        {
+                            statecheck = 2;
+                            msgError = "Cannot Remove Token!!!";
+                        }*/
                     }
                     else
                     {
                         statecheck = 2;
-                        msgError = "Cannot Remove Token!!!";
+                        msgError = "Token / Vender Group is invalid!!!";
                     }
                 }
                 else
                 {
-                    statecheck = 2;
-                    msgError = "Token / Vender Group is invalid!!!";
+                    UserAuthen.DelAuthenKey(Cnn, value.id);
                 }
             }
             catch (Exception ex)
             {
-                return new HttpResponseMessage { StatusCode = HttpStatusCode.NotAcceptable, Content = new StringContent("{" + (char)34 + "Status" + (char)34 + ": " + (char)34 + "0" + (char)34 + "," + (char)34 + "Refer" + (char)34 + ": " + (char)34 + ex.Message + (char)34 + "}", System.Text.Encoding.UTF8, "application/json") };
+                return new HttpResponseMessage { StatusCode = HttpStatusCode.NotAcceptable, Content = new StringContent("{" + (char)34 + "Status" + (char)34 + ": " + (char)34 + statecheck + (char)34 + "," + (char)34 + "Refer" + (char)34 + ": " + (char)34 + ex.Message + (char)34 + "}", System.Text.Encoding.UTF8, "application/json") };
             }
 
             dts.Rows.Add(new Object[] { statecheck, msgError });
@@ -342,7 +396,7 @@ namespace HITConnect.Controllers
             else
             {
                 jsondata = JsonConvert.SerializeObject(dts);
-                return new HttpResponseMessage { StatusCode = HttpStatusCode.NotAcceptable, Content = new StringContent("{" + (char)34 + "Status" + (char)34 + ": " + (char)34 + "0" + (char)34 + "," + (char)34 + "Refer" + (char)34 + ": " + (char)34 + msgError + (char)34 + "}", System.Text.Encoding.UTF8, "application/json") };
+                return new HttpResponseMessage { StatusCode = HttpStatusCode.NotAcceptable, Content = new StringContent("{" + (char)34 + "Status" + (char)34 + ": " + (char)34 + statecheck + (char)34 + "," + (char)34 + "Refer" + (char)34 + ": " + (char)34 + msgError + (char)34 + "}", System.Text.Encoding.UTF8, "application/json") };
             }
         }
 

@@ -7,7 +7,7 @@ using System.Web;
 
 namespace HITConnect
 {
-    public class RcPI
+    public class PerformaInvice
     {
         [JsonProperty("Authen")]
         public authen authen { get; set; }
@@ -20,10 +20,18 @@ namespace HITConnect
     {
         [JsonProperty("id")]
         public string id { get; set; }
+
         [JsonProperty("pwd")]
         public string pwd { get; set; }
+
+        [JsonProperty("token")]
+        public string token { get; set; }
+
         [JsonProperty("venderCode")]
         public string venderCode { get; set; }
+
+        [JsonProperty("venderGroup")]
+        public string venderGroup { get; set; }
         //public string token { get; set; }
     }
 

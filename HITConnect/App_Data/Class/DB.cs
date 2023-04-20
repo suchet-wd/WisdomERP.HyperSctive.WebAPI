@@ -15,7 +15,6 @@ namespace WSM.Conn
 
         public static string _ConnectString;
 
-
         public static string[] DBName = new string[30];
 
         public static string[] SystemDBName = { "DB_TEMPDB", "DB_VENDER" };

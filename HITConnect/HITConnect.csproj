@@ -167,7 +167,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Data\Class\DB.cs" />
-    <Compile Include="App_Data\Class\RcPI.cs" />
+    <Compile Include="App_Data\Class\PerformaInvice.cs" />
     <Compile Include="App_Data\Class\RefreshResultJSON.cs" />
     <Compile Include="App_Data\Class\RequireHttpsAttribute.cs" />
     <Compile Include="App_Data\Class\SQLConn.cs" />
@@ -209,12 +209,12 @@
     <Compile Include="Areas\HelpPage\SampleGeneration\TextSample.cs" />
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
     <Compile Include="Controllers\HomeController.cs" />
-    <Compile Include="Controllers\PackingListController.cs" />
-    <Compile Include="Controllers\POPackRoll.cs" />
+    <Compile Include="Controllers\Backup\PackingListController.cs" />
+    <Compile Include="Controllers\Backup\POPackRoll.cs" />
     <Compile Include="Controllers\PaymentController.cs" />
     <Compile Include="Controllers\PIController.cs" />
     <Compile Include="Controllers\UserController.cs" />
-    <Compile Include="Controllers\ValuesController.cs" />
+    <Compile Include="Controllers\Backup\ValuesController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
