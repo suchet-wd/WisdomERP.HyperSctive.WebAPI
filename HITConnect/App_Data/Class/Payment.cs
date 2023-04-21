@@ -25,7 +25,7 @@ namespace HITConnect
 
         [JsonProperty("venderGroup")]
         public string venderGroup { get; set; }
-        
+
         [JsonProperty("startDate")]
         public string startDate { get; set; }
 
@@ -37,5 +37,15 @@ namespace HITConnect
 
         [JsonProperty("PO")]
         public string PO { get; set; }
+    }
+
+
+    public class PIPayment
+    { 
+    
+    }
+    public class POPayment
+    {
+
     }
 }

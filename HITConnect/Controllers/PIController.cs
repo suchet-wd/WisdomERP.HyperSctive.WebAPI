@@ -131,38 +131,10 @@ namespace HITConnect.Controllers
                 {
                     try
                     {
-
-                        //dt = HITConnect.UserAuthen.getDTUserValidate(Cnn, value);
-                        /*
-                        _Qry = " SELECT V.Pwd, V.VanderMailLogIn, ATK.DataKey, VUP.VanderGrp " +
-                            " FROM [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.VenderUser AS V  " +
-                            " LEFT JOIN [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.AuthenKeys AS ATK ON ATK.VanderMailLogIn = V.VanderMailLogIn  " +
-                            " LEFT JOIN[DB_VENDER].dbo.VenderUserPermissionCmp AS VUP ON VUP.VanderMailLogIn = V.VanderMailLogIn " +
-                            " WHERE V.VanderMailLogIn = '" + value.authen.id + "' AND VUP.VanderGrp = '" + value.authen.venderCode + "' ";
-                        dt = Cnn.GetDataTable(_Qry, WSM.Conn.DB.DataBaseName.DB_VENDER);
-                        */
-
-                        // REMOVE TOKEN FROM AuthenKeys
-                        //_Qry = "DELETE FROM [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.AuthenKeys WHERE VanderMailLogIn = '" +
-                        //    value.authen.id + "'";
-
-                        //if (Cnn.ExecuteOnly(_Qry, WSM.Conn.DB.DataBaseName.DB_VENDER))
-                        //{
                         try
                         {
                             foreach (PI _pi in _PIPass)
                             {
-                                /*
-                                _Qry = "SELECT DISTINCT FTDocNo from [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.POToVenderConfirm " +
-                                    "WHERE FTDocNo = '" + _pi.FTDocNo + "'";
-                                dt = Cnn.GetDataTable(_Qry, WSM.Conn.DB.DataBaseName.DB_VENDER);
-                                if (dt != null)
-                                {
-                                    _Qry = "DELETE FROM [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.POToVenderConfirm " +
-                                        "WHERE FTDocNo = '" + _pi.FTDocNo + "'";
-                                    bool delOK = (Cnn.ExecuteOnly(_Qry, WSM.Conn.DB.DataBaseName.DB_VENDER));
-                                }
-                                */
                                 int seq = 1;
                                 foreach (PO _po in _pi.po)
                                 {
@@ -249,13 +221,6 @@ namespace HITConnect.Controllers
                         {
                             Console.WriteLine(ex);
                         }
-                        /*}
-                        else
-                        {
-                            statecheck = 2;
-                            msgError = "Token is invalid!!!";
-                        }*/
-
                     }
                     catch (Exception ex)
                     {
@@ -273,7 +238,6 @@ namespace HITConnect.Controllers
             if (_PIProblem.Count > 0)
             {
                 jsondata = JsonConvert.SerializeObject(_PIProblem);
-                //return new HttpResponseMessage { StatusCode = HttpStatusCode.NotAcceptable, Content = new StringContent("{" + (char)34 + "Status" + (char)34 + ": " + (char)34 + "0" + (char)34 + "," + (char)34 + "Refer" + (char)34 + ": " + (char)34 + msgError + (char)34 + "}", System.Text.Encoding.UTF8, "application/json") };
                 return new HttpResponseMessage { StatusCode = HttpStatusCode.NotAcceptable, Content = new StringContent(jsondata, System.Text.Encoding.UTF8, "application/json") };
             }
             else
@@ -293,29 +257,5 @@ namespace HITConnect.Controllers
             //jsondata = JsonConvert.SerializeObject(dts);
             return new HttpResponseMessage { StatusCode = HttpStatusCode.Accepted, Content = new StringContent(jsondata, System.Text.Encoding.UTF8, "application/json") };
         }
-        /*
-        // GET api/values/5
-        public string Get(int id)
-        {
-            return "value";
-        }
-
-        // POST api/values
-        public void Post([FromBody] string value)
-        {
-        }
-
-
-
-        // PUT api/values/5
-        public void Put(int id, [FromBody] string value)
-        {
-        }
-
-        // DELETE api/values/5
-        public void Delete(int id)
-        {
-        }
-        */
     }
 }
