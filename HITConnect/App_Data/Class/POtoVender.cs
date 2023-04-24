@@ -1,12 +1,8 @@
 ﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 
 namespace HITConnect
 {
-    public class Payment
+    public class POtoVender
     {
         [JsonProperty("Authen")]
         public UserAuthen authen { get; set; }
@@ -17,10 +13,7 @@ namespace HITConnect
         [JsonProperty("endDate")]
         public string endDate { get; set; }
 
-        [JsonProperty("PI")]
-        public string PI { get; set; }
-
-        [JsonProperty("PO")]
-        public string PO { get; set; }
+        [JsonProperty("PONo")]
+        public string PONo { get; set; }
     }
 }

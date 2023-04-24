@@ -1,13 +1,9 @@
 ﻿using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Web;
 
 namespace HITConnect
 {
-
     public class UserAuthen
     {
         [JsonProperty("id")]
@@ -19,14 +15,12 @@ namespace HITConnect
         [JsonProperty("token")]
         public string token { get; set; }
 
-        //[JsonProperty("statecheck")]
-        //public string statecheck { get; set; }
-
         [JsonProperty("venderCode")]
         public string venderCode { get; set; }
 
         [JsonProperty("venderGroup")]
         public string venderGroup { get; set; }
+
 
         public static DataTable GetDTUserValidate(WSM.Conn.SQLConn Cnn, UserAuthen value)
         {
@@ -43,7 +37,7 @@ namespace HITConnect
                 {
                     if (value.token != "" && value.venderCode != "")
                     {
-                        _Qry = " SELECT V.Pwd AS Pws, V.VanderMailLogIn AS VanderMailLogIn, ATK.DataKey AS DataKey, V.Vander AS Vander" +
+                        _Qry = " SELECT V.Pwd AS pwd, V.VanderMailLogIn AS VanderMailLogIn, ATK.DataKey AS DataKey, V.Vander AS Vander" +
                         " FROM [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.VenderUser AS V  " +
                         " LEFT JOIN [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.AuthenKeys AS ATK ON ATK.VanderMailLogIn = V.VanderMailLogIn  " +
                         " WHERE V.VanderMailLogIn = '" + value.id + "' AND V.Vander = '" + value.venderCode + "' ";
@@ -83,7 +77,7 @@ namespace HITConnect
             {
                 Console.WriteLine(ex);
             }
-            return Cnn.ExecuteOnly(_Qry, WSM.Conn.DB.DataBaseName.DB_VENDER);
+            return Cnn.ExecuteOnly(_Qry, WSM.Conn.DB.DataBaseName.DB_VENDER); ;
         }
     }
 }

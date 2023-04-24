@@ -167,7 +167,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Data\Class\DB.cs" />
-    <Compile Include="App_Data\Class\PerformaInvice.cs" />
+    <Compile Include="App_Data\Class\POtoVender.cs" />
+    <Compile Include="App_Data\Class\PerformaInvoice.cs" />
     <Compile Include="App_Data\Class\RefreshResultJSON.cs" />
     <Compile Include="App_Data\Class\RequireHttpsAttribute.cs" />
     <Compile Include="App_Data\Class\SQLConn.cs" />
@@ -211,6 +212,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\Backup\PackingListController.cs" />
     <Compile Include="Controllers\Backup\POPackRoll.cs" />
+    <Compile Include="Controllers\PO2VController.cs" />
     <Compile Include="Controllers\PaymentController.cs" />
     <Compile Include="Controllers\PIController.cs" />
     <Compile Include="Controllers\UserController.cs" />

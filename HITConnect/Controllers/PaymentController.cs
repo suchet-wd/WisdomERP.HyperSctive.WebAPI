@@ -1,9 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
@@ -12,7 +9,7 @@ namespace HITConnect.Controllers
 {
     public class PaymentController : ApiController
     {
-        private string columnList = "SELECT ISNULL(PONo, '') AS PONo, ISNULL(PayType, '') AS PayType, ISNULL(PaymentTerm, '') AS PaymentTerm, " +
+        private string columnPOPayment = "SELECT ISNULL(PONo, '') AS PONo, ISNULL(PayType, '') AS PayType, ISNULL(PaymentTerm, '') AS PaymentTerm, " +
             " ISNULL(PaymentDate, '') AS PaymentDate, ISNULL(LCNo, '') AS LCNo, ISNULL(PINo, '') AS PINo, ISNULL(PIDate, '') AS PIDate, " +
             " ISNULL(RcvPIDate, '') AS RcvPIDate, ISNULL(PISuplCFMDeliveryDate, '') AS PISuplCFMDeliveryDate, ISNULL(InvoiceNo, '') AS InvoiceNo, " +
             " ISNULL(InvoiceDate, '') AS InvoiceDate, ISNULL(PurchaseDate, '') AS PurchaseDate, ISNULL(PurchaseBy, '') AS PurchaseBy, " +
@@ -25,18 +22,18 @@ namespace HITConnect.Controllers
             " ISNULL(PIDocDNAmt, 0) AS PIDocDNAmt, ISNULL(PIDocSurchargeAmt, 0) AS PIDocSurchargeAmt, ISNULL(PIDocNetAmt, 0) AS PIDocNetAmt, " +
             " ISNULL(Note, '') AS Note, ISNULL(FTStateClose, '') AS FTStateClose, ISNULL(FTStateHasFile, '') AS FTStateHasFile " +
             " , ISNULL(DATALENGTH(FTFileRef), -1) AS FTFileRef ";
-        //" , ISNULL(DATALENGTH(FTFileRef), -1) AS FTFileRef ";
-        //SELECT FTFileRef from[DB_VENDER].dbo.POPayment FOR XML PATH(''), BINARY BASE64
 
+        /*
         // GET api/values
         public IEnumerable<string> Get()
         {
             return new string[] { "String1", "String2" };
         }
+        */
 
         [HttpPost]
-        [Route("api/CheckPayment/")]
-        public HttpResponseMessage CheckPayment(Payment pmRq)
+        [Route("api/GetPayment/")]
+        public HttpResponseMessage GetPayment(Payment value)
         {
             string _Qry = "";
             int statecheck = 0;
@@ -46,35 +43,28 @@ namespace HITConnect.Controllers
             DataTable dts = new DataTable();
             dts.Columns.Add("Status", typeof(string));
             dts.Columns.Add("Message", typeof(string));
+            WSM.Conn.SQLConn Cnn = new WSM.Conn.SQLConn();
 
             try
             {
-                UserAuthen userAuthen = new UserAuthen();
-                userAuthen.id = pmRq.id;
-                userAuthen.pwd = pmRq.pwd;
-                userAuthen.token = pmRq.token;
-                userAuthen.venderCode = pmRq.venderCode;
-                userAuthen.venderGroup = pmRq.venderGroup;
-
-                WSM.Conn.SQLConn Cnn = new WSM.Conn.SQLConn();
-                dt = HITConnect.UserAuthen.GetDTUserValidate(Cnn, userAuthen);
+                dt = HITConnect.UserAuthen.GetDTUserValidate(Cnn, value.authen);
                 if (dt != null && dt.Rows.Count > 0)
                 {
 
-                    _Qry = columnList + " FROM [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.POPayment ";
+                    _Qry = columnPOPayment + " FROM [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.POPayment ";
 
-                    if (pmRq.startDate != null && pmRq.endDate != null)
+                    if (value.startDate != null && value.endDate != null)
                     {
-                        if (Convert.ToDateTime(pmRq.startDate) <= Convert.ToDateTime(pmRq.endDate))
+                        if (Convert.ToDateTime(value.startDate) <= Convert.ToDateTime(value.endDate))
                         {
-                            _Qry += " WHERE PaymentDate BETWEEN '" + pmRq.startDate + "' AND '" + pmRq.endDate + "' ";
-                            if (pmRq.PI != null && pmRq.PO == null)
+                            _Qry += " WHERE PaymentDate BETWEEN '" + value.startDate + "' AND '" + value.endDate + "' ";
+                            if (value.PI != null && value.PO == null)
                             {
-                                _Qry += " AND PINo = '" + pmRq.PI + "' ";
+                                _Qry += " AND PINo = '" + value.PI + "' ";
                             }
-                            if (pmRq.PI == null && pmRq.PO != null)
+                            if (value.PI == null && value.PO != null)
                             {
-                                _Qry += " AND PONo = '" + pmRq.PO + "'";
+                                _Qry += " AND PONo = '" + value.PO + "'";
                             }
                         }
                         else
@@ -84,19 +74,19 @@ namespace HITConnect.Controllers
                         }
 
                     }
-                    else if (pmRq.startDate == null || pmRq.endDate == null)
+                    else if (value.startDate == "" || value.endDate == "")
                     {
-                        if (pmRq.PI != null && pmRq.PO == null)
+                        if (value.PI != "" && value.PO == "")
                         {
-                            _Qry += " WHERE PINo = '" + pmRq.PI + "' ";
+                            _Qry += " WHERE PINo = '" + value.PI + "' ";
                         }
-                        if (pmRq.PO != null && pmRq.PI == null)
+                        if (value.PO != "" && value.PI == "")
                         {
-                            _Qry += " WHERE PONo = '" + pmRq.PO + "'";
+                            _Qry += " WHERE PONo = '" + value.PO + "'";
                         }
-                        if (pmRq.PO != null && pmRq.PI != null)
+                        if (value.PO != "" && value.PI != "")
                         {
-                            _Qry += " WHERE PONo = '" + pmRq.PO + "'  OR PINo = '" + pmRq.PI + "' ";
+                            _Qry += " WHERE PONo = '" + value.PO + "'  OR PINo = '" + value.PI + "' ";
                         }
                         else
                         {
@@ -134,22 +124,33 @@ namespace HITConnect.Controllers
                 else
                 {
                     statecheck = 2;
-                    msgError = "Please check Username and Password";
+                    msgError = "Please check User authentication!!!";
                 }
 
                 jsondata = JsonConvert.SerializeObject(dts);
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
+                Console.WriteLine(ex.Message);
             }
             if (statecheck == 1)
             {
-                return new HttpResponseMessage { StatusCode = HttpStatusCode.Accepted, Content = new StringContent(jsondata, System.Text.Encoding.UTF8, "application/json") };
+                return new HttpResponseMessage
+                {
+                    StatusCode = HttpStatusCode.Accepted,
+                    Content = new StringContent(jsondata, System.Text.Encoding.UTF8, "application/json")
+                };
             }
             else
             {
-                return new HttpResponseMessage { StatusCode = HttpStatusCode.NotAcceptable, Content = new StringContent("{" + (char)34 + "Status" + (char)34 + ": " + (char)34 + statecheck + (char)34 + "," + (char)34 + "Refer" + (char)34 + ": " + (char)34 + msgError + (char)34 + "}", System.Text.Encoding.UTF8, "application/json") };
+                UserAuthen.DelAuthenKey(Cnn, value.authen.id);
+                return new HttpResponseMessage
+                {
+                    StatusCode = HttpStatusCode.NotAcceptable,
+                    Content = new StringContent("{" + (char)34 + "Status" + (char)34 + ": " + (char)34 + statecheck +
+                    (char)34 + "," + (char)34 + "Refer" + (char)34 + ": " + (char)34 + msgError + (char)34 + "}",
+                    System.Text.Encoding.UTF8, "application/json")
+                };
             }
         }
     }
