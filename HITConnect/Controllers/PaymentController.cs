@@ -23,13 +23,6 @@ namespace HITConnect.Controllers
             " ISNULL(Note, '') AS Note, ISNULL(FTStateClose, '') AS FTStateClose, ISNULL(FTStateHasFile, '') AS FTStateHasFile " +
             " , ISNULL(DATALENGTH(FTFileRef), -1) AS FTFileRef ";
 
-        /*
-        // GET api/values
-        public IEnumerable<string> Get()
-        {
-            return new string[] { "String1", "String2" };
-        }
-        */
 
         [HttpPost]
         [Route("api/GetPayment/")]
@@ -48,6 +41,7 @@ namespace HITConnect.Controllers
             try
             {
                 dt = HITConnect.UserAuthen.GetDTUserValidate(Cnn, value.authen);
+                UserAuthen.DelAuthenKey(Cnn, value.authen.id);
                 if (dt != null && dt.Rows.Count > 0)
                 {
 
@@ -133,6 +127,7 @@ namespace HITConnect.Controllers
             {
                 Console.WriteLine(ex.Message);
             }
+
             if (statecheck == 1)
             {
                 return new HttpResponseMessage
@@ -143,7 +138,6 @@ namespace HITConnect.Controllers
             }
             else
             {
-                UserAuthen.DelAuthenKey(Cnn, value.authen.id);
                 return new HttpResponseMessage
                 {
                     StatusCode = HttpStatusCode.NotAcceptable,

@@ -35,6 +35,8 @@ namespace HITConnect.Controllers
             dts.Columns.Add("Message", typeof(string));
             WSM.Conn.SQLConn Cnn = new WSM.Conn.SQLConn();
 
+            // Delete Old Token from Database
+            UserAuthen.DelAuthenKey(Cnn, value.id);
             if (value.id == "")
             {
                 statecheck = 2;
@@ -49,15 +51,10 @@ namespace HITConnect.Controllers
                 }
                 else
                 {
-                    if (value.venderCode != "" && value.venderGroup != "")
+                    if (value.venderGroup == "")
                     {
                         statecheck = 2;
-                        msgError = "Vender Group not require!!!";
-                    }
-                    else if (value.venderCode == "")
-                    {
-                        statecheck = 2;
-                        msgError = "Please check Vender Code!!!";
+                        msgError = "Please check Vender Group!!!";
                     }
                 }
             }
@@ -78,20 +75,8 @@ namespace HITConnect.Controllers
 
                                 if (Cnn.ExecuteOnly(_Qry, WSM.Conn.DB.DataBaseName.DB_VENDER))
                                 {
-                                    //token = row["pwd"].ToString();
                                     statecheck = 1;
                                     msgError = "Successful";
-                                }
-                                else
-                                {
-                                    _Qry = "UPDATE [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.AuthenKeys SET DataKey = NEWID() ";
-                                    _Qry += " WHERE VanderMailLogIn = '" + value.id + "'";
-                                    if (Cnn.ExecuteOnly(_Qry, WSM.Conn.DB.DataBaseName.DB_VENDER))
-                                    {
-                                        //token = row["pwd"].ToString();
-                                        statecheck = 1;
-                                        msgError = "Successful";
-                                    }
                                 }
                                 _Qry = "SELECT DataKey FROM [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.AuthenKeys " +
                                     " WHERE VanderMailLogIn = '" + value.id + "'";
@@ -114,13 +99,9 @@ namespace HITConnect.Controllers
                         token = "";
                         statecheck = 2;
                         msgError = "Please check User authentication!!!";
-                        
-                    }
-                } else
-                {
-                    UserAuthen.DelAuthenKey(Cnn, value.id);
-                }
 
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -140,7 +121,7 @@ namespace HITConnect.Controllers
                 {
                     StatusCode = HttpStatusCode.Accepted,
                     Content = new StringContent(jsondata, System.Text.Encoding.UTF8, "application/json")
-                } : 
+                } :
                 new HttpResponseMessage
                 {
                     StatusCode = HttpStatusCode.NotAcceptable,

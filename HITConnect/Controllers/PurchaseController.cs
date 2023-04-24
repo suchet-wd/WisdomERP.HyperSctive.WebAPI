@@ -8,7 +8,7 @@ using System.Web.Http;
 
 namespace HITConnect.Controllers
 {
-    public class PO2VController : ApiController
+    public class PurchaseController : ApiController
     {
         private string columnPO2V = " SELECT ISNULL(VenderCode, '') AS VenderCode ,ISNULL(VendorName, '') AS VendorName, " +
             "ISNULL(VendorLocation, '') AS VendorLocation ,ISNULL(FactoryCode, '') AS FactoryCode ,ISNULL(PONo, '') AS PONo, " +
@@ -64,8 +64,8 @@ namespace HITConnect.Controllers
 
 
         [HttpPost]
-        [Route("api/SetPOtoVender/")]
-        public HttpResponseMessage SetPOtoVender([FromBody] UserAuthen value)
+        [Route("api/GetPruchaseInfo/")]
+        public HttpResponseMessage GetPruchaseInfo([FromBody] UserAuthen value)
         {
             string _Qry = "";
             string jsondata = "";
@@ -92,10 +92,10 @@ namespace HITConnect.Controllers
                 }
                 else
                 {
-                    if (value.venderCode == "")
+                    if (value.venderGroup == "")
                     {
                         statecheck = 2;
-                        msgError = "Please check vender code!!!";
+                        msgError = "Please check Vender Group!!!";
                     }
                 }
             }
@@ -104,15 +104,16 @@ namespace HITConnect.Controllers
                 if (statecheck != 2)
                 {
                     dt = HITConnect.UserAuthen.GetDTUserValidate(Cnn, value);
+                    UserAuthen.DelAuthenKey(Cnn, value.id);
+
                     if (dt != null && dt.Rows.Count > 0)
                     {
-                        //if (dtPO != null)
-                        //{
-
                         /*  Fields Not Send JSON  [FTDataKey],[FTDateCreate],  */
 
                         _Qry = columnPO2V + " FROM [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].[dbo].[POToVender] AS POV " +
-                            " WHERE POV.vendercode = '" + value.venderCode + "'AND POV.StateAcknowledge = 0";
+                            " INNER JOIN [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].[dbo].VenderCode VC " +
+                            " ON VC.Vander = POV.VenderCode "+
+                            " WHERE VC.VenderGrp = '" + value.venderGroup + "'AND POV.StateAcknowledge = 0";
                         dtPO = Cnn.GetDataTable(_Qry, WSM.Conn.DB.DataBaseName.DB_VENDER);
 
                         if (dtPO != null)
@@ -224,14 +225,15 @@ namespace HITConnect.Controllers
                                 " ISNULL(Actualdeldate, '') AS Actualdeldate, ISNULL(InvoiceNo, '') AS InvoiceNo, ISNULL(RcvQty, 0) AS RcvQty, " +
                                 " ISNULL(RcvDate, '') AS RcvDate, ISNULL(StateRead, '') AS StateRead ";
                             _Qry += " FROM [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.POToVender AS POV ";
-                            _Qry += " WHERE POV.vendercode = '" + value.venderCode + "' AND POV.StateAcknowledge = 0 ";
+                            _Qry += " POV INNER JOIN [dbo].VenderCode VC ON VC.Vander = POV.VenderCode ";
+                            _Qry += " WHERE VC.VenderGrp = '" + value.venderGroup + "' AND POV.StateAcknowledge = 0 ";
 
                             _Qry += " SELECT @TotalEff=@@ROWCOUNT ";
 
 
                             _Qry += " UPDATE[" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.POToVender SET StateAcknowledge = 1, ";
                             _Qry += " AcknowledgeBy = '" + value.id + "' , AcknowledgeDate = @DATE, AcknowledgeTime = @TIME ";
-                            _Qry += " WHERE vendercode = '" + value.venderCode + "' AND StateAcknowledge = 0 ";
+                            _Qry += " WHERE vendercode = '" + value.venderGroup + "' AND StateAcknowledge = 0 ";
 
 
                             _Qry += " SELECT @TotalStamp=@@ROWCOUNT ";
@@ -271,23 +273,13 @@ namespace HITConnect.Controllers
                             statecheck = 2;
                             msgError = "Please check connection!!!";
                         }
-                        //}
-                        //else
-                        //{
-                        //    statecheck = 2;
-                        //    msgError = "Token / Vender Group is invalid!!!";
-                        //}
                     }
                     else
                     {
                         statecheck = 2;
                         msgError = "Please check User authentication!!!";
-                        UserAuthen.DelAuthenKey(Cnn, value.id);
+                        
                     }
-                }
-                else
-                {
-                    UserAuthen.DelAuthenKey(Cnn, value.id);
                 }
             }
             catch (Exception ex)
@@ -302,6 +294,7 @@ namespace HITConnect.Controllers
             }
 
             dts.Rows.Add(new Object[] { statecheck, msgError });
+            
             if (statecheck == 1)
             {
                 jsondata = JsonConvert.SerializeObject(dtPO);
@@ -325,8 +318,8 @@ namespace HITConnect.Controllers
         }
 
         [HttpPost]
-        [Route("api/GetPO2VenACK/")]
-        public HttpResponseMessage GetPO2VenACK(POtoVender value)
+        [Route("api/GetPurchaseAckInfo/")]
+        public HttpResponseMessage GetPurchaseAckInfo([FromBody] POtoVender value)
         {
             string _Qry = "";
             int statecheck = 0;
@@ -340,6 +333,7 @@ namespace HITConnect.Controllers
             try
             {
                 dt = HITConnect.UserAuthen.GetDTUserValidate(Cnn, value.authen);
+                UserAuthen.DelAuthenKey(Cnn, value.authen.id);
                 if (dt != null && dt.Rows.Count > 0)
                 {
                     _Qry = columnPO2V + " FROM [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.POToVender_ACK ";
@@ -349,11 +343,7 @@ namespace HITConnect.Controllers
                         if (Convert.ToDateTime(value.startDate) <= Convert.ToDateTime(value.endDate))
                         {
                             _Qry += " WHERE PODate BETWEEN '" + value.startDate + "' AND '" + value.endDate + "' ";
-                            /*if (getRq.PI != null && getRq.PO == null)
-                            {
-                                _Qry += " AND PINo = '" + getRq.PI + "' ";
-                            }*/
-                            if (value.PONo != "") //getRq.PI == null &&
+                            if (value.PONo != "") 
                             {
                                 _Qry += " AND PONo = '" + value.PONo + "'";
                             }
@@ -367,16 +357,7 @@ namespace HITConnect.Controllers
                     }
                     else if (value.startDate == "" || value.endDate == "")
                     {
-                        /*if (getRq.PI != null && getRq.PONo == null)
-                        {
-                            _Qry += " WHERE PINo = '" + getRq.PI + "' ";
-                        }*/
-
-                        /*if (getRq.PONo != null && getRq.PI != null)
-                        {
-                            _Qry += " WHERE PONo = '" + getRq.PONo + "'  OR PINo = '" + getRq.PI + "' ";
-                        }*/
-                        if (value.PONo != "")// && getRq.PI == null)
+                        if (value.PONo != "")
                         {
                             _Qry += " WHERE PONo = '" + value.PONo + "'";
                         }
@@ -419,12 +400,12 @@ namespace HITConnect.Controllers
                     statecheck = 2;
                     msgError = "Please check User authentication!!!";
                 }
-                //jsondata = JsonConvert.SerializeObject(dt);
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
             }
+
             if (statecheck == 1)
             {
                 jsondata = JsonConvert.SerializeObject(dt);

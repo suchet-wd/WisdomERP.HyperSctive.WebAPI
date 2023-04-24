@@ -9,7 +9,7 @@ using System.Web.Http;
 
 namespace HITConnect.Controllers
 {
-    public class PIController : ApiController
+    public class PerformaInvoiceController : ApiController
     {
         /*
         // GET api/values
@@ -21,7 +21,7 @@ namespace HITConnect.Controllers
 
         [HttpPost]
         [Route("api/PerformaInviceInfo/")]
-        public HttpResponseMessage PerformaInviceInfo(PerformaInvoice value)
+        public HttpResponseMessage PerformaInviceInfo([FromBody] PerformaInvoice value)
         {
             List<PI> _PIProblem = new List<PI>();
             List<PI> _PIPass = new List<PI>();
@@ -37,6 +37,7 @@ namespace HITConnect.Controllers
 
             WSM.Conn.SQLConn Cnn = new WSM.Conn.SQLConn();
             dt = HITConnect.UserAuthen.GetDTUserValidate(Cnn, userAuthen);
+            UserAuthen.DelAuthenKey(Cnn, value.authen.id);
             if (dt != null && dt.Rows.Count > 0)
             {
                 // Verify Format Date "yyyy/MM/dd" and PO Quantity
@@ -221,7 +222,6 @@ namespace HITConnect.Controllers
             {
                 statecheck = 2;
                 msgError = "Please check User authentication!!!";
-                UserAuthen.DelAuthenKey(Cnn, value.authen.id);
             }
 
             if (_PIProblem.Count > 0)
@@ -235,7 +235,6 @@ namespace HITConnect.Controllers
             }
             else
             {
-                UserAuthen.DelAuthenKey(Cnn, value.authen.id);
                 dts.Rows.Add(new Object[] { statecheck, msgError });
                 jsondata = JsonConvert.SerializeObject(dts);
                 return new HttpResponseMessage
@@ -250,7 +249,7 @@ namespace HITConnect.Controllers
 
         [HttpPost]
         [Route("api/PDF2PerformaInvice/")]
-        public HttpResponseMessage PDF2PerformaInvice(PDF2PerformaInvoice value)
+        public HttpResponseMessage PDF2PerformaInvice([FromBody] PDF2PerformaInvoice value)
         {
             string _Qry = "";
             string jsondata = "";
@@ -270,7 +269,7 @@ namespace HITConnect.Controllers
             if (statecheck != 2)
             {
                 dt = HITConnect.UserAuthen.GetDTUserValidate(Cnn, value.authen);
-
+                UserAuthen.DelAuthenKey(Cnn, value.authen.id);
                 if (dt != null && dt.Rows.Count > 0)
                 {
                     try
@@ -334,10 +333,7 @@ namespace HITConnect.Controllers
                     msgError = "Please check User authentication!!!";
                 }
             }
-            /*else
-            {
-                UserAuthen.DelAuthenKey(Cnn, value.authen.id);
-            }*/
+
             if (statecheck == 1)
             {
                 //jsondata = JsonConvert.SerializeObject(dtPO);
@@ -350,7 +346,6 @@ namespace HITConnect.Controllers
             else
             {
                 //jsondata = JsonConvert.SerializeObject(dts);
-                UserAuthen.DelAuthenKey(Cnn, value.authen.id);
                 return new HttpResponseMessage
                 {
                     StatusCode = HttpStatusCode.NotAcceptable,
