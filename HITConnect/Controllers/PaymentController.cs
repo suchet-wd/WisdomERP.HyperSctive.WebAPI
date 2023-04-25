@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Net;
 using System.Net.Http;
@@ -38,90 +39,102 @@ namespace HITConnect.Controllers
             dts.Columns.Add("Message", typeof(string));
             WSM.Conn.SQLConn Cnn = new WSM.Conn.SQLConn();
 
+            // Check id + pwd + vender group
+            List<string> _result = UserAuthen.ValidateField(value.authen);
+            statecheck = int.Parse(_result[0]);
+            msgError = _result[1];
+            // End Check id + pwd + vender group
+
             try
             {
-                dt = HITConnect.UserAuthen.GetDTUserValidate(Cnn, value.authen);
-                UserAuthen.DelAuthenKey(Cnn, value.authen.id);
-                if (dt != null && dt.Rows.Count > 0)
+                if (statecheck != 2)
                 {
+                    dt = HITConnect.UserAuthen.GetDTUserValidate(Cnn, value.authen);
 
-                    _Qry = columnPOPayment + " FROM [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.POPayment ";
+                    // Delete Old Token from Database
+                    UserAuthen.DelAuthenKey(Cnn, value.authen.id);
 
-                    if (value.startDate != null && value.endDate != null)
+                    if (dt != null && dt.Rows.Count > 0)
                     {
-                        if (Convert.ToDateTime(value.startDate) <= Convert.ToDateTime(value.endDate))
-                        {
-                            _Qry += " WHERE PaymentDate BETWEEN '" + value.startDate + "' AND '" + value.endDate + "' ";
-                            if (value.PI != null && value.PO == null)
-                            {
-                                _Qry += " AND PINo = '" + value.PI + "' ";
-                            }
-                            if (value.PI == null && value.PO != null)
-                            {
-                                _Qry += " AND PONo = '" + value.PO + "'";
-                            }
-                        }
-                        else
-                        {
-                            statecheck = 2;
-                            msgError = "Start Date must be lower than End Date";
-                        }
 
-                    }
-                    else if (value.startDate == "" || value.endDate == "")
-                    {
-                        if (value.PI != "" && value.PO == "")
-                        {
-                            _Qry += " WHERE PINo = '" + value.PI + "' ";
-                        }
-                        if (value.PO != "" && value.PI == "")
-                        {
-                            _Qry += " WHERE PONo = '" + value.PO + "'";
-                        }
-                        if (value.PO != "" && value.PI != "")
-                        {
-                            _Qry += " WHERE PONo = '" + value.PO + "'  OR PINo = '" + value.PI + "' ";
-                        }
-                        else
-                        {
-                            statecheck = 2;
-                            msgError = "Please check start date and end date!!!";
-                        }
-                    }
+                        _Qry = columnPOPayment + " FROM [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.POPayment ";
 
-                    if (statecheck == 0)
-                        dt = Cnn.GetDataTable(_Qry, WSM.Conn.DB.DataBaseName.DB_VENDER);
-
-                    if (statecheck != 2)
-                    {
-                        foreach (DataRow row in dt.Rows)
+                        if (value.startDate != null && value.endDate != null)
                         {
-                            if (Convert.ToBase64String((byte[])row["FTFileRef"]) != "-1")
+                            if (Convert.ToDateTime(value.startDate) <= Convert.ToDateTime(value.endDate))
                             {
-                                row["FTFileRef"] = Convert.ToBase64String((byte[])row["FTFileRef"]);
+                                _Qry += " WHERE PaymentDate BETWEEN '" + value.startDate + "' AND '" + value.endDate + "' ";
+                                if (value.PI != null && value.PO == null)
+                                {
+                                    _Qry += " AND PINo = '" + value.PI + "' ";
+                                }
+                                if (value.PI == null && value.PO != null)
+                                {
+                                    _Qry += " AND PONo = '" + value.PO + "'";
+                                }
                             }
                             else
                             {
-                                row["FTFileRef"] = "";
+                                statecheck = 2;
+                                msgError = "Start Date must be lower than End Date";
+                            }
+
+                        }
+                        else if (value.startDate == "" || value.endDate == "")
+                        {
+                            if (value.PI != "" && value.PO == "")
+                            {
+                                _Qry += " WHERE PINo = '" + value.PI + "' ";
+                            }
+                            if (value.PO != "" && value.PI == "")
+                            {
+                                _Qry += " WHERE PONo = '" + value.PO + "'";
+                            }
+                            if (value.PO != "" && value.PI != "")
+                            {
+                                _Qry += " WHERE PONo = '" + value.PO + "'  OR PINo = '" + value.PI + "' ";
+                            }
+                            else
+                            {
+                                statecheck = 2;
+                                msgError = "Please check start date and end date!!!";
                             }
                         }
-                        dts = dt;
 
-                        statecheck = 1;
-                        msgError = "Successful";
+                        if (statecheck == 0)
+                            dt = Cnn.GetDataTable(_Qry, WSM.Conn.DB.DataBaseName.DB_VENDER);
+
+                        if (statecheck != 2)
+                        {
+                            foreach (DataRow row in dt.Rows)
+                            {
+                                if (Convert.ToBase64String((byte[])row["FTFileRef"]) != "-1")
+                                {
+                                    row["FTFileRef"] = Convert.ToBase64String((byte[])row["FTFileRef"]);
+                                }
+                                else
+                                {
+                                    row["FTFileRef"] = "";
+                                }
+                            }
+                            dts = dt;
+
+                            statecheck = 1;
+                            msgError = "Successful";
+                        }
+                        else
+                        {
+                            dts.Rows.Add(new Object[] { statecheck, msgError });
+                        }
                     }
                     else
                     {
-                        dts.Rows.Add(new Object[] { statecheck, msgError });
+                        statecheck = 2;
+                        msgError = "Please check User authentication!!!";
                     }
-                }
-                else
-                {
-                    statecheck = 2;
-                    msgError = "Please check User authentication!!!";
-                }
 
-                jsondata = JsonConvert.SerializeObject(dts);
+                    jsondata = JsonConvert.SerializeObject(dts);
+                }
             }
             catch (Exception ex)
             {

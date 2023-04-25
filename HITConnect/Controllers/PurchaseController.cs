@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Net;
 using System.Net.Http;
@@ -72,38 +73,24 @@ namespace HITConnect.Controllers
             string msgError = "";
             int statecheck = 0;
             DataTable dt = null;
-            DataTable dts = new DataTable();
             DataTable dtPO = new DataTable();
+            DataTable dts = new DataTable();
             dts.Columns.Add("Status", typeof(string));
             dts.Columns.Add("Message", typeof(string));
             WSM.Conn.SQLConn Cnn = new WSM.Conn.SQLConn();
 
-            if (value.id == "")
-            {
-                statecheck = 2;
-                msgError = "Please check ID!!!";
-            }
-            else
-            {
-                if (value.pwd == "")
-                {
-                    statecheck = 2;
-                    msgError = "Please check password!!!";
-                }
-                else
-                {
-                    if (value.venderGroup == "")
-                    {
-                        statecheck = 2;
-                        msgError = "Please check Vender Group!!!";
-                    }
-                }
-            }
+            // Check id + pwd + vender group
+            List<string> _result = UserAuthen.ValidateField(value);
+            statecheck = int.Parse(_result[0]);
+            msgError = _result[1];
+            // End Check id + pwd + vender group
+
             try
             {
                 if (statecheck != 2)
                 {
                     dt = HITConnect.UserAuthen.GetDTUserValidate(Cnn, value);
+                    // Delete Old Token from Database
                     UserAuthen.DelAuthenKey(Cnn, value.id);
 
                     if (dt != null && dt.Rows.Count > 0)
@@ -293,7 +280,7 @@ namespace HITConnect.Controllers
                 };
             }
 
-            dts.Rows.Add(new Object[] { statecheck, msgError });
+            //dts.Rows.Add(new Object[] { statecheck, msgError });
             
             if (statecheck == 1)
             {
@@ -330,9 +317,17 @@ namespace HITConnect.Controllers
             dts.Columns.Add("Status", typeof(string));
             dts.Columns.Add("Message", typeof(string));
             WSM.Conn.SQLConn Cnn = new WSM.Conn.SQLConn();
+
+            // Check id + pwd + vender group
+            List<string> _result = UserAuthen.ValidateField(value.authen);
+            statecheck = int.Parse(_result[0]);
+            msgError = _result[1];
+            // End Check id + pwd + vender group
+
             try
             {
                 dt = HITConnect.UserAuthen.GetDTUserValidate(Cnn, value.authen);
+                // Delete Old Token from Database
                 UserAuthen.DelAuthenKey(Cnn, value.authen.id);
                 if (dt != null && dt.Rows.Count > 0)
                 {

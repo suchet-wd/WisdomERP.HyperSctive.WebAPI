@@ -7,7 +7,8 @@ namespace HITConnect
     {
         [JsonProperty("Authen")]
         public UserAuthen authen { get; set; }
-        
+
+        [JsonProperty("invoice")]
         public List<Invoice> invoice { get; set; }
     }
 

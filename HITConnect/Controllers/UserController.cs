@@ -35,35 +35,21 @@ namespace HITConnect.Controllers
             dts.Columns.Add("Message", typeof(string));
             WSM.Conn.SQLConn Cnn = new WSM.Conn.SQLConn();
 
-            // Delete Old Token from Database
-            UserAuthen.DelAuthenKey(Cnn, value.id);
-            if (value.id == "")
-            {
-                statecheck = 2;
-                msgError = "Please check ID!!!";
-            }
-            else
-            {
-                if (value.pwd == "")
-                {
-                    statecheck = 2;
-                    msgError = "Please check password!!!";
-                }
-                else
-                {
-                    if (value.venderGroup == "")
-                    {
-                        statecheck = 2;
-                        msgError = "Please check Vender Group!!!";
-                    }
-                }
-            }
+            // Check id + pwd + vender group
+            List<string> _result = UserAuthen.ValidateField(value);
+            statecheck = int.Parse(_result[0]);
+            msgError = _result[1];
+            // End Check id + pwd + vender group
 
             try
             {
                 if (statecheck != 2)
                 {
                     dt = HITConnect.UserAuthen.GetDTUserValidate(Cnn, value);
+
+                    // Delete Old Token from Database
+                    UserAuthen.DelAuthenKey(Cnn, value.id);
+
                     if (dt != null && dt.Rows.Count > 0)
                     {
                         foreach (DataRow row in dt.Rows)
@@ -99,7 +85,6 @@ namespace HITConnect.Controllers
                         token = "";
                         statecheck = 2;
                         msgError = "Please check User authentication!!!";
-
                     }
                 }
             }
@@ -125,8 +110,8 @@ namespace HITConnect.Controllers
                 new HttpResponseMessage
                 {
                     StatusCode = HttpStatusCode.NotAcceptable,
-                    Content = new StringContent("{" + (char)34 + "Status" + (char)34 + ": " + (char)34 + statecheck + (char)34 + "," +
-                    (char)34 + "Refer" + (char)34 + ": " + (char)34 + msgError + (char)34 + "}",
+                    Content = new StringContent("{" + (char)34 + "Status" + (char)34 + ": " + (char)34 + statecheck +
+                    (char)34 + "," + (char)34 + "Refer" + (char)34 + ": " + (char)34 + msgError + (char)34 + "}",
                     System.Text.Encoding.UTF8, "application/json")
                 };
         }
