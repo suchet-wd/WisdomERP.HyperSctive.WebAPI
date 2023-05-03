@@ -10,19 +10,20 @@ namespace HITConnect.Controllers
 {
     public class PaymentController : ApiController
     {
-        private string columnPOPayment = "SELECT ISNULL(PONo, '') AS PONo, ISNULL(PayType, '') AS PayType, ISNULL(PaymentTerm, '') AS PaymentTerm, " +
-            " ISNULL(PaymentDate, '') AS PaymentDate, ISNULL(LCNo, '') AS LCNo, ISNULL(PINo, '') AS PINo, ISNULL(PIDate, '') AS PIDate, " +
-            " ISNULL(RcvPIDate, '') AS RcvPIDate, ISNULL(PISuplCFMDeliveryDate, '') AS PISuplCFMDeliveryDate, ISNULL(InvoiceNo, '') AS InvoiceNo, " +
-            " ISNULL(InvoiceDate, '') AS InvoiceDate, ISNULL(PurchaseDate, '') AS PurchaseDate, ISNULL(PurchaseBy, '') AS PurchaseBy, " +
-            " ISNULL(SupplierCode, '') AS SupplierCode, ISNULL(SupplierName, '') AS SupplierName, ISNULL(Currency, '') AS Currency, " +
-            " ISNULL(DeliveryDate, '') AS DeliveryDate, ISNULL(Company, '') AS Company, ISNULL(Buy, '') AS Buy, ISNULL(POUnit, '') AS POUnit, " +
-            " ISNULL(POQty, 0) AS POQty, ISNULL(POAmount, 0) AS POAmount, ISNULL(POOutstandingQty, 0) AS POOutstandingQty, " +
-            " ISNULL(Revised, 0) AS Revised, ISNULL(RevisedDate, '') AS RevisedDate, ISNULL(RevisedBy, '') AS RevisedBy, " +
-            " ISNULL(SentDocToAccDate, '') AS SentDocToAccDate, ISNULL(FinishbalancePaymentDate, '') AS FinishbalancePaymentDate, " +
-            " ISNULL(PIQuantity, 0) AS PIQuantity, ISNULL(PINetAmt, 0) AS PINetAmt, ISNULL(PIDocCNAmt, 0) AS PIDocCNAmt, " +
-            " ISNULL(PIDocDNAmt, 0) AS PIDocDNAmt, ISNULL(PIDocSurchargeAmt, 0) AS PIDocSurchargeAmt, ISNULL(PIDocNetAmt, 0) AS PIDocNetAmt, " +
-            " ISNULL(Note, '') AS Note, ISNULL(FTStateClose, '') AS FTStateClose, ISNULL(FTStateHasFile, '') AS FTStateHasFile " +
-            " , ISNULL(DATALENGTH(FTFileRef), -1) AS FTFileRef ";
+        private string columnPOPayment = "SELECT ISNULL(PONo, '') AS PO Number, ISNULL(PayType, '') AS Pay Type, ISNULL(PaymentTerm, '') AS Payment Term, " +
+            " ISNULL(PaymentDate, '') AS Payment Date, ISNULL(LCNo, '') AS LC Number, ISNULL(PINo, '') AS PI Number, ISNULL(PIDate, '') AS PI Date, " +
+            " ISNULL(RcvPIDate, '') AS Receive PI Date, ISNULL(PISuplCFMDeliveryDate, '') AS PI Confirm Delivery Date, ISNULL(InvoiceNo, '') AS Invoice No, " +
+            " ISNULL(InvoiceDate, '') AS Invoice Date, ISNULL(PurchaseDate, '') AS Purchase Date, ISNULL(PurchaseBy, '') AS Purchase By, " +
+            " ISNULL(SupplierCode, '') AS Vendor Code, ISNULL(SupplierName, '') AS Vendor Name, ISNULL(Currency, '') AS Currency, " +
+            " ISNULL(DeliveryDate, '') AS Delivery Date, ISNULL(Company, '') AS Company Name, ISNULL(Buy, '') AS Buy Code, ISNULL(POUnit, '') AS Unit, " +
+            " ISNULL(POQty, 0) AS PO Qty, ISNULL(POAmount, 0) AS PO Amount, ISNULL(POOutstandingQty, 0) AS PO Outstanding Qty, " +
+            //" ISNULL(Revised, 0) AS Revised, ISNULL(RevisedDate, '') AS RevisedDate, ISNULL(RevisedBy, '') AS RevisedBy, " +
+            " ISNULL(SentDocToAccDate, '') AS Submit Document Date, ISNULL(FinishbalancePaymentDate, '') AS Complete Payment Date, " +
+            " ISNULL(PIQuantity, 0) AS PI Quantity, ISNULL(PINetAmt, 0) AS PI Net Amt, ISNULL(PIDocCNAmt, 0) AS Credit Note Amount, " +
+            " ISNULL(PIDocDNAmt, 0) AS Debit Note Amount, ISNULL(PIDocSurchargeAmt, 0) AS Surcharge Amount, ISNULL(PIDocNetAmt, 0) AS Net Amount, " +
+            " ISNULL(Note, '') AS Remark, " +
+            //" ISNULL(FTStateClose, '') AS FTStateClose, ISNULL(FTStateHasFile, '') AS FTStateHasFile " +
+            " , ISNULL(DATALENGTH(FTFileRef), -1) AS PDF File ";
 
 
         [HttpPost]
@@ -47,7 +48,7 @@ namespace HITConnect.Controllers
 
             try
             {
-                if (statecheck != 2)
+                if (statecheck != 2 && value.authen.token != "")
                 {
                     dt = HITConnect.UserAuthen.GetDTUserValidate(Cnn, value.authen);
 
@@ -134,6 +135,11 @@ namespace HITConnect.Controllers
                     }
 
                     jsondata = JsonConvert.SerializeObject(dts);
+                }
+                else
+                {
+                    statecheck = 2;
+                    msgError = "Invalid token!!!";
                 }
             }
             catch (Exception ex)

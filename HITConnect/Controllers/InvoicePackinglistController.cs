@@ -11,22 +11,6 @@ namespace HITConnect.Controllers
 {
     public class InvoicePackinglistController : ApiController
     {
-        /*private string columnList = "SELECT ISNULL(FTDataKey, '') AS FTDataKey, ISNULL(invno, '') AS invno, ISNULL(invdate, '') AS invdate, " +
-            "ISNULL(pono, '') AS pono, ISNULL(itemno, '') AS itemno, ISNULL(colorcode, '') AS colorcode, ISNULL(size, '') AS size, " +
-            "ISNULL(colorname, '') AS colorname, ISNULL(rollno, '') AS rollno, ISNULL(width, '') AS width, ISNULL(actualwidth, '') AS actualwidth, " +
-            "ISNULL(actuallength, 0) AS actuallength, ISNULL(actualweight, 0) AS actualweight, ISNULL(potno, '') AS potno, " +
-            "ISNULL(barcode, '') AS barcode, ISNULL(clothno, '') AS clothno, ISNULL(stock, '') AS stock, ISNULL(packno, '') AS packno, " +
-            "ISNULL(packtype, '') AS packtype, ISNULL(ordertype, '') AS ordertype, ISNULL(ORDERNO, '') AS ORDERNO, ISNULL(ArticleNo, '') AS ArticleNo, " +
-            "ISNULL(Composition, '') AS Composition, ISNULL(StdWt, 0) AS StdWt, ISNULL(NetWtKG, 0) AS NetWtKG, ISNULL(GrossWtKG, 0) AS GrossWtKG, " +
-            "ISNULL(Madein, '') AS Madein, ISNULL(Shipto, '') AS Shipto, ISNULL(FTDateCreate, '') AS FTDateCreate, ISNULL(FTStateClose, '') AS FTStateClose, " +
-            "ISNULL(FTStateCloseDate, '') AS FTStateCloseDate, ISNULL(FTStateCloseBy, '') AS FTStateCloseBy, ISNULL(FTVanderCode, '') AS FTVanderCode " +
-            "FROM [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].[dbo].[POPackRoll] ";*/
-
-        /*private string columnList2 = "SELECT [FTDataKey],[invno],[invdate],[pono],[itemno],[colorcode],[size],[colorname],[rollno],[width]," +
-            "[actualwidth],[actuallength],[actualweight],[potno],[barcode],[clothno],[stock],[packno],[packtype],[ordertype],[ORDERNO]," +
-            "[ArticleNo],[Composition],[StdWt],[NetWtKG],[GrossWtKG],[Madein],[Shipto],[FTDateCreate],[FTStateClose],[FTStateCloseDate]," +
-            "[FTStateCloseBy],[FTVanderCode] FROM [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].[dbo].[POPackRoll] ";*/
-
         [HttpPost]
         [Route("api/InvoicePackinglist/")]
         public HttpResponseMessage InvoicePackinglist(InvoicePackinglist value)
@@ -52,7 +36,7 @@ namespace HITConnect.Controllers
 
             try
             {
-                if (statecheck != 2)
+                if (statecheck != 2 && value.authen.token != "")
                 {
                     dt = HITConnect.UserAuthen.GetDTUserValidate(Cnn, value.authen);
 
@@ -76,6 +60,7 @@ namespace HITConnect.Controllers
                                     _Qry = " DECLARE @TotalRow int = 0 ";
                                     _Qry += " DECLARE @TotalDel int = 0 ";
                                     _Qry += " DECLARE @Message nvarchar(500) = '' ";
+
                                     _Qry += " BEGIN TRANSACTION ";
                                     _Qry += " BEGIN TRY ";
                                     _Qry += " SELECT @TotalRow =COUNT(*) FROM [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.POPackRoll " +
@@ -116,21 +101,24 @@ namespace HITConnect.Controllers
                                         _Qry += " DECLARE @Date varchar(10) = Convert(varchar(10), Getdate(), 111) ";
                                         _Qry += " DECLARE @Time varchar(10) = Convert(varchar(8), Getdate(), 114) ";
                                         _Qry += " DECLARE @Message nvarchar(500) = '' ";
-
+                                        _Qry += " DECLARE @vendercode VARCHAR(30) = '' ";
                                         _Qry += " BEGIN TRANSACTION ";
                                         _Qry += " BEGIN TRY ";
                                         int count = 0;
                                         foreach (POPackroll pr in row.poPackRoll)
                                         {
+                                            _Qry += " SELECT @vendercode = (SELECT DISTINCT POV.VenderCode FROM dbo.POToVender POV WHERE POV.PONo = '" + pr.pono + "' ) ";
+
                                             count = 0;
                                             foreach (Roll r in pr.roll)
                                             {
+
                                                 _Qry += " INSERT INTO [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.POPackRoll ( " +
                                                     " [invno], [invdate], [pono], [itemno], [colorcode], [size], [colorname], [rollno], " +
                                                     " [width], [actualwidth], [actuallength], [actualweight], [lotno], [barcode], " +
                                                     " [clothno], [stock], [packno], [packtype], [ordertype], [ORDERNO], [ArticleNo], " +
                                                     " [Composition], [StdWt], [NetWtKG], [GrossWtKG], [Madein], [Shipto], [FTDataKey], " +
-                                                    " [FTInsUser], [FDInsDate], [FTInsTime] ) VALUES (";
+                                                    " [FTInsUser], [FDInsDate], [FTInsTime], [FTVenderCode] ) VALUES (";
                                                 _Qry += "'" + row.invno + "','" + row.invdate + "','" + pr.pono + "','" + pr.itemno + "','" +
                                                     pr.colorcode + "','" + pr.size + "','" + pr.colorname + "','" + r.rollno + "','" +
                                                     r.width + "','" + r.actualweight + "','" + r.actuallength + "','" + r.actualweight +
@@ -138,7 +126,7 @@ namespace HITConnect.Controllers
                                                     r.stock + "','" + r.packno + "','" + r.ordertype + "','" + r.ORDERNO + "','" +
                                                     r.ArticleNo + "','" + r.Composition + "','" + r.StdWt + "','" + r.NetWtKG + "','" +
                                                     r.GrossWtKG + "','" + r.Madein + "','" + r.Shipto + "','" + row.invno + pr.pono +
-                                                    count++ + "','" + value.authen.id + "', @Date, @Time) ";
+                                                    count++ + "','" + value.authen.id + "', @Date, @Time, @vendercode) ";
                                                 _Qry += " SELECT @TotalEff = @@ROWCOUNT + @TotalEff ";
                                             }
                                         }
@@ -183,6 +171,11 @@ namespace HITConnect.Controllers
                         msgError = "Please check User authentication!!!";
                     }
                     jsondata = JsonConvert.SerializeObject(dts);
+                }
+                else
+                {
+                    statecheck = 2;
+                    msgError = "Invalid token!!!";
                 }
             }
             catch (Exception ex)

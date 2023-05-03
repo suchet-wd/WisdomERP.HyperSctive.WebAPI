@@ -3,6 +3,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Drawing;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
@@ -11,50 +12,55 @@ namespace HITConnect.Controllers
 {
     public class PurchaseController : ApiController
     {
-        private string columnPO2V = " SELECT ISNULL(VenderCode, '') AS VenderCode ,ISNULL(VendorName, '') AS VendorName, " +
-            "ISNULL(VendorLocation, '') AS VendorLocation ,ISNULL(FactoryCode, '') AS FactoryCode ,ISNULL(PONo, '') AS PONo, " +
-            "ISNULL(PODate, '') AS PODate, ISNULL(Shipto, '') AS Shipto ,ISNULL(GarmentShipmentDestination, '') AS GarmentShipmentDestination, " +
-            "ISNULL(MatrClass, '') AS MatrClass ,ISNULL(ItemSeq, 0) AS ItemSeq ,ISNULL(POItemCode, '') AS POItemCode , " +
-            "ISNULL(MatrCode, '') AS MatrCode ,ISNULL(UPCCOMBOIM, '') AS UPCCOMBOIM ,ISNULL(ContentCode, '') AS ContentCode , " +
-            "ISNULL(CareCode, '') AS CareCode ,ISNULL(Color, '') AS Color ,ISNULL(ColorName, '') AS ColorName ,ISNULL(GCW, '') AS GCW , " +
+        private string columnPO2V = " SELECT ISNULL(VenderCode, '') AS Vendor Code ,ISNULL(VendorName, '') AS Vendor Name, " +
+            "ISNULL(VendorLocation, '') AS Vendor Location ,ISNULL(FactoryCode, '') AS Factory Code ,ISNULL(PONo, '') AS PO Number, " +
+            "ISNULL(PODate, '') AS PO Date, ISNULL(Shipto, '') AS Shipto ,ISNULL(GarmentShipmentDestination, '') AS Garment Shipment Destination, " +
+            "ISNULL(MatrClass, '') AS Material Type ,ISNULL(ItemSeq, 0) AS ItemSeq ,ISNULL(POItemCode, '') AS PO ItemCode , " +
+            "ISNULL(MatrCode, '') AS Material Code ,ISNULL(UPCCOMBOIM, '') AS UPC(COMBO IM#) ,ISNULL(ContentCode, '') AS Content Code , " +
+            "ISNULL(CareCode, '') AS Care Code ,ISNULL(Color, '') AS Color Code ,ISNULL(ColorName, '') AS Color Name ,ISNULL(GCW, '') AS GCW , " +
             "ISNULL(Size, '') AS Size ,ISNULL(SizeMatrix, '') AS SizeMatrix ,ISNULL(Currency, '') AS Currency ,ISNULL(Price, 0) AS Price , " +
-            "ISNULL(Quantity, 0) AS Quantity ,ISNULL(QtyUnit, '') AS QtyUnit ,ISNULL(DeliveryDate, '') AS DeliveryDate, " +
-            "ISNULL(Season, '') AS Season ,ISNULL(Custporef, '') AS Custporef ,ISNULL(Buy, '') AS Buy ,ISNULL(BuyNo, '') AS BuyNo , " +
-            "ISNULL(Category, '') AS Category ,ISNULL(Program, '') AS Program ,ISNULL(SubProgram, '') AS SubProgram , " +
-            "ISNULL(StyleNo, '') AS StyleNo ,ISNULL(StyleName, '') AS StyleName ,ISNULL(POMatching1, '') AS POMatching1, " +
-            "ISNULL(POMatching2, '') AS POMatching2 ,ISNULL(POMatching3, '') AS POMatching3 ,ISNULL(POMatching4, '') AS POMatching4, " +
-            "ISNULL(POMatching5, '') AS POMatching5 ,ISNULL(ItemMatching1, '') AS ItemMatching1, ISNULL(ItemMatching2, '') AS ItemMatching2 , " +
-            "ISNULL(ItemMatching3, '') AS ItemMatching3, ISNULL(ItemMatching4, '') AS ItemMatching4 ,ISNULL(ItemMatching5, '') AS ItemMatching5 , " +
-            "ISNULL(Position, '') AS Position ,ISNULL(Type, '') AS Type ,ISNULL(PriceTerm, 0) AS PriceTerm, " +
-            "ISNULL(PaymentTerm, '') AS PaymentTerm ,ISNULL(Remarkfrommer, '') AS Remarkfrommer , " +
-            "ISNULL(RemarkForPurchase, '') AS RemarkForPurchase, ISNULL(InvoiceCmpCode, '') AS InvoiceCmpCode , " +
-            "ISNULL(CompanyName, '') AS CompanyName, ISNULL(address1, '') AS address1 ,ISNULL(address2, '') AS address2, " +
-            "ISNULL(address3, '') AS address3 ,ISNULL(address4, '') AS address4 ,ISNULL(sysowner, '') AS sysowner , " +
-            "ISNULL(ZeroInspection, '') AS ZeroInspection ,ISNULL(GarmentShip, '') AS GarmentShip, " +
-            "ISNULL(OGACDate, '') AS OGACDate ,ISNULL(HITLink, '') AS HITLink, ISNULL(NIKECustomerPONo, '') AS NIKECustomerPONo , " +
-            "ISNULL(QRS, 0) AS QRS ,ISNULL(PromoQty, 0) AS PromoQty ,ISNULL(ActualQuantity, 0) AS ActualQuantity , " +
-            "ISNULL(POUploadDate, '') AS POUploadDate ,ISNULL(POUploadTime, '') AS POUploadTime , " +
-            "ISNULL(POUploadBy, '') AS POUploadBy ,ISNULL(CountryOfOrigin, '') CountryOfOrigin  , " +
-            "ISNULL(SaleOrderSaleOrderLine, '') AS SaleOrderSaleOrderLine, ISNULL(NikeSAPPOPONIKEPOLine, '') AS NikeSAPPOPONIKEPOLine , " +
-            "ISNULL(NikematerialStyleColorway, '') AS NikematerialStyleColorway ,ISNULL(Modifire1, '') AS Modifire1 , " +
-            "ISNULL(Modifire2, '') AS Modifire2, ISNULL(Modifire3, '') AS Modifire3 ,ISNULL(MPOHZ, '') AS MPOHZ , " +
-            "ISNULL(ItemDescription, '') AS ItemDescription ,ISNULL(BulkQRSSample, '') AS BulkQRSSample , " +
-            "ISNULL(ExtraMinQty, 0) AS ExtraMinQty ,ISNULL(EAGSystemUnitPriceERP3, 0) AS EAGSystemUnitPriceERP3 , " +
-            "ISNULL(CCTotalpage, 0) AS CCTotalpage ,ISNULL(Surcharge, 0) AS Surcharge ,ISNULL(POApproveDate, '') AS POApproveDate , " +
-            "ISNULL(POIssueDate, '') AS POIssueDate ,ISNULL(CLXorderconfirmationnumber, '') AS CLXorderconfirmationnumber , " +
-            "ISNULL(FTYMerch, '') AS FTYMerch ,ISNULL(HKMerch, '') AS HKMerch ,ISNULL(ChinaInsertCard, '') AS ChinaInsertCard , " +
-            "ISNULL(P1pc2in1, '') AS P1pc2in1 ,ISNULL(ReplyCode, '') AS ReplyCode, ISNULL(WovenLabelSizeLength, '') AS WovenLabelSizeLength , " +
-            "ISNULL(ArgentinaImportNumber, '') AS ArgentinaImportNumber ,ISNULL(DownFill, '') AS DownFill ,ISNULL(SYS_ID, '') AS SYS_ID , " +
-            "ISNULL(ChinasizeMatrixtype, '') AS ChinasizeMatrixtype ,ISNULL(EAGERPItemNumber, '') AS EAGERPItemNumber , " +
-            "ISNULL(CompoundColororCCIMfor2in1CCIM, '') AS CompoundColororCCIMfor2in1CCIM ,ISNULL(CPO, '') AS CPO , " +
-            "ISNULL(BhasaIndonesiaProductBrand, '') AS BhasaIndonesiaProductBrand ,ISNULL(SAFCODE, '') AS SAFCODE , " +
-            "ISNULL(Youthorder, '') AS Youthorder ,ISNULL(NFCproduct, '') AS NFCproduct , " +
-            "ISNULL(NeckneckopeningX2, '') AS NeckneckopeningX2, ISNULL(ChestbodywidthX2, '') AS ChestbodywidthX2 , " +
-            "ISNULL(CenterBackbodylength, '') AS CenterBackbodylength ,ISNULL(WaistwaistrelaxedInseam, '') AS WaistwaistrelaxedInseam , " +
-            "ISNULL(PackQuantityQTYPERSELLINGUNIT, 0) AS PackQuantityQTYPERSELLINGUNIT ,ISNULL(Fabriccode, 0) AS Fabriccode , " +
-            "ISNULL(PRODUCTDESCRIPTION, '') AS PRODUCTDESCRIPTION ,ISNULL(PRODUCTCODEDESCRIPTION, '') AS PRODUCTCODEDESCRIPTION , " +
-            "ISNULL(GARMENTSTYLEFIELD, '') AS GARMENTSTYLEFIELD ,ISNULL(INSEAMSTYLE, '') AS INSEAMSTYLE , " +
-            "ISNULL(StateFlag, '') AS StateFlag  ";
+            "ISNULL(Quantity, 0) AS Quantity ,ISNULL(QtyUnit, '') AS Unit ,ISNULL(DeliveryDate, '') AS FCTY Need Date, " +
+            "ISNULL(Season, '') AS Season ,ISNULL(Custporef, '') AS End Customer PO ,ISNULL(Buy, '') AS Buy Code ,ISNULL(BuyNo, '') AS Buy Month , " +
+            "ISNULL(Category, '') AS Category ,ISNULL(Program, '') AS Buy Group ,ISNULL(SubProgram, '') AS Sub Program , " +
+            "ISNULL(StyleNo, '') AS Style No ,ISNULL(StyleName, '') AS StyleName ,ISNULL(POMatching1, '') AS POMatching1, " +
+            "ISNULL(POMatching2, '') AS PO Matching 2 ,ISNULL(PO Matching 3, '') AS PO Matching 3 ,ISNULL(PO Matching 4, '') AS PO Matching 4, " +
+            "ISNULL(POMatching5, '') AS PO Matching 5 ,ISNULL(ItemMatching1, '') AS Item Matching 1, ISNULL(ItemMatching2, '') AS Item Matching 2 , " +
+            "ISNULL(ItemMatching3, '') AS ItemMatching3, ISNULL(ItemMatching4, '') AS ItemMatching4 ,ISNULL(ItemMatching5, '') AS Item Matching 5 , " +
+            "ISNULL(Position, '') AS Position ,ISNULL(Type, '') AS Type ,ISNULL(PriceTerm, 0) AS Price Term, " +
+            "ISNULL(PaymentTerm, '') AS Payment Term ,ISNULL(Remarkfrommer, '') AS Remark From Mer , " +
+            "ISNULL(RemarkForPurchase, '') AS Remark For Purchase, ISNULL(InvoiceCmpCode, '') AS InvoiceCmpCode , " +
+            "ISNULL(CompanyName, '') AS CompanyName, ISNULL(address1, '') AS Address 1 ,ISNULL(address2, '') AS Address 2, " +
+            "ISNULL(address3, '') AS Address 3 ,ISNULL(address4, '') AS Address 4 ,ISNULL(sysowner, '') AS Purchaser , " +
+            "ISNULL(ZeroInspection, '') AS Zero Inspection ,ISNULL(GarmentShip, '') AS GAC Date, " +
+            "ISNULL(OGACDate, '') AS OGAC Date(MM/YYYY) ,ISNULL(HITLink, '') AS HIT Job No, ISNULL(NIKECustomerPONo, '') AS NIKE Sales Order No , " +
+            "ISNULL(QRS, 0) AS QPP/QRS Quantity ,ISNULL(PromoQty, 0) AS Promo Quantity ,ISNULL(ActualQuantity, 0) AS Total Quantity , " +
+            "ISNULL(POUploadDate, '') AS PO Upload Date ,ISNULL(POUploadTime, '') AS Upload Time , " +
+            "ISNULL(POUploadBy, '') AS POUploadBy ,ISNULL(CountryOfOrigin, '') Country Of Origin (Label)  , " +
+            "ISNULL(SaleOrderSaleOrderLine, '') AS SalesOrder Line (VAS), ISNULL(NikeSAPPOPONIKEPOLine, '') AS Nike PO-Line , " +
+            "ISNULL(NikematerialStyleColorway, '') AS Nike Style-Colorway ,ISNULL(Modifire1, '') AS Modifire 1 , " +
+            "ISNULL(Modifire2, '') AS Modifire 2, ISNULL(Modifire3, '') AS Modifire 3 ,ISNULL(MPOHZ, '') AS MPOHZ , " +
+            "ISNULL(ItemDescription, '') AS Item Description ,ISNULL(BulkQRSSample, '') AS Bulk/Sample (Care Label) , " +
+            //"ISNULL(ExtraMinQty, 0) AS ExtraMinQty ,ISNULL(EAGSystemUnitPriceERP3, 0) AS EAGSystemUnitPriceERP3 , " +
+            "ISNULL(CCTotalpage, 0) AS CC Total page ,ISNULL(Surcharge, 0) AS Surcharge , " +
+            //ISNULL(POApproveDate, '') AS POApproveDate , " +
+            //"ISNULL(POIssueDate, '') AS POIssueDate ,ISNULL(CLXorderconfirmationnumber, '') AS CLXorderconfirmationnumber , " +
+            //"ISNULL(FTYMerch, '') AS FTYMerch ,ISNULL(HKMerch, '') AS HKMerch , " +
+            "ISNULL(ChinaInsertCard, '') AS ChinaInsertCard , ISNULL(P1pc2in1, '') AS P1PC 2in1 , " +
+            //"ISNULL(ReplyCode, '') AS ReplyCode, " +
+            "ISNULL(WovenLabelSizeLength, '') AS Woven Label Size Length (Avery) , " +
+            "ISNULL(ArgentinaImportNumber, '') AS Argentina Import Number ,ISNULL(DownFill, '') AS DownFill ,ISNULL(SYS_ID, '') AS SYS_ID , " +
+            "ISNULL(ChinasizeMatrixtype, '') AS Chinasize Matrixtype ,ISNULL(EAGERPItemNumber, '') AS EAGERP Item Number , " +
+            "ISNULL(CompoundColororCCIMfor2in1CCIM, '') AS Compound Coloror CCI Mfor2in1CCIM ,ISNULL(CPO, '') AS CPO , " +
+            "ISNULL(BhasaIndonesiaProductBrand, '') AS Bhasa Indonesia Product Brand ,ISNULL(SAFCODE, '') AS SAFCODE , " +
+            "ISNULL(Youthorder, '') AS Youth order  ,ISNULL(NFCproduct, '') AS NFC Product , " +
+            "ISNULL(NeckneckopeningX2, '') AS Neck neck opening X2, ISNULL(ChestbodywidthX2, '') AS Chest body width X2 , " +
+            "ISNULL(CenterBackbodylength, '') AS Center Back body length ,ISNULL(WaistwaistrelaxedInseam, '') AS Waist waistrelaxed Inseam , " +
+            "ISNULL(PackQuantityQTYPERSELLINGUNIT, 0) AS Pack Quantity QTYPERSELLINGUNIT ,ISNULL(Fabriccode, 0) AS Fabric code , " +
+            "ISNULL(PRODUCTDESCRIPTION, '') AS PRODUCT DESCRIPTION ," +
+            //"ISNULL(PRODUCTCODEDESCRIPTION, '') AS PRODUCTCODEDESCRIPTION , " +
+            "ISNULL(GARMENTSTYLEFIELD, '') AS Compound Coloror CCI Mfor2in1CCIM , " +
+            "ISNULL(GARMENTSTYLEFIELD, '') AS GARMENT STYLE FIELD ,ISNULL(INSEAMSTYLE, '') AS INSEAM STYLE ";
+        //"ISNULL(StateFlag, '') AS StateFlag  ";
 
         //,[StateAcknowledge],[AcknowledgeBy],[AcknowledgeDate],[AcknowledgeTime],[StateAcknowledgeLock],[StateClose]
         //,[T2_Confirm_Ship_Date],[T2_Confirm_Price],[T2_Confirm_Quantity],[T2_Confirm_OrderNo],[T2_Confirm_PO_Date]
@@ -65,8 +71,8 @@ namespace HITConnect.Controllers
 
 
         [HttpPost]
-        [Route("api/GetPruchaseInfo/")]
-        public HttpResponseMessage GetPruchaseInfo([FromBody] UserAuthen value)
+        [Route("api/GetPurchaseInfo/")]
+        public HttpResponseMessage GetPurchaseInfo([FromBody] UserAuthen value)
         {
             string _Qry = "";
             string jsondata = "";
@@ -87,7 +93,7 @@ namespace HITConnect.Controllers
 
             try
             {
-                if (statecheck != 2)
+                if (statecheck != 2 && value.token != "")
                 {
                     dt = HITConnect.UserAuthen.GetDTUserValidate(Cnn, value);
                     // Delete Old Token from Database
@@ -99,7 +105,7 @@ namespace HITConnect.Controllers
 
                         _Qry = columnPO2V + " FROM [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].[dbo].[POToVender] AS POV " +
                             " INNER JOIN [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].[dbo].VenderCode VC " +
-                            " ON VC.Vander = POV.VenderCode "+
+                            " ON VC.Vender = POV.VenderCode " +
                             " WHERE VC.VenderGrp = '" + value.venderGroup + "'AND POV.StateAcknowledge = 0";
                         dtPO = Cnn.GetDataTable(_Qry, WSM.Conn.DB.DataBaseName.DB_VENDER);
 
@@ -147,62 +153,7 @@ namespace HITConnect.Controllers
                                 " [StateAcknowledge],[AcknowledgeBy],[AcknowledgeDate],[AcknowledgeTime], " +
                                 " [StateAcknowledgeLock],[StateClose],[T2_Confirm_Price],[T2_Confirm_Quantity],[T2_Confirm_OrderNo], " +
                                 " [T2_Confirm_PO_Date],[T2_Confirm_By],[Estimatedeldate],[Actualdeldate],[InvoiceNo],[RcvQty],[RcvDate],[StateRead] ) ";
-                            /*_Qry += " SELECT ISNULL(FTDataKey, '') AS FTDataKey, ISNULL(FTDateCreate, '') AS FTDateCreate, " +
-                                "ISNULL(VenderCode, ''), ISNULL(VendorName, '') AS VendorName, ISNULL(VendorLocation, '') AS VendorLocation, " +
-                                "ISNULL(FactoryCode, '') AS FactoryCode, ISNULL(PONo, '') AS PONo, ISNULL(PODate, '') AS PODate, " +
-                                "ISNULL(Shipto, '') AS Shipto, ISNULL(GarmentShipmentDestination, '') AS GarmentShipmentDestination," +
-                                "ISNULL(MatrClass, '') AS MatrClass, ISNULL(ItemSeq, 0) AS ItemSeq,ISNULL(POItemCode, '') AS POItemCode," +
-                                "ISNULL(MatrCode, '') AS MatrCode,ISNULL(UPCCOMBOIM, '') AS UPCCOMBOIM,ISNULL(ContentCode, '') AS ContentCode," +
-                                "ISNULL(CareCode, '') AS CareCode, ISNULL(Color, '') AS Color, ISNULL(ColorName, '') AS ColorName, " +
-                                "ISNULL(GCW, '') AS GCW, ISNULL(Size, '') AS Size, ISNULL(SizeMatrix, '') AS SizeMatrix, " +
-                                "ISNULL(Currency, '') AS Currency, ISNULL(Price, 0) AS Price, ISNULL(Quantity, 0) AS Quantity," +
-                                "ISNULL(QtyUnit, '') AS QtyUnit, ISNULL(DeliveryDate, '') AS DeliveryDate, ISNULL(Season, '') AS Season, " +
-                                "ISNULL(Custporef, ''),ISNULL(Buy, ''),ISNULL(BuyNo, ''), ISNULL(Category, '') AS Category, " +
-                                "ISNULL(Program, '') AS Program, ISNULL(SubProgram, '') AS SubProgram, ISNULL(StyleNo, '')," +
-                                "ISNULL(StyleName, ''),ISNULL(POMatching1, ''), ISNULL(POMatching2, ''),ISNULL(POMatching3, '') AS POMatching3, " +
-                                "ISNULL(POMatching4, ''),ISNULL(POMatching5, '') AS POMatching5, ISNULL(ItemMatching1, '') AS ItemMatching1, " +
-                                "ISNULL(ItemMatching2, '') AS ItemMatching2,ISNULL(ItemMatching3, '') AS ItemMatching3, " +
-                                "ISNULL(ItemMatching4, '') AS ItemMatching4, ISNULL(ItemMatching5, '') AS ItemMatching5, " +
-                                "ISNULL(Position, '') AS Position, ISNULL(Type, '') AS Type, ISNULL(PriceTerm, ''),ISNULL(PaymentTerm, ''), " +
-                                "ISNULL(Remarkfrommer, '') AS Remarkfrommer, ISNULL(RemarkForPurchase, '') AS RemarkForPurchase," +
-                                "ISNULL(InvoiceCmpCode, '') AS InvoiceCmpCode, ISNULL(CompanyName, '') AS CompanyName, " +
-                                "ISNULL(address1, '') AS address1, ISNULL(address2, '') AS address2, ISNULL(address3, '') AS address3, " +
-                                "ISNULL(address4, '') AS address4, ISNULL(sysowner, '') AS sysowner, ISNULL(ZeroInspection, '') AS ZeroInspection, " +
-                                "ISNULL(GarmentShip, '') AS GarmentShip, ISNULL(OGACDate, '') AS OGACDate, ISNULL(HITLink, '') AS HITLink, " +
-                                "ISNULL(NIKECustomerPONo, '') AS NIKECustomerPONo, ISNULL(QRS, 0) AS QRS, ISNULL(PromoQty, 0) AS PromoQty, " +
-                                "ISNULL(ActualQuantity, 0) AS ActualQuantity, ISNULL(POUploadDate, '') AS POUploadDate, " +
-                                "ISNULL(POUploadTime, '') AS POUploadTime, ISNULL(POUploadBy, '') AS POUploadBy, " +
-                                "ISNULL(CountryOfOrigin, '') AS CountryOfOrigin, ISNULL(SaleOrderSaleOrderLine, '') AS SaleOrderSaleOrderLine," +
-                                "ISNULL(NikeSAPPOPONIKEPOLine, '') AS NikeSAPPOPONIKEPOLine, " +
-                                "ISNULL(NikematerialStyleColorway, '') AS NikematerialStyleColorway, ISNULL(Modifire1, '') AS Modifire1, " +
-                                "ISNULL(Modifire2, '') AS Modifire2, ISNULL(Modifire3, '') AS Modifire3, ISNULL(MPOHZ, '') AS MPOHZ, " +
-                                "ISNULL(ItemDescription, '') AS ItemDescription, ISNULL(BulkQRSSample, '') AS BulkQRSSample, " +
-                                "ISNULL(ExtraMinQty, 0) AS ExtraMinQty, ISNULL(EAGSystemUnitPriceERP3, 0) AS EAGSystemUnitPriceERP3, " +
-                                "ISNULL(CCTotalpage, 0) AS CCTotalpage, ISNULL(Surcharge, 0) AS Surcharge, ISNULL(POApproveDate, '') AS POApproveDate," +
-                                "ISNULL(POIssueDate, '') AS POIssueDate,ISNULL(CLXorderconfirmationnumber, '') AS CLXorderconfirmationnumber, " +
-                                "ISNULL(FTYMerch, '') AS FTYMerch,ISNULL(HKMerch, '') AS HKMerch, ISNULL(ChinaInsertCard, '') AS ChinaInsertCard," +
-                                "ISNULL(P1pc2in1, '') AS P1pc2in1,ISNULL(ReplyCode, '') AS ReplyCode, " +
-                                "ISNULL(WovenLabelSizeLength, '') AS WovenLabelSizeLength, ISNULL(ArgentinaImportNumber, '') AS ArgentinaImportNumber, " +
-                                "ISNULL(DownFill, '') AS DownFill, ISNULL(SYS_ID, '') AS SYS_ID, ISNULL(ChinasizeMatrixtype, '') AS ChinasizeMatrixtype, " +
-                                "ISNULL(EAGERPItemNumber, '') AS EAGERPItemNumber,ISNULL(CompoundColororCCIMfor2in1CCIM, '') AS CompoundColororCCIMfor2in1CCIM," +
-                                "ISNULL(CPO, '') AS CPO,ISNULL(BhasaIndonesiaProductBrand, '') AS BhasaIndonesiaProductBrand, ISNULL(SAFCODE, '') AS SAFCODE, " +
-                                "ISNULL(Youthorder, '') AS Youthorder, ISNULL(NFCproduct, '') AS NFCproduct, ISNULL(NeckneckopeningX2, '') AS NeckneckopeningX2, " +
-                                "ISNULL(ChestbodywidthX2, '') AS ChestbodywidthX2, ISNULL(CenterBackbodylength, '') AS CenterBackbodylength, " +
-                                "ISNULL(WaistwaistrelaxedInseam, '') AS WaistwaistrelaxedInseam, " +
-                                "ISNULL(PackQuantityQTYPERSELLINGUNIT, 0) AS PackQuantityQTYPERSELLINGUNIT, ISNULL(Fabriccode, '') AS Fabriccode, " +
-                                "ISNULL(PRODUCTDESCRIPTION, '') AS PRODUCTDESCRIPTION, ISNULL(PRODUCTCODEDESCRIPTION, '') AS PRODUCTCODEDESCRIPTION," +
-                                "ISNULL(GARMENTSTYLEFIELD, '') AS GARMENTSTYLEFIELD, ISNULL(INSEAMSTYLE, '') AS INSEAMSTYLE, " +
-                                // Update Stamp in POToVender_ACK
-                                "1 AS StateAcknowledge, '" + value.id + "' AS AcknowledgeBy, @DATE AS AcknowledgeDate, @TIME AS AcknowledgeTime, " +
-                                "ISNULL(StateAcknowledgeLock, '') AS StateAcknowledgeLock, ISNULL(StateClose, '') AS StateClose, " +
-                                "ISNULL( T2_Confirm_Price, 0 ) AS T2_Confirm_Price, ISNULL(T2_Confirm_Quantity, 0) AS T2_Confirm_Quantity, " +
-                                "ISNULL(T2_Confirm_OrderNo, '') AS T2_Confirm_OrderNo, ISNULL(T2_Confirm_PO_Date, '') AS T2_Confirm_PO_Date, " +
-                                "ISNULL(T2_Confirm_By, '') AS T2_Confirm_By, ISNULL(Estimatedeldate, '') AS Estimatedeldate, " +
-                                "ISNULL(Actualdeldate, '') AS Actualdeldate, ISNULL(InvoiceNo, '') AS InvoiceNo, ISNULL(RcvQty, 0) AS RcvQty, " +
-                                "ISNULL(RcvDate, '') AS RcvDate, ISNULL(StateRead, '') AS StateRead " +
-                                "FROM [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.POToVender AS POV " +
-                                "WHERE POV.vendercode = '" + value.venderCode + "' AND POV.StateAcknowledge = 0";
-                            */
+
                             _Qry += columnPO2V + ", 1 AS StateAcknowledge, '" + value.id + "' AS AcknowledgeBy, " +
                                 " @DATE AS AcknowledgeDate, @TIME AS AcknowledgeTime, " +
                                 " ISNULL(StateAcknowledgeLock, '') AS StateAcknowledgeLock, ISNULL(StateClose, '') AS StateClose, " +
@@ -212,7 +163,7 @@ namespace HITConnect.Controllers
                                 " ISNULL(Actualdeldate, '') AS Actualdeldate, ISNULL(InvoiceNo, '') AS InvoiceNo, ISNULL(RcvQty, 0) AS RcvQty, " +
                                 " ISNULL(RcvDate, '') AS RcvDate, ISNULL(StateRead, '') AS StateRead ";
                             _Qry += " FROM [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.POToVender AS POV ";
-                            _Qry += " POV INNER JOIN [dbo].VenderCode VC ON VC.Vander = POV.VenderCode ";
+                            _Qry += " POV INNER JOIN [dbo].VenderCode VC ON VC.Vender = POV.VenderCode ";
                             _Qry += " WHERE VC.VenderGrp = '" + value.venderGroup + "' AND POV.StateAcknowledge = 0 ";
 
                             _Qry += " SELECT @TotalEff=@@ROWCOUNT ";
@@ -265,8 +216,13 @@ namespace HITConnect.Controllers
                     {
                         statecheck = 2;
                         msgError = "Please check User authentication!!!";
-                        
+
                     }
+                }
+                else
+                {
+                    statecheck = 2;
+                    msgError = "Invalid token!!!";
                 }
             }
             catch (Exception ex)
@@ -281,7 +237,7 @@ namespace HITConnect.Controllers
             }
 
             //dts.Rows.Add(new Object[] { statecheck, msgError });
-            
+
             if (statecheck == 1)
             {
                 jsondata = JsonConvert.SerializeObject(dtPO);
@@ -338,7 +294,7 @@ namespace HITConnect.Controllers
                         if (Convert.ToDateTime(value.startDate) <= Convert.ToDateTime(value.endDate))
                         {
                             _Qry += " WHERE PODate BETWEEN '" + value.startDate + "' AND '" + value.endDate + "' ";
-                            if (value.PONo != "") 
+                            if (value.PONo != "")
                             {
                                 _Qry += " AND PONo = '" + value.PONo + "'";
                             }

@@ -45,7 +45,7 @@ namespace HITConnect.Controllers
 
             try
             {
-                if (statecheck != 2)
+                if (statecheck != 2 && value.authen.token != "")
                 {
                     dt = HITConnect.UserAuthen.GetDTUserValidate(Cnn, value.authen);
 
@@ -65,6 +65,33 @@ namespace HITConnect.Controllers
                                 {
                                     statecheck = 2;
                                     msgError = "Please check Date format 'yyyy/MM/dd' !!! [FTDocDate]";
+                                }
+                            }
+                            if (_pi.T2_Confirm_Ship_Date != "")
+                            {
+                                if (!DateTime.TryParseExact(_pi.T2_Confirm_Ship_Date, "yyyy/MM/dd", DateTimeFormatInfo.InvariantInfo, DateTimeStyles.None, out tempDate))
+                                {
+                                    statecheck = 2;
+                                    msgError = "Please check Date format 'yyyy/MM/dd' !!! [T2_Confirm_Ship_Date]";
+                                    break;
+                                }
+                            }
+                            if (_pi.Actualdeldate != "")
+                            {
+                                if (!DateTime.TryParseExact(_pi.Actualdeldate, "yyyy/MM/dd", DateTimeFormatInfo.InvariantInfo, DateTimeStyles.None, out tempDate))
+                                {
+                                    statecheck = 2;
+                                    msgError = "Please check Date format 'yyyy/MM/dd' !!! [Actualdeldate]";
+                                    break;
+                                }
+                            }
+                            if (_pi.Estimatedeldate != "")
+                            {
+                                if (!DateTime.TryParseExact(_pi.Estimatedeldate, "yyyy/MM/dd", DateTimeFormatInfo.InvariantInfo, DateTimeStyles.None, out tempDate))
+                                {
+                                    statecheck = 2;
+                                    msgError = "Please check Date format 'yyyy/MM/dd' !!! [Estimatedeldate]";
+                                    break;
                                 }
                             }
                             double _PIQuantity = 0;
@@ -89,33 +116,7 @@ namespace HITConnect.Controllers
                                         break;
                                     }
                                 }
-                                if (_po.T2_Confirm_Ship_Date != "")
-                                {
-                                    if (!DateTime.TryParseExact(_po.T2_Confirm_Ship_Date, "yyyy/MM/dd", DateTimeFormatInfo.InvariantInfo, DateTimeStyles.None, out tempDate))
-                                    {
-                                        statecheck = 2;
-                                        msgError = "Please check Date format 'yyyy/MM/dd' !!! [T2_Confirm_Ship_Date]";
-                                        break;
-                                    }
-                                }
-                                if (_po.Actualdeldate != "")
-                                {
-                                    if (!DateTime.TryParseExact(_po.Actualdeldate, "yyyy/MM/dd", DateTimeFormatInfo.InvariantInfo, DateTimeStyles.None, out tempDate))
-                                    {
-                                        statecheck = 2;
-                                        msgError = "Please check Date format 'yyyy/MM/dd' !!! [Actualdeldate]";
-                                        break;
-                                    }
-                                }
-                                if (_po.Estimatedeldate != "")
-                                {
-                                    if (!DateTime.TryParseExact(_po.Estimatedeldate, "yyyy/MM/dd", DateTimeFormatInfo.InvariantInfo, DateTimeStyles.None, out tempDate))
-                                    {
-                                        statecheck = 2;
-                                        msgError = "Please check Date format 'yyyy/MM/dd' !!! [Estimatedeldate]";
-                                        break;
-                                    }
-                                }
+                                
                             }
 
                             if (_pi.FNPIQuantity != _PIQuantity)
@@ -169,19 +170,19 @@ namespace HITConnect.Controllers
                                         //[FTFileRef],
                                         _Qry += " VALUES ('" + value.authen.id + "', @Date, @Time, '" + _po.PONo + "', '" + _po.POItemCode + "', '" +
                                             _po.Color + "', '" + _po.Size + "', " + _po.FNPOQty + ", " + seq++ + "," + _po.FNDocType + ",'" + _pi.FTDocNo + "','" +
-                                            _pi.FTDocDate + "', '" + _po.T2_Confirm_Ship_Date + "', " + _po.T2_Confirm_Price + "," +
-                                            _po.T2_Confirm_Quantity + ", '" + _po.T2_Confirm_OrderNo + "','" + _po.T2_Confirm_PO_Date + "','" +
-                                            _po.T2_Confirm_By + "','" + _po.T2_Confirm_Note + "', '" + _po.Estimatedeldate + "','" +
-                                            _po.Actualdeldate + "'," + _po.RcvQty + ", '" + _po.RcvDate + "','" + _pi.FTStateHasFile + "','" + _pi.InvoiceNo + "', " +
+                                            _pi.FTDocDate + "', '" + _pi.T2_Confirm_Ship_Date + "', " + _pi.T2_Confirm_Price + "," +
+                                            _pi.T2_Confirm_Quantity + ", '" + _po.T2_Confirm_OrderNo + "','" + _po.T2_Confirm_PO_Date + "','" +
+                                            _pi.T2_Confirm_By + "','" + _pi.T2_Confirm_Note + "', '" + _pi.Estimatedeldate + "','" +
+                                            _pi.Actualdeldate + "'," + _po.RcvQty + ", '" + _po.RcvDate + "','" + _pi.FTStateHasFile + "','" + _pi.InvoiceNo + "', " +
                                             _pi.FNPINetAmt + ", " + _pi.FNPIQuantity + ", '" + _pi.FTAWBNo + "' ) ";
                                         //_pi.FTFileRef + "', '" +
 
                                         _Qry += " SELECT @TotalEff=@@ROWCOUNT ";
 
                                         _Qry += " UPDATE [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.POToVender_ACK SET " +
-                                            " [T2_Confirm_Ship_Date] = '" + _po.T2_Confirm_Ship_Date + "', [T2_Confirm_Price] = '" + _po.T2_Confirm_Price + "', " +
-                                            " [T2_Confirm_Quantity] = '" + _po.T2_Confirm_Quantity + "', [T2_Confirm_OrderNo] = '" + _po.T2_Confirm_OrderNo + "', " +
-                                            " [T2_Confirm_PO_Date] = '" + _po.T2_Confirm_PO_Date + "', " + " [T2_Confirm_By]= '" + _po.T2_Confirm_By + "', " +
+                                            " [T2_Confirm_Ship_Date] = '" + _pi.T2_Confirm_Ship_Date + "', [T2_Confirm_Price] = '" + _pi.T2_Confirm_Price + "', " +
+                                            " [T2_Confirm_Quantity] = '" + _pi.T2_Confirm_Quantity + "', [T2_Confirm_OrderNo] = '" + _po.T2_Confirm_OrderNo + "', " +
+                                            " [T2_Confirm_PO_Date] = '" + _po.T2_Confirm_PO_Date + "', " + " [T2_Confirm_By]= '" + _pi.T2_Confirm_By + "', " +
                                             " [Estimatedeldate]= '" + _pi.FTDocDate + "', " + " [Actualdeldate]= '" + _pi.FTDocDate + "', " +
                                             " [RcvQty]= '" + _po.RcvQty + "', " + " [RcvDate]= '" + _po.RcvDate + "', " +
                                             " [FTStateHasFile] = '" + _pi.FTStateHasFile + "', " + "[InvoiceNo] = '" + _pi.InvoiceNo + "', " +
@@ -238,6 +239,11 @@ namespace HITConnect.Controllers
                         msgError = "Please check User authentication!!!";
                     }
                 }
+                else
+                {
+                    statecheck = 2;
+                    msgError = "Invalid token!!!";
+                }
             }
             catch (Exception ex)
             {
@@ -293,7 +299,7 @@ namespace HITConnect.Controllers
                 statecheck = 2;
                 msgError = "Please check PI number!!!";
             }
-            if (statecheck != 2)
+            if (statecheck != 2 && value.authen.token != "")
             {
                 dt = HITConnect.UserAuthen.GetDTUserValidate(Cnn, value.authen);
 
@@ -362,6 +368,11 @@ namespace HITConnect.Controllers
                     statecheck = 2;
                     msgError = "Please check User authentication!!!";
                 }
+            }
+            else
+            {
+                statecheck = 2;
+                msgError = "Invalid token!!!";
             }
 
             if (statecheck == 1)

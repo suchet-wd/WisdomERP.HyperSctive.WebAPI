@@ -9,17 +9,17 @@ namespace HITConnect
 {
     public class UserAuthen
     {
-        [JsonProperty("id")]
+        [JsonProperty("id", Required = Required.Always)]
         public string id { get; set; }
 
-        [JsonProperty("pwd")]
+        [JsonProperty("pwd", Required = Required.Always)]
         public string pwd { get; set; }
+
+        [JsonProperty("venderGroup", Required = Required.Always)]
+        public string venderGroup { get; set; }
 
         [JsonProperty("token")]
         public string token { get; set; }
-
-        [JsonProperty("venderGroup")]
-        public string venderGroup { get; set; }
 
         public static List<string> ValidateField(UserAuthen value)
         {
@@ -57,13 +57,22 @@ namespace HITConnect
             try
             {
                 string _Qry = "";
-                if (value.id != "" && value.venderGroup != "")
+                if (value.id != "" && value.venderGroup != "" && value.token == "")
                 {
-                    _Qry = " SELECT V.Pwd AS pwd, V.VanderMailLogIn AS VanderMailLogIn , VUP.VanderGrp AS VanderGrp " +
+                    _Qry = " SELECT V.Pwd AS pwd, V.VenderMailLogIn AS VenderMailLogIn , VUP.VenderGrp AS VenderGrp " +
                         " FROM [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.VenderUser AS V " +
-                        " LEFT JOIN [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.AuthenKeys AS ATK ON ATK.VanderMailLogIn = V.VanderMailLogIn  " +
-                        " LEFT JOIN VenderUserPermissionCmp VUP ON V.VanderMailLogIn = VUP.VanderMailLogIn " +
-                        " WHERE V.VanderMailLogIn = '" + value.id + "' AND VUP.VanderGrp = '" + value.venderGroup + "'";
+                        " LEFT JOIN [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.AuthenKeys AS ATK ON ATK.VenderMailLogIn = V.VenderMailLogIn  " +
+                        " LEFT JOIN VenderUserPermissionCmp VUP ON V.VenderMailLogIn = VUP.VenderMailLogIn " +
+                        " WHERE V.VenderMailLogIn = '" + value.id + "' AND VUP.VenderGrp = '" + value.venderGroup + "'";
+                }
+                else if (value.id != "" && value.venderGroup != "" && value.token != "")
+                {
+                    _Qry = " SELECT V.Pwd AS pwd, V.VenderMailLogIn AS VenderMailLogIn , VUP.VenderGrp AS VenderGrp " +
+                        " FROM [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.VenderUser AS V " +
+                        " LEFT JOIN [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.AuthenKeys AS ATK ON ATK.VenderMailLogIn = V.VenderMailLogIn  " +
+                        " LEFT JOIN VenderUserPermissionCmp VUP ON V.VenderMailLogIn = VUP.VenderMailLogIn " +
+                        " WHERE V.VenderMailLogIn = '" + value.id + "' AND VUP.VenderGrp = '" + value.venderGroup +
+                        "' AND ATK.DataKey = '" + value.token + "'";
                 }
                 else
                 {
@@ -83,7 +92,7 @@ namespace HITConnect
             string _Qry = "";
             try
             {
-                _Qry = " DELETE FROM [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.AuthenKeys WHERE VanderMailLogIn = '" + value + "'";
+                _Qry = " DELETE FROM [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.AuthenKeys WHERE VenderMailLogIn = '" + value + "'";
             }
             catch (Exception ex)
             {

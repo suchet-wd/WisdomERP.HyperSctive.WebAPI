@@ -5,19 +5,19 @@ namespace HITConnect
 {
     public class InvoicePackinglist
     {
-        [JsonProperty("Authen")]
+        [JsonProperty("Authen", Required = Required.Always)]
         public UserAuthen authen { get; set; }
 
-        [JsonProperty("invoice")]
+        [JsonProperty("Invoice")]
         public List<Invoice> invoice { get; set; }
     }
 
     public class Invoice
     {
-        [JsonProperty("invno")]
+        [JsonProperty("InvoiceNo", Required = Required.Always)]
         public string invno { get; set; }
 
-        [JsonProperty("invdate")]
+        [JsonProperty("InvoiceDate", Required = Required.Always)]
         public string invdate { get; set; }
 
         [JsonProperty("PackRoll")]
@@ -26,19 +26,19 @@ namespace HITConnect
 
     public class POPackroll
     {
-        [JsonProperty("pono")]
+        [JsonProperty("PONumber")]
         public string pono { get; set; }
 
-        [JsonProperty("itemno")]
+        [JsonProperty("ItemNo")]
         public string itemno { get; set; }
 
-        [JsonProperty("colorcode")]
+        [JsonProperty("ColorCode")]
         public string colorcode { get; set; }
 
-        [JsonProperty("size")]
+        [JsonProperty("Size")]
         public string size { get; set; }
 
-        [JsonProperty("colorname")]
+        [JsonProperty("ColorName")]
         public string colorname { get; set; }
 
         [JsonProperty("Roll")]
@@ -48,40 +48,40 @@ namespace HITConnect
 
     public class Roll
     {
-        [JsonProperty("rollno")]
+        [JsonProperty("Roll No")]
         public string rollno { get; set; }
 
-        [JsonProperty("width")]
+        [JsonProperty("Width")]
         public string width { get; set; }
 
-        [JsonProperty("actualwidth")]
+        [JsonProperty("ActualWidth")]
         public string actualwidth { get; set; }
 
-        [JsonProperty("actuallength")]
+        [JsonProperty("ActualLength")]
         public double actuallength { get; set; }
 
-        [JsonProperty("actualweight")]
+        [JsonProperty("ActualWeight")]
         public double actualweight { get; set; }
 
-        [JsonProperty("lotno")]
+        [JsonProperty("LotNo")]
         public string lotno { get; set; }
 
-        [JsonProperty("barcode")]
+        [JsonProperty("Barcode")]
         public string barcode { get; set; }
 
-        [JsonProperty("clothno")]
+        [JsonProperty("Cloth No")]
         public string clothno { get; set; }
 
-        [JsonProperty("stock")]
+        [JsonProperty("Stock")]
         public string stock { get; set; }
 
-        [JsonProperty("packno")]
+        [JsonProperty("PackingNo")]
         public string packno { get; set; }
 
-        [JsonProperty("packtype")]
+        [JsonProperty("PackingType")]
         public string packtype { get; set; }
 
-        [JsonProperty("ordertype")]
+        [JsonProperty("MaterialType")]
         public string ordertype { get; set; }
 
         [JsonProperty("ORDERNO")]
@@ -93,20 +93,23 @@ namespace HITConnect
         [JsonProperty("Composition")]
         public string Composition { get; set; }
 
-        [JsonProperty("StdWt")]
+        [JsonProperty("StandardWeight")]
         public double StdWt { get; set; }
 
-        [JsonProperty("NetWtKG")]
+        [JsonProperty("NetWeightKG")]
         public double NetWtKG { get; set; }
 
-        [JsonProperty("GrossWtKG")]
+        [JsonProperty("GrossWeightKG")]
         public double GrossWtKG { get; set; }
 
-        [JsonProperty("Madein")]
+        [JsonProperty("VendorCountryOfOrigin")]
         public string Madein { get; set; }
 
-        [JsonProperty("Shipto")]
+        [JsonProperty("ShipFrom")]
         public string Shipto { get; set; }
+
+        [JsonProperty("UploadDate")]
+        public string UploadDate { get; set; }
 
     }
 }

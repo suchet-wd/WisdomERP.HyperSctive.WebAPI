@@ -4,16 +4,16 @@ namespace HITConnect
 {
     public class POtoVender
     {
-        [JsonProperty("Authen")]
+        [JsonProperty("Authen", Required = Required.Always)]
         public UserAuthen authen { get; set; }
 
-        [JsonProperty("startDate")]
+        [JsonProperty("FromDate")]
         public string startDate { get; set; }
 
-        [JsonProperty("endDate")]
+        [JsonProperty("ToDate")]
         public string endDate { get; set; }
 
-        [JsonProperty("PONo")]
+        [JsonProperty("PONumber")]
         public string PONo { get; set; }
     }
 }

@@ -215,6 +215,7 @@
     <Compile Include="Controllers\PurchaseController.cs" />
     <Compile Include="Controllers\PaymentController.cs" />
     <Compile Include="Controllers\PerformaInvoiceController.cs" />
+    <Compile Include="Controllers\DashboardControllerr.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>

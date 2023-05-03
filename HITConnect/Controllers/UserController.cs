@@ -50,14 +50,15 @@ namespace HITConnect.Controllers
                     // Delete Old Token from Database
                     UserAuthen.DelAuthenKey(Cnn, value.id);
 
+                    // Save ID & Token to DB then send JSON file
                     if (dt != null && dt.Rows.Count > 0)
                     {
                         foreach (DataRow row in dt.Rows)
                         {
                             if (value.pwd == WSM.Conn.DB.FuncDecryptDataServer(row["pwd"].ToString()))
                             {
-                                _Qry = "INSERT INTO [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.AuthenKeys (VanderMailLogIn, DataKey) ";
-                                _Qry += " VALUES ('" + row["VanderMailLogIn"].ToString() + "', NEWID())";
+                                _Qry = "INSERT INTO [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.AuthenKeys (VenderMailLogIn, DataKey) ";
+                                _Qry += " VALUES ('" + row["VenderMailLogIn"].ToString() + "', NEWID())";
 
                                 if (Cnn.ExecuteOnly(_Qry, WSM.Conn.DB.DataBaseName.DB_VENDER))
                                 {
@@ -65,7 +66,7 @@ namespace HITConnect.Controllers
                                     msgError = "Successful";
                                 }
                                 _Qry = "SELECT DataKey FROM [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.AuthenKeys " +
-                                    " WHERE VanderMailLogIn = '" + value.id + "'";
+                                    " WHERE VenderMailLogIn = '" + value.id + "'";
                                 dt = Cnn.GetDataTable(_Qry, WSM.Conn.DB.DataBaseName.DB_VENDER);
                                 foreach (DataRow r in dt.Rows)
                                 {
