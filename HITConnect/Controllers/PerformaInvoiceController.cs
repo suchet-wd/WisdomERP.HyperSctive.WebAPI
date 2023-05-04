@@ -21,8 +21,8 @@ namespace HITConnect.Controllers
         */
 
         [HttpPost]
-        [Route("api/PerformaInviceInfo/")]
-        public HttpResponseMessage PerformaInviceInfo([FromBody] PerformaInvoice value)
+        [Route("api/PerformaInvoiceInfo/")]
+        public HttpResponseMessage PerformaInvoiceInfo([FromBody] PerformaInvoice value)
         {
             List<PI> _PIProblem = new List<PI>();
             List<PI> _PIPass = new List<PI>();
@@ -116,7 +116,7 @@ namespace HITConnect.Controllers
                                         break;
                                     }
                                 }
-                                
+
                             }
 
                             if (_pi.FNPIQuantity != _PIQuantity)
@@ -156,9 +156,28 @@ namespace HITConnect.Controllers
 
                                         _Qry += " BEGIN TRANSACTION ";
                                         _Qry += " BEGIN TRY ";
-                                        _Qry += " DELETE FROM [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.POToVenderConfirm " +
-                                            "WHERE FTDocNo = '" + _pi.FTDocNo + "' AND PONo = '" + _po.PONo + "' ";
 
+                                        /*_Qry += " DELETE FROM [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.POToVenderConfirm " +
+                                            " WHERE FTDocNo = '" + _pi.FTDocNo + "' AND PONo = '" + _po.PONo + "' ";*/
+                                        
+                                        _Qry += "IF (select count(1) FROM [DB_VENDER].dbo.POToVenderConfirm  WHERE FTDocNo = '" +
+                                            _pi.FTDocNo + "' AND PONo = '" + _po.PONo + "' ) > 0";
+                                        _Qry += " BEGIN ";
+                                        
+                                        _Qry += " UPDATE [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.POToVenderConfirm ";
+                                        //[FTFileRef],[Estimatedeldate]
+                                        _Qry += " SET FTUpdUser = '" + value.authen.id + "', FDUpdDate = @Date, FTUpdTime = @Time, PONo = '" + _po.PONo + "', POItemCode = '" + _po.POItemCode + "', Color = '" +
+                                            _po.Color + "', Size = '" + _po.Size + "', FNPOQty = " + _po.FNPOQty + ", FNSeq = " + seq++ + ", FNDocType = " + _po.FNDocType + ", FTDocNo = '" + _pi.FTDocNo + "', FTDocDate = '" +
+                                            _pi.FTDocDate + "', T2_Confirm_Ship_Date = '" + _pi.T2_Confirm_Ship_Date + "', T2_Confirm_Price = " + _pi.T2_Confirm_Price + ", T2_Confirm_Quantity = " +
+                                            _pi.T2_Confirm_Quantity + ", T2_Confirm_OrderNo = '" + _po.T2_Confirm_OrderNo + "', T2_Confirm_PO_Date = '" + _po.T2_Confirm_PO_Date + "', T2_Confirm_By = '" +
+                                            _pi.T2_Confirm_By + "', T2_Confirm_Note = '" + _pi.T2_Confirm_Note + "', Actualdeldate = '" + //_pi.Estimatedeldate + "','" +
+                                            _pi.Actualdeldate + "', RcvQty = " + _po.RcvQty + ", RcvDate = '" + _po.RcvDate + "', FTStateHasFile = '" + _pi.FTStateHasFile + "', InvoiceNo = '" + _pi.InvoiceNo + "', FNPINetAmt = " +
+                                            _pi.FNPINetAmt + ", FNPIQuantity = " + _pi.FNPIQuantity + ", FTAWBNo = '" + _pi.FTAWBNo + "' " +
+                                            " WHERE FTDocNo = '" + _pi.FTDocNo + "' AND PONo = '" + _po.PONo + "'";
+                                        _Qry += " SELECT @TotalEff=@@ROWCOUNT ";
+                                        //_pi.FTFileRef + "', '" +
+                                        _Qry += " END ELSE BEGIN ";
+                                        
                                         _Qry += " INSERT INTO [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.POToVenderConfirm " +
                                         "([FTInsUser], [FDInsDate], [FTInsTime], [PONo], [POItemCode], " +
                                         "[Color], [Size], [FNPOQty], [FNSeq], [FNDocType], [FTDocNo], " +
@@ -176,8 +195,9 @@ namespace HITConnect.Controllers
                                             _pi.Actualdeldate + "'," + _po.RcvQty + ", '" + _po.RcvDate + "','" + _pi.FTStateHasFile + "','" + _pi.InvoiceNo + "', " +
                                             _pi.FNPINetAmt + ", " + _pi.FNPIQuantity + ", '" + _pi.FTAWBNo + "' ) ";
                                         //_pi.FTFileRef + "', '" +
-
                                         _Qry += " SELECT @TotalEff=@@ROWCOUNT ";
+
+                                        _Qry += " END ";
 
                                         _Qry += " UPDATE [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.POToVender_ACK SET " +
                                             " [T2_Confirm_Ship_Date] = '" + _pi.T2_Confirm_Ship_Date + "', [T2_Confirm_Price] = '" + _pi.T2_Confirm_Price + "', " +
@@ -231,7 +251,7 @@ namespace HITConnect.Controllers
                                 Console.WriteLine(ex.Message);
                             }
                         }
-                        msgError = "All PI are accepted. [ " + count + " PI]";
+                        msgError = "Number PI are accepted is  " + count + " PI";
                     }
                     else
                     {
@@ -274,8 +294,8 @@ namespace HITConnect.Controllers
 
 
         [HttpPost]
-        [Route("api/PDF2PerformaInvice/")]
-        public HttpResponseMessage PDF2PerformaInvice([FromBody] PDF2PerformaInvoice value)
+        [Route("api/PDF2PerformaInvoice/")]
+        public HttpResponseMessage PDF2PerformaInvoice([FromBody] PDF2PerformaInvoice value)
         {
             string _Qry = "";
             string jsondata = "";
