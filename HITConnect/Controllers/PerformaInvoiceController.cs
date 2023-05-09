@@ -166,12 +166,13 @@ namespace HITConnect.Controllers
                                         
                                         _Qry += " UPDATE [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.POToVenderConfirm ";
                                         //[FTFileRef],[Estimatedeldate]
+                                        string StateHasFile = (_pi.FTFileRef.Length > '0') ? "1" : "0";
                                         _Qry += " SET FTUpdUser = '" + value.authen.id + "', FDUpdDate = @Date, FTUpdTime = @Time, PONo = '" + _po.PONo + "', POItemCode = '" + _po.POItemCode + "', Color = '" +
                                             _po.Color + "', Size = '" + _po.Size + "', FNPOQty = " + _po.FNPOQty + ", FNSeq = " + seq++ + ", FNDocType = " + _po.FNDocType + ", FTDocNo = '" + _pi.FTDocNo + "', FTDocDate = '" +
                                             _pi.FTDocDate + "', T2_Confirm_Ship_Date = '" + _pi.T2_Confirm_Ship_Date + "', T2_Confirm_Price = " + _pi.T2_Confirm_Price + ", T2_Confirm_Quantity = " +
                                             _pi.T2_Confirm_Quantity + ", T2_Confirm_OrderNo = '" + _po.T2_Confirm_OrderNo + "', T2_Confirm_PO_Date = '" + _po.T2_Confirm_PO_Date + "', T2_Confirm_By = '" +
                                             _pi.T2_Confirm_By + "', T2_Confirm_Note = '" + _pi.T2_Confirm_Note + "', Actualdeldate = '" + //_pi.Estimatedeldate + "','" +
-                                            _pi.Actualdeldate + "', RcvQty = " + _po.RcvQty + ", RcvDate = '" + _po.RcvDate + "', FTStateHasFile = '" + _pi.FTStateHasFile + "', InvoiceNo = '" + _pi.InvoiceNo + "', FNPINetAmt = " +
+                                            _pi.Actualdeldate + "', RcvQty = " + _po.RcvQty + ", RcvDate = '" + _po.RcvDate + "', FTStateHasFile = '" + StateHasFile + "', InvoiceNo = '" + _pi.InvoiceNo + "', FNPINetAmt = " +
                                             _pi.FNPINetAmt + ", FNPIQuantity = " + _pi.FNPIQuantity + ", FTAWBNo = '" + _pi.FTAWBNo + "' " +
                                             " WHERE FTDocNo = '" + _pi.FTDocNo + "' AND PONo = '" + _po.PONo + "'";
                                         _Qry += " SELECT @TotalEff=@@ROWCOUNT ";
@@ -192,7 +193,7 @@ namespace HITConnect.Controllers
                                             _pi.FTDocDate + "', '" + _pi.T2_Confirm_Ship_Date + "', " + _pi.T2_Confirm_Price + "," +
                                             _pi.T2_Confirm_Quantity + ", '" + _po.T2_Confirm_OrderNo + "','" + _po.T2_Confirm_PO_Date + "','" +
                                             _pi.T2_Confirm_By + "','" + _pi.T2_Confirm_Note + "', '" + _pi.Estimatedeldate + "','" +
-                                            _pi.Actualdeldate + "'," + _po.RcvQty + ", '" + _po.RcvDate + "','" + _pi.FTStateHasFile + "','" + _pi.InvoiceNo + "', " +
+                                            _pi.Actualdeldate + "'," + _po.RcvQty + ", '" + _po.RcvDate + "','" + StateHasFile + "','" + _pi.InvoiceNo + "', " +
                                             _pi.FNPINetAmt + ", " + _pi.FNPIQuantity + ", '" + _pi.FTAWBNo + "' ) ";
                                         //_pi.FTFileRef + "', '" +
                                         _Qry += " SELECT @TotalEff=@@ROWCOUNT ";
@@ -205,7 +206,7 @@ namespace HITConnect.Controllers
                                             " [T2_Confirm_PO_Date] = '" + _po.T2_Confirm_PO_Date + "', " + " [T2_Confirm_By]= '" + _pi.T2_Confirm_By + "', " +
                                             " [Estimatedeldate]= '" + _pi.FTDocDate + "', " + " [Actualdeldate]= '" + _pi.FTDocDate + "', " +
                                             " [RcvQty]= '" + _po.RcvQty + "', " + " [RcvDate]= '" + _po.RcvDate + "', " +
-                                            " [FTStateHasFile] = '" + _pi.FTStateHasFile + "', " + "[InvoiceNo] = '" + _pi.InvoiceNo + "', " +
+                                            " [FTStateHasFile] = '" + StateHasFile + "', " + "[InvoiceNo] = '" + _pi.InvoiceNo + "', " +
                                             " [FNPINetAmt] = '" + _pi.FNPINetAmt + "', " + " [FNPIQuantity]= '" + _pi.FNPIQuantity + "', " +
                                             " [FTAWBNo] = '" + _pi.FTAWBNo + "'" +
                                             " WHERE PONo = '" + _po.PONo + "' AND POItemCode = '" + _po.POItemCode + "' AND Color = '" + _po.Color + "'";

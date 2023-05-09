@@ -9,7 +9,7 @@ using System.Web.Http;
 
 namespace HITConnect.Controllers
 {
-    public class DashboardController : ApiController
+    public class DashboardController //: ApiController
     {
         [HttpPost]
         [Route("api/VenderEveluate/")]

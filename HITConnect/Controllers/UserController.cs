@@ -20,23 +20,20 @@ namespace HITConnect.Controllers
 
         [HttpPost]
         [Route("api/GetToken/")]
-        public HttpResponseMessage GetToken([FromBody] UserAuthen value)
+        public HttpResponseMessage GetToken([FromBody] UserToken value)
         {
-            string _Qry = "";
             int statecheck = 0;
             string msgError = "";
             string token = "";
-            string jsondata = "";
-            DataTable dt = null;
             DataTable dts = new DataTable();
             dts.Columns.Add("id", typeof(string));
             dts.Columns.Add("Status", typeof(string));
             dts.Columns.Add("Token", typeof(string));
             dts.Columns.Add("Message", typeof(string));
-            WSM.Conn.SQLConn Cnn = new WSM.Conn.SQLConn();
+            
 
             // Check id + pwd + vender group
-            List<string> _result = UserAuthen.ValidateField(value);
+            List<string> _result = UserToken.ValidateField(value);
             statecheck = int.Parse(_result[0]);
             msgError = _result[1];
             // End Check id + pwd + vender group
@@ -45,7 +42,8 @@ namespace HITConnect.Controllers
             {
                 if (statecheck != 2)
                 {
-                    dt = HITConnect.UserAuthen.GetDTUserValidate(Cnn, value);
+                    WSM.Conn.SQLConn Cnn = new WSM.Conn.SQLConn();
+                    DataTable dt = HITConnect.UserToken.GetDTUserValidate(Cnn, value);
 
                     // Delete Old Token from Database
                     UserAuthen.DelAuthenKey(Cnn, value.id);
@@ -57,6 +55,7 @@ namespace HITConnect.Controllers
                         {
                             if (value.pwd == WSM.Conn.DB.FuncDecryptDataServer(row["pwd"].ToString()))
                             {
+                                string _Qry = "";
                                 _Qry = "INSERT INTO [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.AuthenKeys (VenderMailLogIn, DataKey) ";
                                 _Qry += " VALUES ('" + row["VenderMailLogIn"].ToString() + "', NEWID())";
 
@@ -100,7 +99,7 @@ namespace HITConnect.Controllers
                 };
             }
             dts.Rows.Add(new Object[] { value.id, statecheck, token, msgError });
-            jsondata = JsonConvert.SerializeObject(dts);
+            string jsondata = JsonConvert.SerializeObject(dts);
 
             return (statecheck == 1) ?
                 new HttpResponseMessage

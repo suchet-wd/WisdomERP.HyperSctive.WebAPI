@@ -70,8 +70,8 @@ namespace HITConnect
 
         /// 
 
-        [JsonProperty("FTStateHasFile")]
-        public string FTStateHasFile { get; set; }
+        //[JsonProperty("FTStateHasFile")]
+        //public string FTStateHasFile { get; set; }
 
         [JsonProperty("FTFileRef")]
         public string FTFileRef { get; set; }
