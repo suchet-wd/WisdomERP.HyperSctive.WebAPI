@@ -6,6 +6,7 @@ using System.Data;
 using System.Diagnostics;
 using System.Data.SqlClient;
 using System.Text;
+using System.Globalization;
 
 namespace WSM.Conn
 {
@@ -133,6 +134,60 @@ namespace WSM.Conn
                 throw new Exception(ex.Message);
             }
 
+        }
+
+
+        public static string ConvertEnDB(object DataDate)
+        {
+            string strDate = "";
+
+            try
+            {
+                strDate = CheckDate(DataDate);
+
+                if ((Convert.ToInt32(Strings.Mid(strDate, 7, 4)) > 0) & (Convert.ToInt32(Strings.Mid(strDate, 7, 4)) > (2300)))
+                {
+                    strDate = (Strings.Mid(strDate, 1, 2)) + "/" + (Strings.Mid(strDate, 4, 2)) + "/" + (Convert.ToInt32(Strings.Mid(strDate, 7, 4)) - 543).ToString("0000");
+                }
+                else
+                {
+                    strDate = (Strings.Mid(strDate, 1, 2)) + "/" + (Strings.Mid(strDate, 4, 2)) + "/" + (Strings.Mid(strDate, 7, 4));
+                }
+
+                strDate = Strings.Mid(strDate, 7, 4) + "/" + Strings.Mid(strDate, 4, 2) + "/" + Strings.Mid(strDate, 1, 2);
+            }
+            catch //(Exception ex)
+            {
+                strDate = "";
+            }
+
+
+            return strDate;
+
+        }
+
+        public static string CheckDate(object Obj)
+        {
+            try
+            {
+                System.Globalization.CultureInfo _Culture = new CultureInfo("en-US", true);
+                _Culture.DateTimeFormat.ShortDatePattern = "dd/MM/yyyy";
+                _Culture.DateTimeFormat.ShortTimePattern = "HH:mm:ss";
+
+                System.Threading.Thread.CurrentThread.CurrentCulture = _Culture;
+                System.Threading.Thread.CurrentThread.CurrentUICulture = _Culture;
+
+
+
+                string _Date = "";
+                _Date = Strings.Format(Convert.ToDateTime(Microsoft.VisualBasic.Strings.Left(Obj.ToString(), 10)), "dd/MM/yyyy");
+
+                return _Date;
+            }
+            catch //(Exception ex)
+            {
+                return "";
+            }
         }
 
 

@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.VisualBasic;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -6,7 +7,11 @@ using System.Globalization;
 using System.Linq.Expressions;
 using System.Net;
 using System.Net.Http;
+using System.Runtime.Remoting.Messaging;
 using System.Web.Http;
+using System.Web.UI.WebControls;
+using WSM.Conn;
+using static System.Net.WebRequestMethods;
 
 namespace HITConnect.Controllers
 {
@@ -118,13 +123,13 @@ namespace HITConnect.Controllers
                                 }
 
                             }
-
+                            /*
                             if (_pi.FNPIQuantity != _PIQuantity)
                             {
                                 statecheck = 2;
                                 msgError = "Please check PO Quantity!!!";
                             }
-
+                            */
 
                             if (statecheck == 2)
                             {
@@ -147,6 +152,130 @@ namespace HITConnect.Controllers
                                     int seq = 1;
                                     foreach (PO _po in _pi.po)
                                     {
+                                        string FTDataKey = "";
+                                        DataTable _dt = new DataTable();
+
+                                        // Retrive FTDataKey from POToVender_ACK
+                                        _Qry = "SELECT FTDataKey FROM [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.POToVender_ACK " +
+                                            " WHERE PONo = '" + _po.PONo + "' AND POItemCode = '" + _po.POItemCode +
+                                            "' AND Color = '" + _po.Color + "' AND Size = '" + _po.Size + "'";
+                                        _dt = Cnn.GetDataTable(_Qry, WSM.Conn.DB.DataBaseName.DB_VENDER);
+                                        if (_dt.Rows.Count == 1)
+                                        {
+                                            foreach (DataRow r in _dt.Rows)
+                                            {
+                                                FTDataKey = r["FTDataKey"].ToString();
+                                            }
+                                        }
+                                        // Check POToVender_ACK have data ? Yes -> Update / No -> Add
+                                        _Qry = "SELECT T2_Confirm_OrderNo FROM [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.POToVender_ACK " +
+                                            " WHERE FTDataKey = '" + FTDataKey + "'";
+                                        _dt = Cnn.GetDataTable(_Qry, WSM.Conn.DB.DataBaseName.DB_VENDER);
+
+                                        if (_dt.Rows.Count > 0)
+                                        {
+                                            _Qry = " declare @RecCount int =0,@PINo nvarchar(30) ='" + _pi.FTDocNo +
+                                                "',@PINoCheck nvarchar(30)='',@pMessage nvarchar(500)='' ";
+
+                                            _Qry += " set @PINoCheck = ISNULL(( select top 1 FTDocNo from [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.POToVenderConfirm  " +
+                                                "WHERE PONo='" + _po.PONo + "' AND POItemCode='" + _po.POItemCode +
+                                                "' AND Color='" + _po.Color + "' AND Size='" + _po.Size + "' AND FTDocNo='" + _pi.FTDocNo +
+                                                "' AND FTDocNo<>@PINo),'') ";
+                                            _Qry += " IF @PINoCheck ='' ";
+                                            _Qry += " BEGIN ";
+
+                                            _Qry += " update POToVenderConfirm set FTUpdUser='" + value.authen.id +
+                                                "',T2_Confirm_By='" + value.authen.id + "', FDUpdDate = Convert(varchar(10),Getdate(),111), " +
+                                                " FTUpdTime = Convert(varchar(8),Getdate(),114), FTDocNo='" + _pi.FTDocNo + "', " +
+                                                " T2_Confirm_OrderNo='" + _pi.FTDocNo + "', FTDocDate='" + DB.ConvertEnDB(_pi.FTDocDate) +
+                                                "' ,T2_Confirm_PO_Date='" + DB.ConvertEnDB(_po.T2_Confirm_PO_Date) + "', Estimatedeldate='" +
+                                                DB.ConvertEnDB(_pi.Estimatedeldate) + "', T2_Confirm_Ship_Date='" + DB.ConvertEnDB(_pi.T2_Confirm_Ship_Date) +
+                                                "', T2_Confirm_Price=" + Conversion.Val(_pi.T2_Confirm_Price) + ", T2_Confirm_Quantity = " +
+                                                Conversion.Val(_pi.T2_Confirm_Quantity) + " ,  Actualdeldate='" + DB.ConvertEnDB(_pi.Actualdeldate) +
+                                                "', FNPIQuantity=" + Conversion.Val(_pi.FNPIQuantity) + " , FNPINetAmt=" + Conversion.Val(_pi.FNPINetAmt) +
+                                                ", InvoiceNo='" + _pi.InvoiceNo + "',FTAWBNo='" + _pi.FTAWBNo + "',T2_Confirm_Note='" + _pi.T2_Confirm_Note +
+                                                "',StateRead='0',StateExport='0' WHERE PONo='" + _po.PONo + "' AND POItemCode='" + _po.POItemCode +
+                                                "' AND Color='" + _po.Color + "' AND Size='" + _po.Size + "' AND FTDocNo=@PINo AND StateRead='0' ";
+                                            _Qry += "SET @RecCount = @@ROWCOUNT ";
+                                            _Qry += " IF @RecCount > 0 ";
+                                            _Qry += " BEGIN ";
+                                            _Qry += " EXEC USP_UPDATEPICFM '" + value.authen.id + "','" + FTDataKey + "','" + _po.PONo + "','" + _po.POItemCode + "','" + _po.Color + "','" + _po.Size + "' ";
+                                            _Qry += " END ";
+                                            _Qry += " END ";
+                                            _Qry += " ELSE ";
+                                            _Qry += " BEGIN ";
+                                            _Qry += " SET @pMessage ='Duplicate document number !!!'   ";
+                                            _Qry += " END ";
+                                            _Qry += " select @RecCount AS FNTotalRec,@pMessage AS FTMessage  ";
+
+                                        }
+                                        else
+                                        {
+
+                                            _Qry = "declare @RecCount int =0, @PINo nvarchar(30) ='" + _pi.FTDocNo +
+                                                "', @PINoCheck nvarchar(30)='',@pMessage nvarchar(500)='' ";
+                                            dt = Cnn.GetDataTable(_Qry, WSM.Conn.DB.DataBaseName.DB_VENDER);
+
+                                            _Qry += " set @PINoCheck = ISNULL(( select top 1 FTDocNo  from [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.POToVenderConfirm  WHERE PONo='" +
+                                                _po.PONo + "' AND POItemCode='" + _po.POItemCode + "' AND Color='" + _po.Color + "' AND Size='" +
+                                                _po.Size + "' AND FTDocNo=@PINo),'') ";
+                                            _Qry += " IF  @PINoCheck = '' ";
+                                            _Qry += " BEGIN ";
+
+                                            _Qry += " insert into POToVenderConfirm( FTInsUser, FDInsDate, FTInsTime, PONo, POItemCode, " +
+                                                "Color, Size, FNPOQty, FNSeq, FNDocType, FTDocNo, FTDocDate, T2_Confirm_Ship_Date, " +
+                                                "T2_Confirm_Price, T2_Confirm_Quantity, T2_Confirm_OrderNo, T2_Confirm_PO_Date, " +
+                                                "T2_Confirm_By, T2_Confirm_Note, Estimatedeldate, Actualdeldate, FTStateHasFile, " +
+                                                "InvoiceNo, FNPIQuantity, FNPINetAmt, FTAWBNo, StateRead, StateExport ) ";
+
+                                            _Qry += " SELECT TOP 1  '" + value.authen.id + "', FDUpdDate = Convert(varchar(10),Getdate(),111), " +
+                                                " FTUpdTime=Convert(varchar(8),Getdate(),114), '" + _po.PONo + "','" + _po.POItemCode + "','" +
+                                                _po.Color + "','" + _po.Size + "',X.Quantity, ISNULL((SELECT MAX(FNSeq) AS FNSeq ";
+                                            _Qry += " FROM [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.POToVenderConfirm ";
+                                            _Qry += " WHERE PONo = '" + _po.PONo + "' AND POItemCode = '" + _po.POItemCode + "' AND Color = '" +
+                                                _po.Color + "' AND Size='" + _po.Size + "'  ),0) +1,0, '" + _pi.FTDocNo + "','" +
+                                                DB.ConvertEnDB(_pi.FTDocDate) + "' ,'" + DB.ConvertEnDB(_pi.T2_Confirm_Ship_Date) + "'," +
+                                                Conversion.Val(+_pi.T2_Confirm_Price) + ", " + Conversion.Val(_pi.T2_Confirm_Quantity) + ",'" +
+                                                _po.T2_Confirm_OrderNo + "','" + DB.ConvertEnDB(_po.T2_Confirm_PO_Date) + "','" + value.authen.id + "', '" +
+                                                _pi.T2_Confirm_Note + "','" + DB.ConvertEnDB(_pi.Estimatedeldate) + "','" +
+                                                DB.ConvertEnDB(_pi.Actualdeldate) + "','0','" + _pi.InvoiceNo + "', " +
+                                                Conversion.Val(_pi.FNPIQuantity) + " , " + Conversion.Val(_pi.FNPINetAmt) + " , '" +
+                                                _pi.FTAWBNo + "','0','0'";
+                                            _Qry += " FROM  [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.POToVender_ACK AS X WITH(NOLOCK) ";
+                                            _Qry += " WHERE FTDataKey='" + FTDataKey + "'  ";
+                                            _Qry += " SET @RecCount = @@ROWCOUNT ";
+                                            _Qry += " IF @RecCount > 0 ";
+                                            _Qry += " BEGIN ";
+                                            _Qry += " EXEC USP_UPDATEPICFM  '" + value.authen.id + "','" + FTDataKey + "','" + _po.PONo + "','" + _po.POItemCode + "','" + _po.Color + "','" + _po.Size + "' ";
+                                            _Qry += " END ";
+                                            _Qry += " END ";
+                                            _Qry += " ELSE ";
+                                            _Qry += " BEGIN ";
+                                            _Qry += " SET @pMessage ='Duplicate document number !!!'   ";
+                                            _Qry += " END ";
+                                            _Qry += " select @RecCount AS FNTotalRec,@pMessage AS FTMessage  ";
+                                        }
+
+                                        dt = Cnn.GetDataTable(_Qry, WSM.Conn.DB.DataBaseName.DB_VENDER);
+                                        foreach (DataRow R in dt.Rows)
+                                        {
+                                            int rec = (int)Conversion.Val(R["FNTotalRec"].ToString());
+                                            if (rec > 0)
+                                            {
+                                                statecheck = 1;
+                                                msgError = "Total Receive = " + rec ;
+                                                _PIPass.Add(_pi);
+                                            }
+                                            else
+                                            {
+                                                statecheck = 2;
+                                                msgError = R["FTMessage"].ToString();
+                                                _PIProblem.Add(_pi);
+                                            }
+                                        }
+
+                                        // OLD Code
+                                        /*
                                         _Qry = "  DECLARE @TotalRow int = 0 ";
                                         _Qry += " DECLARE @TotalEff int = 0 ";
                                         _Qry += " DECLARE @TotalUpdate int = 0 ";
@@ -156,14 +285,14 @@ namespace HITConnect.Controllers
 
                                         _Qry += " BEGIN TRANSACTION ";
                                         _Qry += " BEGIN TRY ";
-
+                                        */
                                         /*_Qry += " DELETE FROM [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.POToVenderConfirm " +
                                             " WHERE FTDocNo = '" + _pi.FTDocNo + "' AND PONo = '" + _po.PONo + "' ";*/
-                                        
+                                        /*
                                         _Qry += "IF (select count(1) FROM [DB_VENDER].dbo.POToVenderConfirm  WHERE FTDocNo = '" +
                                             _pi.FTDocNo + "' AND PONo = '" + _po.PONo + "' ) > 0";
                                         _Qry += " BEGIN ";
-                                        
+
                                         _Qry += " UPDATE [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.POToVenderConfirm ";
                                         //[FTFileRef],[Estimatedeldate]
                                         string StateHasFile = (_pi.FTFileRef.Length > '0') ? "1" : "0";
@@ -178,7 +307,7 @@ namespace HITConnect.Controllers
                                         _Qry += " SELECT @TotalEff=@@ROWCOUNT ";
                                         //_pi.FTFileRef + "', '" +
                                         _Qry += " END ELSE BEGIN ";
-                                        
+
                                         _Qry += " INSERT INTO [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.POToVenderConfirm " +
                                         "([FTInsUser], [FDInsDate], [FTInsTime], [PONo], [POItemCode], " +
                                         "[Color], [Size], [FNPOQty], [FNSeq], [FNDocType], [FTDocNo], " +
@@ -244,6 +373,7 @@ namespace HITConnect.Controllers
                                             msgError = "Cannot save this PO";
                                             _PIProblem.Add(_pi);
                                         }
+                                        */
                                     }
                                 }
                             }
@@ -252,7 +382,7 @@ namespace HITConnect.Controllers
                                 Console.WriteLine(ex.Message);
                             }
                         }
-                        msgError = "Number PI are accepted is  " + count + " PI";
+                        //msgError = "Number PI are accepted is  " + count + " PI";
                     }
                     else
                     {
@@ -270,7 +400,7 @@ namespace HITConnect.Controllers
             {
                 Console.WriteLine(ex.Message);
             }
-
+            
             if (_PIProblem.Count > 0)
             {
                 jsondata = JsonConvert.SerializeObject(_PIProblem);

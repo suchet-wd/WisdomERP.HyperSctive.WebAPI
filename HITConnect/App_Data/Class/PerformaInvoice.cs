@@ -59,16 +59,11 @@ namespace HITConnect
         [JsonProperty("AWBNo")]
         public string FTAWBNo { get; set; }
 
-        [JsonProperty("ConfirmBy")]
-        public string T2_Confirm_By { get; set; }
+        //[JsonProperty("ConfirmBy")]
+        //public string T2_Confirm_By { get; set; }
 
         [JsonProperty("Remark")]
         public string T2_Confirm_Note { get; set; }
-
-        [JsonProperty("PO")]
-        public List<PO> po { get; set; }
-
-        /// 
 
         //[JsonProperty("FTStateHasFile")]
         //public string FTStateHasFile { get; set; }
@@ -76,7 +71,9 @@ namespace HITConnect
         [JsonProperty("FTFileRef")]
         public string FTFileRef { get; set; }
 
-        
+        [JsonProperty("PO")]
+        public List<PO> po { get; set; }
+
     }
 
     public class PO
@@ -92,9 +89,6 @@ namespace HITConnect
 
         [JsonProperty("ColorCode")]
         public string Color { get; set; }
-
-
-        // 
 
         [JsonProperty("Size")]
         public string Size { get; set; }
