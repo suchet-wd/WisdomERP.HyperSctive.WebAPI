@@ -18,7 +18,8 @@ namespace WSM.Conn
 
         public static string[] DBName = new string[30];
 
-        public static string[] SystemDBName = { "DB_TEMPDB", "DB_VENDER" };
+        //public static string[] SystemDBName = { "DB_TEMPDB", "DB_VENDER" };
+        public static string[] SystemDBName = { "DB_VENDER" };
         public enum DataBaseName : int
         {
             DB_TEMPDB = 0,

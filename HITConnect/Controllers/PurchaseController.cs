@@ -39,38 +39,167 @@ namespace HITConnect.Controllers
 
                     if (dt != null && dt.Rows.Count > 0)
                     {
-                        /*  Fields Not Send JSON  [FTDataKey],[FTDateCreate],  */
                         _Qry = " exec [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].[dbo].[USP_PULLPOACK] @User = '" + value.id + "' ";
                         dtPO = Cnn.GetDataTable(_Qry, WSM.Conn.DB.DataBaseName.DB_VENDER);
-                        dtPO.Columns.Remove("FTDataKey");
-                        dtPO.Columns.Remove("FTDateCreate");
-                        dtPO.Columns.Remove("ExtraMinQty");
-                        dtPO.Columns.Remove("EAGSystemUnitPriceERP3");
-                        dtPO.Columns.Remove("POApproveDate");
-                        dtPO.Columns.Remove("POIssueDate");
-                        dtPO.Columns.Remove("CLXorderconfirmationnumber");
-                        dtPO.Columns.Remove("FTYMerch");
-                        dtPO.Columns.Remove("HKMerch");
-                        dtPO.Columns.Remove("ReplyCode");
-                        dtPO.Columns.Remove("StateFlag");
-                        dtPO.Columns.Remove("StateAcknowledge");
-                        dtPO.Columns.Remove("AcknowledgeBy");
-                        dtPO.Columns.Remove("AcknowledgeDate");
-                        dtPO.Columns.Remove("AcknowledgeTime");
-                        dtPO.Columns.Remove("StateAcknowledgeLock");
-                        dtPO.Columns.Remove("StateClose");
-                        dtPO.Columns.Remove("T2_Confirm_Ship_Date");
-                        dtPO.Columns.Remove("T2_Confirm_Price");
-                        dtPO.Columns.Remove("T2_Confirm_Quantity");
-                        dtPO.Columns.Remove("T2_Confirm_OrderNo");
-                        dtPO.Columns.Remove("T2_Confirm_PO_Date");
-                        dtPO.Columns.Remove("T2_Confirm_By");
-                        dtPO.Columns.Remove("Estimatedeldate");
-                        dtPO.Columns.Remove("Actualdeldate");
-                        dtPO.Columns.Remove("InvoiceNo");
-                        dtPO.Columns.Remove("RcvQty");
-                        dtPO.Columns.Remove("RcvDate");
-                        dtPO.Columns.Remove("StateRead");
+                        /*  Fields Not Send JSON  */
+                        if (dtPO.Rows.Count > 0)
+                        {
+                            /* ------------------  Remove Column ------------------ */
+                            dtPO.Columns.Remove("FTDataKey");
+                            dtPO.Columns.Remove("FTDateCreate");
+                            dtPO.Columns.Remove("ExtraMinQty");
+                            dtPO.Columns.Remove("EAGSystemUnitPriceERP3");
+                            dtPO.Columns.Remove("POApproveDate");
+                            dtPO.Columns.Remove("POIssueDate");
+                            dtPO.Columns.Remove("CLXorderconfirmationnumber");
+                            dtPO.Columns.Remove("FTYMerch");
+                            dtPO.Columns.Remove("HKMerch");
+                            dtPO.Columns.Remove("ReplyCode");
+                            //dtPO.Columns.Remove("StateFlag");
+                            dtPO.Columns.Remove("StateAcknowledge");
+                            dtPO.Columns.Remove("AcknowledgeBy");
+                            dtPO.Columns.Remove("AcknowledgeDate");
+                            dtPO.Columns.Remove("AcknowledgeTime");
+                            dtPO.Columns.Remove("StateAcknowledgeLock");
+                            dtPO.Columns.Remove("StateClose");
+                            dtPO.Columns.Remove("T2_Confirm_Ship_Date");
+                            dtPO.Columns.Remove("T2_Confirm_Price");
+                            dtPO.Columns.Remove("T2_Confirm_Quantity");
+                            dtPO.Columns.Remove("T2_Confirm_OrderNo");
+                            dtPO.Columns.Remove("T2_Confirm_PO_Date");
+                            dtPO.Columns.Remove("T2_Confirm_By");
+                            dtPO.Columns.Remove("Estimatedeldate");
+                            dtPO.Columns.Remove("Actualdeldate");
+                            dtPO.Columns.Remove("RcvQty");
+                            dtPO.Columns.Remove("RcvDate");
+                            dtPO.Columns.Remove("StateRead");
+                            //dtPO.Columns.Remove("ItemSeq");
+                            dtPO.Columns.Remove("UPCCOMBOIM");
+                            dtPO.Columns.Remove("ContentCode");
+                            dtPO.Columns.Remove("CareCode");
+                            dtPO.Columns.Remove("SizeMatrix");
+                            dtPO.Columns.Remove("Quantity");
+                            dtPO.Columns.Remove("GarmentShip");
+                            dtPO.Columns.Remove("CountryOfOrigin");
+                            dtPO.Columns.Remove("SaleOrderSaleOrderLine");
+                            dtPO.Columns.Remove("NikeSAPPOPONIKEPOLine");
+                            dtPO.Columns.Remove("NikematerialStyleColorway");
+                            dtPO.Columns.Remove("Modifire1");
+                            dtPO.Columns.Remove("Modifire2");
+                            dtPO.Columns.Remove("Modifire3");
+                            dtPO.Columns.Remove("MPOHZ");
+                            dtPO.Columns.Remove("CCTotalpage");
+                            dtPO.Columns.Remove("ChinaInsertCard");
+                            dtPO.Columns.Remove("P1pc2in1");
+                            dtPO.Columns.Remove("WovenLabelSizeLength");
+                            dtPO.Columns.Remove("ArgentinaImportNumber");
+                            dtPO.Columns.Remove("DownFill");
+                            dtPO.Columns.Remove("SYS_ID");
+                            dtPO.Columns.Remove("ChinasizeMatrixtype");
+                            dtPO.Columns.Remove("EAGERPItemNumber");
+                            dtPO.Columns.Remove("CompoundColororCCIMfor2in1CCIM");
+                            dtPO.Columns.Remove("CPO");
+                            dtPO.Columns.Remove("BhasaIndonesiaProductBrand");
+                            dtPO.Columns.Remove("SAFCODE");
+                            dtPO.Columns.Remove("Youthorder");
+                            dtPO.Columns.Remove("NFCproduct");
+                            dtPO.Columns.Remove("NeckneckopeningX2");
+                            dtPO.Columns.Remove("ChestbodywidthX2");
+                            dtPO.Columns.Remove("CenterBackbodylength");
+                            dtPO.Columns.Remove("WaistwaistrelaxedInseam");
+                            dtPO.Columns.Remove("PackQuantityQTYPERSELLINGUNIT");
+                            dtPO.Columns.Remove("Fabriccode");
+                            dtPO.Columns.Remove("PRODUCTDESCRIPTION");
+                            dtPO.Columns.Remove("PRODUCTCODEDESCRIPTION");
+                            dtPO.Columns.Remove("GARMENTSTYLEFIELD");
+                            dtPO.Columns.Remove("INSEAMSTYLE");
+                            dtPO.Columns.Remove("InvoiceNo");
+                            dtPO.Columns.Remove("T2_Confirm_ShipQuantity");
+                            dtPO.Columns.Remove("T2_Confirm_Ship_Date2");
+                            dtPO.Columns.Remove("T2_Confirm_ShipQuantity2");
+                            dtPO.Columns.Remove("Actualdeldate2");
+                            dtPO.Columns.Remove("StateRejectedBuy");
+                            dtPO.Columns.Remove("RejectedBuyBy");
+                            dtPO.Columns.Remove("RejectedBuyDate");
+                            dtPO.Columns.Remove("RejectedBuyTime");
+                            dtPO.Columns.Remove("T2_Confirm_MOQQuantity");
+
+                            /* ------------------  Rename Column ------------------ */
+
+
+                            dtPO.Columns["PONo"].ColumnName = "PONumber";
+                            dtPO.Columns["MatrClass"].ColumnName = "MaterialType";
+                            dtPO.Columns["MatrCode"].ColumnName = "MaterialCode";
+                            dtPO.Columns["Color"].ColumnName = "ColorCode";
+                            dtPO.Columns["QtyUnit"].ColumnName = "Unit";
+                            dtPO.Columns["DeliveryDate"].ColumnName = "FCTYNeedDate";
+                            dtPO.Columns["Custporef"].ColumnName = "EndCustomerPO";
+                            dtPO.Columns["Buy"].ColumnName = "BuyCode";
+                            dtPO.Columns["BuyNo"].ColumnName = "BuyMonth";
+                            dtPO.Columns["Program"].ColumnName = "BuyGroup";
+                            dtPO.Columns["SubProgram"].ColumnName = "SubProgram";
+                            dtPO.Columns["Remarkfrommer"].ColumnName = "RemarkFromMer";
+                            dtPO.Columns["address1"].ColumnName = "Address1";
+                            dtPO.Columns["address2"].ColumnName = "Address2";
+                            dtPO.Columns["address3"].ColumnName = "Address3";
+                            dtPO.Columns["address4"].ColumnName = "Address4";
+                            dtPO.Columns["sysowner"].ColumnName = "Purchaser";
+                            dtPO.Columns["sysownername"].ColumnName = "PurchaserName";
+                            dtPO.Columns["sysownermail"].ColumnName = "PurchaserEMail";
+                            dtPO.Columns["ZeroInspection"].ColumnName = "ZeroInspection";
+                            dtPO.Columns["OGACDate"].ColumnName = "GACDate";
+                            dtPO.Columns["HITLink"].ColumnName = "HITJobNo";
+                            dtPO.Columns["NIKECustomerPONo"].ColumnName = "NIKESalesOrderNo";
+                            dtPO.Columns["QRS"].ColumnName = "QPP/QRSQuantity";
+                            dtPO.Columns["PromoQty"].ColumnName = "PromoQuantity";
+                            dtPO.Columns["BulkQRSSample"].ColumnName = "BulkQuantity";
+                            dtPO.Columns["ActualQuantity"].ColumnName = "TotalPOQuantity";
+                            dtPO.Columns["POUploadTime"].ColumnName = "UploadTime";
+                            dtPO.Columns["POUploadBy"].ColumnName = "UploadBy";
+
+                            //dtPO.Columns["VenderCode"].ColumnName = "VendorCode";
+                            //dtPO.Columns["VendorName"].ColumnName = "VendorName";
+                            //dtPO.Columns["VendorLocation"].ColumnName = "VendorLocation";
+                            //dtPO.Columns["FactoryCode"].ColumnName = "FactoryCode";
+                            //dtPO.Columns["PODate"].ColumnName = "PODate";
+                            //dtPO.Columns["Shipto"].ColumnName = "Shipto";
+                            //dtPO.Columns["GarmentShipmentDestination"].ColumnName = "GarmentShipmentDestination";
+                            //dtPO.Columns["POItemCode"].ColumnName = "POItemCode";
+                            //dtPO.Columns["ColorName"].ColumnName = "ColorName";
+                            //dtPO.Columns["GCW"].ColumnName = "GCW";
+                            //dtPO.Columns["Size"].ColumnName = "Size";
+                            //dtPO.Columns["Currency"].ColumnName = "Currency";
+                            //dtPO.Columns["Price"].ColumnName = "Price";
+                            //dtPO.Columns["Season"].ColumnName = "Season";
+                            //dtPO.Columns["Category"].ColumnName = "Category";
+                            //dtPO.Columns["StyleNo"].ColumnName = "StyleNo";
+                            //dtPO.Columns["StyleName"].ColumnName = "StyleName";
+                            //dtPO.Columns["POMatching1"].ColumnName = "POMatching1";
+                            //dtPO.Columns["POMatching2"].ColumnName = "POMatching2";
+                            //dtPO.Columns["POMatching3"].ColumnName = "POMatching3";
+                            //dtPO.Columns["POMatching4"].ColumnName = "POMatching4";
+                            //dtPO.Columns["POMatching5"].ColumnName = "POMatching5";
+                            //dtPO.Columns["ItemMatching1"].ColumnName = "ItemMatching1";
+                            //dtPO.Columns["ItemMatching2"].ColumnName = "ItemMatching2";
+                            //dtPO.Columns["ItemMatching3"].ColumnName = "ItemMatching3";
+                            //dtPO.Columns["ItemMatching4"].ColumnName = "ItemMatching4";
+                            //dtPO.Columns["ItemMatching5"].ColumnName = "ItemMatching5";
+                            //dtPO.Columns["Position"].ColumnName = "Position";
+                            //dtPO.Columns["Type"].ColumnName = "Type";
+                            //dtPO.Columns["PriceTerm"].ColumnName = "PriceTerm";
+                            //dtPO.Columns["PaymentTerm"].ColumnName = "PaymentTerm";
+                            //dtPO.Columns["RemarkForPurchase"].ColumnName = "RemarkForPurchase";
+                            //dtPO.Columns["InvoiceCmpCode"].ColumnName = "InvoiceCmpCode";
+                            //dtPO.Columns["CompanyName"].ColumnName = "CompanyName";
+                            //dtPO.Columns["POUploadDate"].ColumnName = "POUploadDate";
+                            //dtPO.Columns["ItemDescription"].ColumnName = "ItemDescription";
+                            //dtPO.Columns["Surcharge"].ColumnName = "Surcharge";
+                        }
+                        else
+                        {
+                            statecheck = 2;
+                            msgError = "No new Data!!!";
+                        }
                     }
                     else
                     {
@@ -124,25 +253,31 @@ namespace HITConnect.Controllers
         public HttpResponseMessage GetPurchaseAckInfo([FromBody] POtoVender value)
         {
             string columnPO2V = " SELECT ISNULL(VenderCode, '') AS 'VendorCode' ,ISNULL(VendorName, '') AS 'VendorName', " +
-            "ISNULL(VendorLocation, '') AS 'VendorLocation' ,ISNULL(FactoryCode, '') AS 'Factory Code' ," +
-            "ISNULL(PONo, '') AS 'PONumber', ISNULL(PODate, '') AS 'PODate', ISNULL(Shipto, '') AS 'Shipto' ," +
+            "ISNULL(VendorLocation, '') AS 'VendorLocation' ,ISNULL(FactoryCode, '') AS 'FactoryCode' ," +
+            "ISNULL(PONo, '') AS 'PONumber', RIGHT(PODate,4)+'/'+SUBSTRING(PODate,4,2)+'/'+LEFT(PODate,2)  AS 'PODate', " +
+            "ISNULL(Shipto, '') AS 'Shipto' ," +
             "ISNULL(GarmentShipmentDestination, '') AS 'Garment Shipment Destination', " +
-            "ISNULL(MatrClass, '') AS 'Material Type' ,ISNULL(ItemSeq, 0) AS 'ItemSeq' ," +
-            "ISNULL(POItemCode, '') AS 'PO ItemCode' , ISNULL(MatrCode, '') AS 'Material Code' ," +
-            "ISNULL(UPCCOMBOIM, '') AS 'UPC(COMBO IM#)' ,ISNULL(ContentCode, '') AS 'Content Code' ," +
-            "ISNULL(CareCode, '') AS 'Care Code' ,ISNULL(Color, '') AS 'Color Code' ," +
+            "ISNULL(MatrClass, '') AS 'MaterialType' , " +
+            "ISNULL(POItemCode, '') AS 'POItemCode' , ISNULL(MatrCode, '') AS 'MaterialCode' ," +
+            //"ISNULL(UPCCOMBOIM, '') AS 'UPC(COMBO IM#)' ,ISNULL(ContentCode, '') AS 'Content Code' ," +
+            //"ISNULL(CareCode, '') AS 'Care Code' ,
+            "ISNULL(ItemSeq, 0) AS 'ItemSeq' ," +
+            "ISNULL(Color, '') AS 'Color Code' ," +
             "ISNULL(ColorName, '') AS 'Color Name' ,ISNULL(GCW, '') AS 'GCW' , ISNULL(Size, '') AS 'Size' ," +
-            "ISNULL(SizeMatrix, '') AS 'SizeMatrix' ,ISNULL(Currency, '') AS 'Currency' ," +
-            "ISNULL(Price, 0) AS 'Price' , ISNULL(Quantity, 0) AS 'Quantity' ,ISNULL(QtyUnit, '') AS 'Unit' ," +
-            "ISNULL(DeliveryDate, '') AS 'FCTY Need Date',ISNULL(Season, '') AS 'Season' ," +
-            "ISNULL(Custporef, '') AS 'End Customer PO' ,ISNULL(Buy, '') AS 'Buy Code' ," +
-            "ISNULL(BuyNo, '') AS 'Buy Month' , ISNULL(Category, '') AS 'Category' ," +
-            "ISNULL(Program, '') AS 'Buy Group' ,ISNULL(SubProgram, '') AS 'Sub Program' , " +
-            "ISNULL(StyleNo, '') AS 'Style No' ,ISNULL(StyleName, '') AS 'StyleName' ," +
-            "ISNULL(POMatching1, '') AS 'POMatching1', ISNULL(POMatching2, '') AS 'PO Matching 2' ," +
-            "ISNULL(POMatching3, '') AS 'PO Matching 3' ,ISNULL(POMatching4, '') AS 'PO Matching 4', " +
-            "ISNULL(POMatching5, '') AS 'PO Matching 5' ,ISNULL(ItemMatching1, '') AS 'Item Matching 1', " +
-            "ISNULL(ItemMatching2, '') AS 'Item Matching 2' , ISNULL(ItemMatching3, '') AS 'ItemMatching3', " +
+            //"ISNULL(SizeMatrix, '') AS 'SizeMatrix' ," +
+            "ISNULL(Currency, '') AS 'Currency' ," +
+            "ISNULL(Price, 0) AS 'Price' , " +
+            //"ISNULL(Quantity, 0) AS 'Quantity' ," +
+            "ISNULL(QtyUnit, '') AS 'Unit' ," +
+            "RIGHT ( DeliveryDate, 4 )+ '/' + SUBSTRING( DeliveryDate, 4, 2 )+ '/' + LEFT ( DeliveryDate, 2 ) AS 'FCTYNeedDate',ISNULL(Season, '') AS 'Season' ," +
+            "ISNULL(Custporef, '') AS 'EndCustomerPO' ,ISNULL(Buy, '') AS 'BuyCode' ," +
+            "ISNULL(BuyNo, '') AS 'BuyMonth' , ISNULL(Category, '') AS 'Category' ," +
+            "ISNULL(Program, '') AS 'BuyGroup' ,ISNULL(SubProgram, '') AS 'SubProgram' , " +
+            "ISNULL(StyleNo, '') AS 'StyleNo' ,ISNULL(StyleName, '') AS 'StyleName' ," +
+            "ISNULL(POMatching1, '') AS 'POMatching1', ISNULL(POMatching2, '') AS 'POMatching2' ," +
+            "ISNULL(POMatching3, '') AS 'POMatching3' ,ISNULL(POMatching4, '') AS 'POMatching4', " +
+            "ISNULL(POMatching5, '') AS 'POMatching5' ,ISNULL(ItemMatching1, '') AS 'ItemMatching1', " +
+            "ISNULL(ItemMatching2, '') AS 'Item Matching2' , ISNULL(ItemMatching3, '') AS 'ItemMatching3', " +
             "ISNULL(ItemMatching4, '') AS 'ItemMatching4' ,ISNULL(ItemMatching5, '') AS 'Item Matching 5' , " +
             "ISNULL(Position, '') AS 'Position' ,ISNULL(Type, '') AS 'Type' ,ISNULL(PriceTerm, 0) AS 'Price Term', " +
             "ISNULL(PaymentTerm, '') AS 'Payment Term' ,ISNULL(Remarkfrommer, '') AS 'Remark From Mer' , " +
@@ -151,33 +286,38 @@ namespace HITConnect.Controllers
             "ISNULL(address2, '') AS 'Address 2', ISNULL(address3, '') AS 'Address 3' ," +
             "ISNULL(address4, '') AS 'Address 4' ,ISNULL(sysowner, '') AS 'Purchaser' , " +
             "ISNULL(ZeroInspection, '') AS 'Zero Inspection' ,ISNULL(GarmentShip, '') AS 'GAC Date', " +
-            "ISNULL(OGACDate, '') AS 'OGAC Date(MM/YYYY)' ,ISNULL(HITLink, '') AS 'HIT Job No', " +
-            "ISNULL(NIKECustomerPONo, '') AS 'NIKE Sales Order No' , ISNULL(QRS, 0) AS 'QPP/QRS Quantity' ," +
-            "ISNULL(PromoQty, 0) AS 'Promo Quantity' ,ISNULL(ActualQuantity, 0) AS 'Total Quantity' , " +
-            "ISNULL(POUploadDate, '') AS 'PO Upload Date' ,ISNULL(POUploadTime, '') AS 'Upload Time' , " +
-            "ISNULL(POUploadBy, '') AS 'POUploadBy' ,ISNULL(CountryOfOrigin, '') AS 'Country Of Origin (Label)'  , " +
-            "ISNULL(SaleOrderSaleOrderLine, '') AS 'SalesOrder Line (VAS)', " +
-            "ISNULL(NikeSAPPOPONIKEPOLine, '') AS 'Nike PO-Line' , " +
-            "ISNULL(NikematerialStyleColorway, '') AS 'Nike Style-Colorway' ,ISNULL(Modifire1, '') AS 'Modifire 1' , " +
-            "ISNULL(Modifire2, '') AS 'Modifire 2', ISNULL(Modifire3, '') AS 'Modifire 3' ," +
-            "ISNULL(MPOHZ, '') AS 'MPOHZ' , ISNULL(ItemDescription, '') AS 'Item Description' ," +
-            "ISNULL(BulkQRSSample, '') AS 'Bulk/Sample (Care Label)' ,ISNULL(CCTotalpage, 0) AS 'CC Total page' ," +
-            "ISNULL(Surcharge, 0) AS 'Surcharge' , ISNULL(ChinaInsertCard, '') AS 'ChinaInsertCard' , " +
-            "ISNULL(P1pc2in1, '') AS 'P1PC 2in1' , ISNULL(WovenLabelSizeLength, '') AS 'Woven Label Size Length (Avery)' , " +
-            "ISNULL(ArgentinaImportNumber, '') AS 'Argentina Import Number' ,ISNULL(DownFill, '') AS 'DownFill' ," +
-            "ISNULL(SYS_ID, '') AS 'SYS_ID' , ISNULL(ChinasizeMatrixtype, '') AS 'Chinasize Matrixtype' ," +
-            "ISNULL(EAGERPItemNumber, '') AS 'EAGERP Item Number' , " +
-            "ISNULL(CompoundColororCCIMfor2in1CCIM, '') AS 'Compound Color CCI Mfor2in1CCIM' ," +
-            "ISNULL(CPO, '') AS 'CPO' , ISNULL(BhasaIndonesiaProductBrand, '') AS 'Bhasa Indonesia Product Brand' ," +
-            "ISNULL(SAFCODE, '') AS 'SAFCODE' , ISNULL(Youthorder, '') AS 'Youth order'  ," +
-            "ISNULL(NFCproduct, '') AS 'NFC Product' , ISNULL(NeckneckopeningX2, '') AS 'Neck neck opening X2', " +
-            "ISNULL(ChestbodywidthX2, '') AS 'Chest body width X2' , " +
-            "ISNULL(CenterBackbodylength, '') AS 'Center Back body length' ," +
-            "ISNULL(WaistwaistrelaxedInseam, '') AS 'Waist waistrelaxed Inseam' , " +
-            "ISNULL(PackQuantityQTYPERSELLINGUNIT, 0) AS 'Pack Quantity QTYPERSELLINGUNIT' ," +
-            "ISNULL(Fabriccode, 0) AS 'Fabric code' ,ISNULL(PRODUCTDESCRIPTION, '') AS 'PRODUCT DESCRIPTION' ," +
-            "ISNULL(GARMENTSTYLEFIELD, '') AS 'Compound Color CCI Mfor2in1CCIM' , " +
-            "ISNULL(GARMENTSTYLEFIELD, '') AS 'GARMENT STYLE FIELD' ,ISNULL(INSEAMSTYLE, '') AS 'INSEAM STYLE' ";
+            //"ISNULL(OGACDate, '') AS 'OGAC Date(MM/YYYY)' ," +
+            "ISNULL(HITLink, '') AS 'HIT Job No', " +
+            "ISNULL(NIKECustomerPONo, '') AS 'NIKE Sales Order No' , ISNULL(QRS, 0) AS 'QPP/QRS Quantity', " +
+            "ISNULL(BulkQRSSample, 0) AS 'BulkQuantity', " +
+            "ISNULL(PromoQty, 0) AS 'PromoQuantity' ,ISNULL(ActualQuantity, 0) AS 'TotalQuantity' , " +
+            "RIGHT ( POUploadDate, 4 )+ '/' + SUBSTRING( POUploadDate, 4, 2 )+ '/' + LEFT ( POUploadDate, 2 )  AS 'POUploadDate' ,ISNULL(POUploadTime, '') AS 'UploadTime' , " +
+            "ISNULL(POUploadBy, '') AS 'POUploadBy' ," +
+            //"ISNULL(CountryOfOrigin, '') AS 'Country Of Origin (Label)'  , " +
+            //"ISNULL(SaleOrderSaleOrderLine, '') AS 'SalesOrder Line (VAS)', " +
+            //"ISNULL(NikeSAPPOPONIKEPOLine, '') AS 'Nike PO-Line' , " +
+            //"ISNULL(NikematerialStyleColorway, '') AS 'Nike Style-Colorway' ,ISNULL(Modifire1, '') AS 'Modifire 1' , " +
+            //"ISNULL(Modifire2, '') AS 'Modifire 2', ISNULL(Modifire3, '') AS 'Modifire 3' ," +
+            //"ISNULL(MPOHZ, '') AS 'MPOHZ' , " +
+            "ISNULL(ItemDescription, '') AS 'ItemDescription' ," +
+            //"ISNULL(BulkQRSSample, '') AS 'Bulk/Sample (Care Label)' ,ISNULL(CCTotalpage, 0) AS 'CC Total page' ," +
+            "ISNULL(Surcharge, 0) AS 'Surcharge' ";
+            //"ISNULL(ChinaInsertCard, '') AS 'ChinaInsertCard' , " +
+            //"ISNULL(P1pc2in1, '') AS 'P1PC 2in1' , ISNULL(WovenLabelSizeLength, '') AS 'Woven Label Size Length (Avery)' , " +
+            //"ISNULL(ArgentinaImportNumber, '') AS 'Argentina Import Number' ,ISNULL(DownFill, '') AS 'DownFill' ," +
+            //"ISNULL(SYS_ID, '') AS 'SYS_ID' , ISNULL(ChinasizeMatrixtype, '') AS 'Chinasize Matrixtype' ," +
+            //"ISNULL(EAGERPItemNumber, '') AS 'EAGERP Item Number' , " +
+            //"ISNULL(CompoundColororCCIMfor2in1CCIM, '') AS 'Compound Color CCI Mfor2in1CCIM' ," +
+            //"ISNULL(CPO, '') AS 'CPO' , ISNULL(BhasaIndonesiaProductBrand, '') AS 'Bhasa Indonesia Product Brand' ," +
+            //"ISNULL(SAFCODE, '') AS 'SAFCODE' , ISNULL(Youthorder, '') AS 'Youth order'  ," +
+            //"ISNULL(NFCproduct, '') AS 'NFC Product' , ISNULL(NeckneckopeningX2, '') AS 'Neck neck opening X2', " +
+            //"ISNULL(ChestbodywidthX2, '') AS 'Chest body width X2' , " +
+            //"ISNULL(CenterBackbodylength, '') AS 'Center Back body length' ," +
+            //"ISNULL(WaistwaistrelaxedInseam, '') AS 'Waist waistrelaxed Inseam' , " +
+            //"ISNULL(PackQuantityQTYPERSELLINGUNIT, 0) AS 'Pack Quantity QTYPERSELLINGUNIT' ," +
+            //"ISNULL(Fabriccode, 0) AS 'Fabric code' ,ISNULL(PRODUCTDESCRIPTION, '') AS 'PRODUCT DESCRIPTION' ," +
+            //"ISNULL(GARMENTSTYLEFIELD, '') AS 'Compound Color CCI Mfor2in1CCIM' , " +
+            //"ISNULL(GARMENTSTYLEFIELD, '') AS 'GARMENT STYLE FIELD' ,ISNULL(INSEAMSTYLE, '') AS 'INSEAM STYLE' ";
             string _Qry = "";
             int statecheck = 0;
             string msgError = "";
@@ -201,17 +341,15 @@ namespace HITConnect.Controllers
                 UserAuthen.DelAuthenKey(Cnn, value.authen.id);
                 if (dt != null && dt.Rows.Count > 0)
                 {
-                    _Qry = columnPO2V + " FROM [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.POToVender_ACK ";
-
+                    _Qry = columnPO2V + " FROM " + WSM.Conn.DB.DataBaseName.DB_VENDER + ".dbo.POToVender_ACK ";
+                    string _QryCondition = "";
                     if (value.startDate != "" && value.endDate != "")
                     {
                         if (Convert.ToDateTime(value.startDate) <= Convert.ToDateTime(value.endDate))
                         {
-                            _Qry += " WHERE PODate BETWEEN '" + value.startDate + "' AND '" + value.endDate + "' ";
-                            if (value.PONo != "")
-                            {
-                                _Qry += " AND PONo = '" + value.PONo + "'";
-                            }
+                            _QryCondition = (_QryCondition.Length > 0) ? (" AND " + _QryCondition) : _QryCondition;
+                            _QryCondition += "(RIGHT(PODate,4)+'/'+SUBSTRING(PODate,4,2)+'/'+LEFT(PODate,2)) >= '" + value.startDate + "' " +
+                                " AND (RIGHT(PODate,4)+'/'+SUBSTRING(PODate,4,2)+'/'+LEFT(PODate,2)) <= '" + value.endDate + "' ";
                         }
                         else
                         {
@@ -220,21 +358,35 @@ namespace HITConnect.Controllers
                         }
 
                     }
-                    else if (value.startDate == "" || value.endDate == "")
+                    if (value.startACK != "" && value.endACK != "")
                     {
-                        if (value.PONo != "")
+                        if (Convert.ToDateTime(value.startACK) <= Convert.ToDateTime(value.endACK))
                         {
-                            _Qry += " WHERE PONo = '" + value.PONo + "'";
+                            _QryCondition = (_QryCondition.Length > 0) ? (" AND " + _QryCondition) : _QryCondition;
+
+                            _QryCondition += " (RIGHT(AcknowledgeDate,4)+'/'+SUBSTRING(AcknowledgeDate,4,2)+'/'+LEFT(AcknowledgeDate,2)) >= '" + value.startACK + "' " +
+                                " AND (RIGHT(AcknowledgeDate,4)+'/'+SUBSTRING(AcknowledgeDate,4,2)+'/'+LEFT(AcknowledgeDate,2)) <= '" + value.endACK + "' ";
                         }
                         else
                         {
                             statecheck = 2;
-                            msgError = "Please check start date and end date!!!";
+                            msgError = "Start Date must be lower than End Date";
                         }
+                    }
+                    if (value.PONo != "")
+                    {
+                        _QryCondition = (_QryCondition.Length > 0) ? (" AND " + _QryCondition) : _QryCondition;
+                        _QryCondition += " PONo = '" + value.PONo + "'";
+                    }
+                    if (value.AcknowledgeBy != "")
+                    {
+                        _QryCondition = (_QryCondition.Length > 0) ? (" AND " + _QryCondition) : _QryCondition;
+                        _QryCondition += " AcknowledgeBy = '" + value.AcknowledgeBy + "'";
                     }
 
                     if (statecheck == 0)
                     {
+                        _Qry = (_QryCondition.Length > 0) ? (_Qry + "WHERE " + _QryCondition) : _Qry;
                         dt = Cnn.GetDataTable(_Qry, WSM.Conn.DB.DataBaseName.DB_VENDER);
                         statecheck = 1;
                         msgError = "Successful";

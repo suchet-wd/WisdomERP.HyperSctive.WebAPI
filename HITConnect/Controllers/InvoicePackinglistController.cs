@@ -48,7 +48,8 @@ namespace HITConnect.Controllers
                         {
                             if (row.invdate != "")
                             {
-                                if (!DateTime.TryParseExact(row.invdate, "yyyy/MM/dd", DateTimeFormatInfo.InvariantInfo, DateTimeStyles.None, out tempDate))
+                                if (!DateTime.TryParseExact(row.invdate, "yyyy/MM/dd", 
+                                    DateTimeFormatInfo.InvariantInfo, DateTimeStyles.None, out tempDate))
                                 {
                                     statecheck = 2;
                                     msgError = "Please check Date format 'yyyy/MM/dd' !!! [invdate]";
@@ -63,8 +64,9 @@ namespace HITConnect.Controllers
 
                                     _Qry += " BEGIN TRANSACTION ";
                                     _Qry += " BEGIN TRY ";
-                                    _Qry += " SELECT @TotalRow =COUNT(*) FROM [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.POPackRoll " +
-                                    " WHERE invno = '" + row.invno + "'";
+                                    _Qry += " SELECT @TotalRow =COUNT(*) FROM [" + 
+                                        WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.POPackRoll " +
+                                        " WHERE invno = '" + row.invno + "'";
 
                                     _Qry += " DELETE FROM [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.POPackRoll " +
                                     " WHERE invno = '" + row.invno + "' AND FTStateClose is NULL ";
@@ -107,7 +109,9 @@ namespace HITConnect.Controllers
                                         int count = 0;
                                         foreach (POPackroll pr in row.poPackRoll)
                                         {
-                                            _Qry += " SELECT @vendercode = (SELECT DISTINCT POV.VenderCode FROM dbo.POToVender POV WHERE POV.PONo = '" + pr.pono + "' ) ";
+                                            _Qry += " SELECT @vendercode = (SELECT DISTINCT POV.VenderCode FROM [" + 
+                                                WSM.Conn.DB.DataBaseName.DB_VENDER + 
+                                                "].dbo.POToVender POV WHERE POV.PONo = '" + pr.pono + "' ) ";
 
                                             count = 0;
                                             foreach (Roll r in pr.roll)

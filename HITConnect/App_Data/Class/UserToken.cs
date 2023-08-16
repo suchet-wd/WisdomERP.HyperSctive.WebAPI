@@ -15,11 +15,9 @@ namespace HITConnect
         [JsonProperty("pwd", Required = Required.Always)]
         public string pwd { get; set; }
 
-        [JsonProperty("venderGroup", Required = Required.Always)]
-        public string venderGroup { get; set; }
-
         public static List<string> ValidateField(UserToken value)
         {
+            DataTable _dataTable = null;
             string msgError = "";
             string statecheck = "0";
             if (value.id == "")
@@ -36,10 +34,19 @@ namespace HITConnect
                 }
                 else
                 {
-                    if (value.venderGroup == "")
+                    try
                     {
-                        statecheck = "2";
-                        msgError = "Please check Vender Group!!!";
+                        WSM.Conn.SQLConn Cnn = new WSM.Conn.SQLConn();
+                        string _Qry = "SELECT V.VenderMailLogIn AS VenderMailLogIn ,V.Pwd AS pwd, ATK.VenderMailLogIn ";
+                        _Qry += "FROM [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.VenderUser AS V WITH(NOLOCK) ";
+                        _Qry += "LEFT JOIN [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.AuthenKeys AS ATK WITH(NOLOCK )  ON ATK.VenderMailLogIn = V.VenderMailLogIn ";
+                        _Qry += "WHERE V.VenderMailLogIn = '" + value.id + "' AND V.Pwd = '" + value.id + "'";
+                        _dataTable = Cnn.GetDataTable(_Qry, WSM.Conn.DB.DataBaseName.DB_VENDER);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex);
+                        return null;
                     }
                 }
             }
@@ -51,23 +58,27 @@ namespace HITConnect
 
         public static DataTable GetDTUserValidate(WSM.Conn.SQLConn Cnn, UserToken value)
         {
-            DataTable dataTable = new DataTable();
+            DataTable _dataTable = null;
             try
             {
                 string _Qry = "";
-                if (value.id != "" && value.venderGroup != "")
+                if (value.id != "")// && value.venderGroup != "")
                 {
-                    _Qry = " SELECT V.Pwd AS pwd, V.VenderMailLogIn AS VenderMailLogIn , VUP.VenderGrp AS VenderGrp " +
-                        " FROM [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.VenderUser AS V " +
-                        " LEFT JOIN [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.AuthenKeys AS ATK ON ATK.VenderMailLogIn = V.VenderMailLogIn  " +
-                        " LEFT JOIN VenderUserPermissionCmp VUP ON V.VenderMailLogIn = VUP.VenderMailLogIn " +
-                        " WHERE V.VenderMailLogIn = '" + value.id + "' AND VUP.VenderGrp = '" + value.venderGroup + "'";
+                    _Qry = "SELECT DISTINCT V.Pwd AS pwd, V.VenderMailLogIn, ATK.VenderMailLogIn AS ATK " +
+                        //--, P.VenderGrp AS VenderGrp
+                        "FROM [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.VenderUser AS V WITH(NOLOCK) " +
+                        "OUTER APPLY(SELECT* FROM [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.AuthenKeys WITH (NOLOCK ) " +
+                        "WHERE VenderMailLogIn = V.VenderMailLogIn) AS ATK " +
+                        "OUTER APPLY(SELECT VenderGrp FROM [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.VenderUserPermissionCmp WITH (NOLOCK ) " +
+                        "WHERE VenderMailLogIn = V.VenderMailLogIn) AS P " +
+                        "WHERE V.VenderMailLogIn = '" + value.id + "'";
+                    _dataTable = Cnn.GetDataTable(_Qry, WSM.Conn.DB.DataBaseName.DB_VENDER);
                 }
                 else
                 {
-                    return null;
+                    return _dataTable;
                 }
-                return Cnn.GetDataTable(_Qry, WSM.Conn.DB.DataBaseName.DB_VENDER);
+                return _dataTable;
             }
             catch (Exception ex)
             {

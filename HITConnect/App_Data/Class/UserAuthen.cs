@@ -15,9 +15,6 @@ namespace HITConnect
         [JsonProperty("pwd", Required = Required.Always)]
         public string pwd { get; set; }
 
-        [JsonProperty("venderGroup", Required = Required.Always)]
-        public string venderGroup { get; set; }
-
         [JsonProperty("token")]
         public string token { get; set; }
 
@@ -36,15 +33,7 @@ namespace HITConnect
                 {
                     statecheck = "2";
                     msgError = "Please check password!!!";
-                }
-                else
-                {
-                    if (value.venderGroup == "")
-                    {
-                        statecheck = "2";
-                        msgError = "Please check Vender Group!!!";
-                    }
-                }
+                } 
             }
             List<string> _result = new List<string>();
             _result.Add(statecheck);
@@ -54,52 +43,54 @@ namespace HITConnect
 
         public static DataTable GetDTUserValidate(WSM.Conn.SQLConn Cnn, UserAuthen value)
         {
-            DataTable dataTable = new DataTable();
+            DataTable _dataTable = new DataTable();
+
+            string _Qry = "";
+            if (value.id != "" &&  value.token == "") 
+            {
+                _Qry = " SELECT V.Pwd AS pwd, V.VenderMailLogIn AS VenderMailLogIn , VUP.VenderGrp AS VenderGrp " +
+                    " FROM [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.VenderUser AS V WITH ( NOLOCK ) " +
+                    " LEFT JOIN [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.AuthenKeys AS ATK WITH ( NOLOCK ) " +
+                    " ON ATK.VenderMailLogIn = V.VenderMailLogIn  " +
+                    " LEFT JOIN [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.VenderUserPermissionCmp VUP WITH ( NOLOCK ) " +
+                    " ON V.VenderMailLogIn = VUP.VenderMailLogIn " +
+                    " WHERE V.VenderMailLogIn = '" + value.id + "'";
+            }
+            else if (value.id != "" &&  value.token != "") 
+            {
+                _Qry = " SELECT V.Pwd AS pwd, V.VenderMailLogIn AS VenderMailLogIn , VUP.VenderGrp AS VenderGrp " +
+                    " FROM [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.VenderUser AS V WITH ( NOLOCK ) " +
+                    " LEFT JOIN [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.AuthenKeys AS ATK WITH ( NOLOCK ) " +
+                    " ON ATK.VenderMailLogIn = V.VenderMailLogIn  " +
+                    " LEFT JOIN [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.VenderUserPermissionCmp AS VUP WITH ( NOLOCK ) " +
+                    " ON V.VenderMailLogIn = VUP.VenderMailLogIn " +
+                    " WHERE V.VenderMailLogIn = '" + value.id + "' AND ATK.DataKey = '" + value.token + "'";
+            }
             try
             {
-                string _Qry = "";
-                if (value.id != "" && value.venderGroup != "" && value.token == "")
-                {
-                    _Qry = " SELECT V.Pwd AS pwd, V.VenderMailLogIn AS VenderMailLogIn , VUP.VenderGrp AS VenderGrp " +
-                        " FROM [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.VenderUser AS V " +
-                        " LEFT JOIN [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.AuthenKeys AS ATK ON ATK.VenderMailLogIn = V.VenderMailLogIn  " +
-                        " LEFT JOIN VenderUserPermissionCmp VUP ON V.VenderMailLogIn = VUP.VenderMailLogIn " +
-                        " WHERE V.VenderMailLogIn = '" + value.id + "' AND VUP.VenderGrp = '" + value.venderGroup + "'";
-                }
-                else if (value.id != "" && value.venderGroup != "" && value.token != "")
-                {
-                    _Qry = " SELECT V.Pwd AS pwd, V.VenderMailLogIn AS VenderMailLogIn , VUP.VenderGrp AS VenderGrp " +
-                        " FROM [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.VenderUser AS V " +
-                        " LEFT JOIN [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.AuthenKeys AS ATK ON ATK.VenderMailLogIn = V.VenderMailLogIn  " +
-                        " LEFT JOIN VenderUserPermissionCmp VUP ON V.VenderMailLogIn = VUP.VenderMailLogIn " +
-                        " WHERE V.VenderMailLogIn = '" + value.id + "' AND VUP.VenderGrp = '" + value.venderGroup +
-                        "' AND ATK.DataKey = '" + value.token + "'";
-                }
-                else
-                {
-                    return null;
-                }
-                return Cnn.GetDataTable(_Qry, WSM.Conn.DB.DataBaseName.DB_VENDER);
+                _dataTable = Cnn.GetDataTable(_Qry, WSM.Conn.DB.DataBaseName.DB_VENDER);
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex);
-                return null;
             }
+            return _dataTable;
         }
 
         public static bool DelAuthenKey(WSM.Conn.SQLConn Cnn, string value)
         {
             string _Qry = "";
+            bool _result = false;
             try
             {
                 _Qry = " DELETE FROM [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.AuthenKeys WHERE VenderMailLogIn = '" + value + "'";
+                _result = Cnn.ExecuteOnly(_Qry, WSM.Conn.DB.DataBaseName.DB_VENDER);
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex);
             }
-            return Cnn.ExecuteOnly(_Qry, WSM.Conn.DB.DataBaseName.DB_VENDER); ;
+            return _result;
         }
     }
 }

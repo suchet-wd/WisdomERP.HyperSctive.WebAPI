@@ -10,20 +10,20 @@ namespace HITConnect.Controllers
 {
     public class PaymentController : ApiController
     {
-        private string columnPOPayment = "SELECT ISNULL(PONo, '') AS PO Number, ISNULL(PayType, '') AS Pay Type, ISNULL(PaymentTerm, '') AS Payment Term, " +
-            " ISNULL(PaymentDate, '') AS Payment Date, ISNULL(LCNo, '') AS LC Number, ISNULL(PINo, '') AS PI Number, ISNULL(PIDate, '') AS PI Date, " +
-            " ISNULL(RcvPIDate, '') AS Receive PI Date, ISNULL(PISuplCFMDeliveryDate, '') AS PI Confirm Delivery Date, ISNULL(InvoiceNo, '') AS Invoice No, " +
-            " ISNULL(InvoiceDate, '') AS Invoice Date, ISNULL(PurchaseDate, '') AS Purchase Date, ISNULL(PurchaseBy, '') AS Purchase By, " +
-            " ISNULL(SupplierCode, '') AS Vendor Code, ISNULL(SupplierName, '') AS Vendor Name, ISNULL(Currency, '') AS Currency, " +
-            " ISNULL(DeliveryDate, '') AS Delivery Date, ISNULL(Company, '') AS Company Name, ISNULL(Buy, '') AS Buy Code, ISNULL(POUnit, '') AS Unit, " +
-            " ISNULL(POQty, 0) AS PO Qty, ISNULL(POAmount, 0) AS PO Amount, ISNULL(POOutstandingQty, 0) AS PO Outstanding Qty, " +
+        private string columnPOPayment = "SELECT ISNULL(PONo, '') AS 'PONumber', ISNULL(PayType, '') AS 'PayType', ISNULL(PaymentTerm, '') AS 'PaymentTerm', " +
+            " ISNULL(PaymentDate, '') AS 'PaymentDate', ISNULL(LCNo, '') AS 'LCNumber', ISNULL(PINo, '') AS 'PINumber', ISNULL(PIDate, '') AS 'PIDate', " +
+            " ISNULL(RcvPIDate, '') AS 'ReceivePIDate', ISNULL(PISuplCFMDeliveryDate, '') AS 'PIConfirmDeliveryDate', ISNULL(InvoiceNo, '') AS 'InvoiceNo', " +
+            " ISNULL(InvoiceDate, '') AS 'InvoiceDate', ISNULL(PurchaseDate, '') AS 'PurchaseDate', ISNULL(PurchaseBy, '') AS 'PurchaseBy', " +
+            " ISNULL(SupplierCode, '') AS 'VendorCode', ISNULL(SupplierName, '') AS 'VendorName', ISNULL(Currency, '') AS 'Currency', " +
+            " ISNULL(DeliveryDate, '') AS 'DeliveryDate', ISNULL(Company, '') AS 'CompanyName', ISNULL(Buy, '') AS 'BuyCode', ISNULL(POUnit, '') AS 'Unit', " +
+            " ISNULL(POQty, 0) AS 'POQty', ISNULL(POAmount, 0) AS 'POAmount', ISNULL(POOutstandingQty, 0) AS 'POOutstandingQty', " +
             //" ISNULL(Revised, 0) AS Revised, ISNULL(RevisedDate, '') AS RevisedDate, ISNULL(RevisedBy, '') AS RevisedBy, " +
-            " ISNULL(SentDocToAccDate, '') AS Submit Document Date, ISNULL(FinishbalancePaymentDate, '') AS Complete Payment Date, " +
-            " ISNULL(PIQuantity, 0) AS PI Quantity, ISNULL(PINetAmt, 0) AS PI Net Amt, ISNULL(PIDocCNAmt, 0) AS Credit Note Amount, " +
-            " ISNULL(PIDocDNAmt, 0) AS Debit Note Amount, ISNULL(PIDocSurchargeAmt, 0) AS Surcharge Amount, ISNULL(PIDocNetAmt, 0) AS Net Amount, " +
-            " ISNULL(Note, '') AS Remark, " +
+            " ISNULL(SentDocToAccDate, '') AS 'SubmitDocumentDate', ISNULL(FinishbalancePaymentDate, '') AS 'CompletePaymentDate', " +
+            " ISNULL(PIQuantity, 0) AS 'PIQuantity', ISNULL(PINetAmt, 0) AS 'PINetAmt', ISNULL(PIDocCNAmt, 0) AS 'CreditNoteAmount', " +
+            " ISNULL(PIDocDNAmt, 0) AS 'DebitNoteAmount', ISNULL(PIDocSurchargeAmt, 0) AS 'SurchargeAmount', ISNULL(PIDocNetAmt, 0) AS 'NetAmount', " +
+            " ISNULL(Note, '') AS 'Remark' " +
             //" ISNULL(FTStateClose, '') AS FTStateClose, ISNULL(FTStateHasFile, '') AS FTStateHasFile " +
-            " , ISNULL(DATALENGTH(FTFileRef), -1) AS PDF File ";
+            " , ISNULL(DATALENGTH(FTFileRef), -1) AS 'PDFFile' ";
 
 
         [HttpPost]
@@ -60,11 +60,11 @@ namespace HITConnect.Controllers
 
                         _Qry = columnPOPayment + " FROM [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.POPayment ";
 
-                        if (value.startDate != null && value.endDate != null)
+                        if (value.startDate != "" && value.endDate != "")
                         {
                             if (Convert.ToDateTime(value.startDate) <= Convert.ToDateTime(value.endDate))
                             {
-                                _Qry += " WHERE PaymentDate BETWEEN '" + value.startDate + "' AND '" + value.endDate + "' ";
+                                _Qry += " WHERE PaymentDate >= '" + value.startDate + "' AND PaymentDate <='" + value.endDate + "' ";
                                 if (value.PI != null && value.PO == null)
                                 {
                                     _Qry += " AND PINo = '" + value.PI + "' ";
@@ -95,15 +95,13 @@ namespace HITConnect.Controllers
                             {
                                 _Qry += " WHERE PONo = '" + value.PO + "'  OR PINo = '" + value.PI + "' ";
                             }
-                            else
-                            {
-                                statecheck = 2;
-                                msgError = "Please check start date and end date!!!";
-                            }
                         }
 
                         if (statecheck == 0)
+                        {
                             dt = Cnn.GetDataTable(_Qry, WSM.Conn.DB.DataBaseName.DB_VENDER);
+                            statecheck = 1;
+                        }
 
                         if (statecheck != 2)
                         {
@@ -149,6 +147,7 @@ namespace HITConnect.Controllers
 
             if (statecheck == 1)
             {
+                jsondata = JsonConvert.SerializeObject(dt);
                 return new HttpResponseMessage
                 {
                     StatusCode = HttpStatusCode.Accepted,

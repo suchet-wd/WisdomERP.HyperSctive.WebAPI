@@ -10,14 +10,6 @@ namespace HITConnect.Controllers
 {
     public class UserController : ApiController
     {
-        /*
-        // GET api/values
-        public IEnumerable<string> Get()
-        {
-            return new string[] { "String1", "String2" };
-        }
-        */
-
         [HttpPost]
         [Route("api/GetToken/")]
         public HttpResponseMessage GetToken([FromBody] UserToken value)
@@ -64,7 +56,7 @@ namespace HITConnect.Controllers
                                     statecheck = 1;
                                     msgError = "Successful";
                                 }
-                                _Qry = "SELECT DataKey FROM [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.AuthenKeys " +
+                                _Qry = "SELECT DataKey FROM [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.AuthenKeys WITH ( NOLOCK ) " +
                                     " WHERE VenderMailLogIn = '" + value.id + "'";
                                 dt = Cnn.GetDataTable(_Qry, WSM.Conn.DB.DataBaseName.DB_VENDER);
                                 foreach (DataRow r in dt.Rows)

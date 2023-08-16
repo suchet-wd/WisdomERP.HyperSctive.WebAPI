@@ -17,8 +17,8 @@ namespace HITConnect
         [JsonProperty("Authen")]
         public UserAuthen authen { get; set; }
 
-        [JsonProperty("PINumber")]
-        public string PINo { get; set; }
+        [JsonProperty("PONumber")]
+        public string PONo { get; set; }
 
         [JsonProperty("pdfFile")]
         public string pdfFile { get; set; }
@@ -26,6 +26,11 @@ namespace HITConnect
 
     public class PI
     {
+        //
+        //StateExport
+        //StateExportDate
+        //POPrice
+        //T2_Confirm_Amount
         [JsonProperty("PINumber")]
         public string FTDocNo { get; set; }
 
@@ -35,23 +40,20 @@ namespace HITConnect
         [JsonProperty("PIConfirmDeliveryDate")]
         public string Estimatedeldate { get; set; }
 
-        [JsonProperty("TotalPIQty")]
+        [JsonProperty("ConfirmQuantity")]
         public double FNPIQuantity { get; set; }
 
-        [JsonProperty("TotalPIAmt")]
-        public double FNPINetAmt { get; set; }
+        [JsonProperty("ConfirmMOQQuantity")]
+        public double T2_Confirm_MOQQuantity { get; set; }
 
-        [JsonProperty("ConfirmShipDate")]
-        public string T2_Confirm_Ship_Date { get; set; }
+        [JsonProperty("TotalP/IQty")]
+        public double TotalPIQty { get; set; }
 
-        [JsonProperty("ActualDeliveryDate")]
-        public string Actualdeldate { get; set; }
-
-        [JsonProperty("ConfirmPrice")]
-        public double T2_Confirm_Price { get; set; }
-
-        [JsonProperty("ConfirmQuantity")]
-        public double T2_Confirm_Quantity { get; set; }
+        [JsonProperty("P/ISurChargeAmount")]
+        public double Doc_Surcharge_Amount { get; set; }
+        
+        [JsonProperty("TotalP/IAmount")]
+        public double TotalPIAmount { get; set; }
 
         [JsonProperty("InvoiceNo")]
         public string InvoiceNo { get; set; }
@@ -59,16 +61,39 @@ namespace HITConnect
         [JsonProperty("AWBNo")]
         public string FTAWBNo { get; set; }
 
+        [JsonProperty("ConfirmPrice")]
+        public double ConfirmPrice { get; set; }
+        
+        [JsonProperty("ConfirmShipDate")]
+        public string T2_Confirm_Ship_Date { get; set; }
+
+        [JsonProperty("ConfirmShipQuantity")]
+        public double T2_Confirm_ShipQuantity { get; set; }
+
+        [JsonProperty("ActualDeliveryDate")]
+        public string Actualdeldate { get; set; }
+
+        [JsonProperty("ConfirmShipDate(2nd)")]
+        public string T2_Confirm_Ship_Date2 { get; set; }
+
+        [JsonProperty("ConfirmShipQuantity(2nd)")]
+        public double T2_Confirm_ShipQuantity2 { get; set; }
+
+        [JsonProperty("ActualDeliveryDate(2nd)")]
+        public string Actualdeldate2 { get; set; }
+
+        [JsonProperty("FNPINetAmt")]
+        public double FNPINetAmt { get; set; }
         //[JsonProperty("ConfirmBy")]
         //public string T2_Confirm_By { get; set; }
 
-        [JsonProperty("Remark")]
+        [JsonProperty("Memo")]
         public string T2_Confirm_Note { get; set; }
 
         //[JsonProperty("FTStateHasFile")]
         //public string FTStateHasFile { get; set; }
 
-        [JsonProperty("FTFileRef")]
+        [JsonProperty("FilePDF")]
         public string FTFileRef { get; set; }
 
         [JsonProperty("PO")]
@@ -102,14 +127,20 @@ namespace HITConnect
         [JsonProperty("DocType")]
         public int FNDocType { get; set; }
 
-        [JsonProperty("ConfirmOrderNo")]
-        public string T2_Confirm_OrderNo { get; set; }
+        //[JsonProperty("ConfirmOrderNo")]
+        //public string T2_Confirm_OrderNo { get; set; }
 
-        [JsonProperty("RcvQty")]
-        public int RcvQty { get; set; }
+        [JsonProperty("ConfirmPrice")]
+        public double T2_Confirm_Price { get; set; }
 
-        [JsonProperty("RcvDate")]
-        public string RcvDate { get; set; }
+        [JsonProperty("ConfirmQuantity")]
+        public double T2_Confirm_Quantity { get; set; }
+
+        //[JsonProperty("RcvQty")]
+        //public int RcvQty { get; set; }
+
+        //[JsonProperty("RcvDate")]
+        //public string RcvDate { get; set; }
 
         /* For Import Main System
          
