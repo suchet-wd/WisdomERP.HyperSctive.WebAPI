@@ -118,16 +118,16 @@ namespace HITConnect.Controllers
                                             {
 
                                                 _Qry += " INSERT INTO [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.POPackRoll ( " +
-                                                    " [invno], [invdate], [pono], [itemno], [colorcode], [size], [colorname], [rollno], " +
-                                                    " [width], [actualwidth], [actuallength], [actualweight], [lotno], [barcode], " +
-                                                    " [clothno], [stock], [packno], [packtype], [ordertype], [ORDERNO], [ArticleNo], " +
-                                                    " [Composition], [StdWt], [NetWtKG], [GrossWtKG], [Madein], [Shipto], [FTDataKey], " +
-                                                    " [FTInsUser], [FDInsDate], [FTInsTime], [FTVenderCode] ) VALUES (";
+                                                    " invno, invdate, pono, itemno, colorcode, size, colorname, rollno, " +
+                                                    " width, actualwidth, actuallength, actualweight, lotno, barcode, " +
+                                                    " clothno, stock, ordertype, ORDERNO, ArticleNo, " +
+                                                    " Composition, StdWt, NetWtKG, GrossWtKG, Madein, Shipto, FTDataKey, " +
+                                                    " FTInsUser, FDInsDate, FTInsTime, FTVenderCode ) VALUES (";
                                                 _Qry += "'" + row.invno + "','" + row.invdate + "','" + pr.pono + "','" + pr.itemno + "','" +
                                                     pr.colorcode + "','" + pr.size + "','" + pr.colorname + "','" + r.rollno + "','" +
                                                     r.width + "','" + r.actualweight + "','" + r.actuallength + "','" + r.actualweight +
-                                                    "','" + r.actualweight + "','" + r.lotno + "','" + r.barcode + "','" + r.clothno + "','" +
-                                                    r.stock + "','" + r.packno + "','" + r.ordertype + "','" + r.ORDERNO + "','" +
+                                                    "','" + r.lotno + "','" + r.barcode + "','" + r.clothno + "','" +
+                                                    r.stock + "','" + r.ordertype + "','" + r.ORDERNO + "','" +
                                                     r.ArticleNo + "','" + r.Composition + "','" + r.StdWt + "','" + r.NetWtKG + "','" +
                                                     r.GrossWtKG + "','" + r.Madein + "','" + r.Shipto + "','" + row.invno + pr.pono +
                                                     count++ + "','" + value.authen.id + "', @Date, @Time, @vendercode) ";

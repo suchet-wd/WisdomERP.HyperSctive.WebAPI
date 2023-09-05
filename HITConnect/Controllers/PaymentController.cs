@@ -15,15 +15,15 @@ namespace HITConnect.Controllers
             " ISNULL(RcvPIDate, '') AS 'ReceivePIDate', ISNULL(PISuplCFMDeliveryDate, '') AS 'PIConfirmDeliveryDate', ISNULL(InvoiceNo, '') AS 'InvoiceNo', " +
             " ISNULL(InvoiceDate, '') AS 'InvoiceDate', ISNULL(PurchaseDate, '') AS 'PurchaseDate', ISNULL(PurchaseBy, '') AS 'PurchaseBy', " +
             " ISNULL(SupplierCode, '') AS 'VendorCode', ISNULL(SupplierName, '') AS 'VendorName', ISNULL(Currency, '') AS 'Currency', " +
-            " ISNULL(DeliveryDate, '') AS 'DeliveryDate', ISNULL(Company, '') AS 'CompanyName', ISNULL(Buy, '') AS 'BuyCode', ISNULL(POUnit, '') AS 'Unit', " +
+            " ISNULL(DeliveryDate, '') AS 'DeliveryDate', ISNULL(Company, '') AS 'CompanyName', ISNULL(Buy, '') AS 'BuyMonth', ISNULL(POUnit, '') AS 'Unit', " +
             " ISNULL(POQty, 0) AS 'POQty', ISNULL(POAmount, 0) AS 'POAmount', ISNULL(POOutstandingQty, 0) AS 'POOutstandingQty', " +
             //" ISNULL(Revised, 0) AS Revised, ISNULL(RevisedDate, '') AS RevisedDate, ISNULL(RevisedBy, '') AS RevisedBy, " +
             " ISNULL(SentDocToAccDate, '') AS 'SubmitDocumentDate', ISNULL(FinishbalancePaymentDate, '') AS 'CompletePaymentDate', " +
             " ISNULL(PIQuantity, 0) AS 'PIQuantity', ISNULL(PINetAmt, 0) AS 'PINetAmt', ISNULL(PIDocCNAmt, 0) AS 'CreditNoteAmount', " +
             " ISNULL(PIDocDNAmt, 0) AS 'DebitNoteAmount', ISNULL(PIDocSurchargeAmt, 0) AS 'SurchargeAmount', ISNULL(PIDocNetAmt, 0) AS 'NetAmount', " +
-            " ISNULL(Note, '') AS 'Remark' " +
+            " ISNULL(Note, '') AS 'Remark' , FTFileRef AS 'PDFFile' ";
             //" ISNULL(FTStateClose, '') AS FTStateClose, ISNULL(FTStateHasFile, '') AS FTStateHasFile " +
-            " , ISNULL(DATALENGTH(FTFileRef), -1) AS 'PDFFile' ";
+            //" , ISNULL(DATALENGTH(FTFileRef), -1) AS 'PDFFile' ";
 
 
         [HttpPost]

@@ -26,16 +26,16 @@ namespace HITConnect
 
     public class POPackroll
     {
-        [JsonProperty("PONumber")]
+        [JsonProperty("PONumber", Required = Required.Always)]
         public string pono { get; set; }
 
-        [JsonProperty("ItemNo")]
+        [JsonProperty("ItemNo", Required = Required.Always)]
         public string itemno { get; set; }
 
-        [JsonProperty("ColorCode")]
+        [JsonProperty("ColorCode", Required = Required.Always)]
         public string colorcode { get; set; }
 
-        [JsonProperty("Size")]
+        [JsonProperty("Size", Required = Required.Always)]
         public string size { get; set; }
 
         [JsonProperty("ColorName")]
@@ -75,11 +75,11 @@ namespace HITConnect
         [JsonProperty("Stock")]
         public string stock { get; set; }
 
-        [JsonProperty("PackingNo")]
-        public string packno { get; set; }
+        //[JsonProperty("PackingNo")]
+        //public string packno { get; set; }
 
-        [JsonProperty("PackingType")]
-        public string packtype { get; set; }
+        //[JsonProperty("PackingType")]
+        //public string packtype { get; set; }
 
         [JsonProperty("MaterialType")]
         public string ordertype { get; set; }

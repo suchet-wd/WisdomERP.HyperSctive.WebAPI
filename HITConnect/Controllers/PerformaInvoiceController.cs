@@ -390,7 +390,7 @@ namespace HITConnect.Controllers
             msgError = _result[1];
             // End Check id + pwd + vender group
 
-            if (value.PONo == "")
+            if (value.PINo == "")
             {
                 statecheck = 2;
                 msgError = "Please check PO number!!!";
@@ -406,7 +406,7 @@ namespace HITConnect.Controllers
                 {
                     try
                     {
-                        _Qry = createSqlUploadPDF(value.authen.id, value.pdfFile, value.PONo);
+                        _Qry = createSqlUploadPDF(value.authen.id, value.pdfFile, value.PINo);
                         if (Cnn.ExecuteOnly(_Qry, WSM.Conn.DB.DataBaseName.DB_VENDER))
                         {
                             statecheck = 1;
@@ -468,16 +468,16 @@ namespace HITConnect.Controllers
 
             _Qry += " BEGIN TRANSACTION ";
             _Qry += " BEGIN TRY ";
-            _Qry += " UPDATE [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.POToVenderConfirm " +
+            _Qry += " UPDATE " + WSM.Conn.DB.DataBaseName.DB_VENDER + ".dbo.POToVenderConfirm " +
                 " SET FTUpdUser = '" + id + "', FDUpdDate = @Date, FTUpdTime = @Time, " +
             " FTFileRef = CAST(N'' AS xml).value('xs:base64Binary(\"" + pdfFile + "\")', 'varbinary(max)'), FTStateHasFile = '1' WHERE PONo = '" + poNo + "' ";
             _Qry += " SELECT @TotalEff=@@ROWCOUNT ";
 
-            _Qry += " UPDATE [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.POToVender_ACK " +
+            _Qry += " UPDATE " + WSM.Conn.DB.DataBaseName.DB_VENDER + ".dbo.POToVender_ACK " +
                 " SET FTStateHasFile = '1' WHERE PONo = '" + poNo + "' ";
             _Qry += " SELECT @TotalEff_ACK=@@ROWCOUNT ";
 
-            _Qry += " IF (@TotalEff = @TotalEff_ACK) ";
+            _Qry += " IF (@TotalEff > 0 AND @TotalEff_ACK > 0) ";
             _Qry += "   BEGIN ";
             _Qry += "       COMMIT TRANSACTION ";
             _Qry += "   END ";

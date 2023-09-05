@@ -17,8 +17,8 @@ namespace HITConnect
         [JsonProperty("Authen")]
         public UserAuthen authen { get; set; }
 
-        [JsonProperty("PONumber")]
-        public string PONo { get; set; }
+        [JsonProperty("PINumber")]
+        public string PINo { get; set; }
 
         [JsonProperty("pdfFile")]
         public string pdfFile { get; set; }

@@ -55,7 +55,6 @@ namespace HITConnect.Controllers
                             dtPO.Columns.Remove("FTYMerch");
                             dtPO.Columns.Remove("HKMerch");
                             dtPO.Columns.Remove("ReplyCode");
-                            //dtPO.Columns.Remove("StateFlag");
                             dtPO.Columns.Remove("StateAcknowledge");
                             dtPO.Columns.Remove("AcknowledgeBy");
                             dtPO.Columns.Remove("AcknowledgeDate");
@@ -73,7 +72,6 @@ namespace HITConnect.Controllers
                             dtPO.Columns.Remove("RcvQty");
                             dtPO.Columns.Remove("RcvDate");
                             dtPO.Columns.Remove("StateRead");
-                            //dtPO.Columns.Remove("ItemSeq");
                             dtPO.Columns.Remove("UPCCOMBOIM");
                             dtPO.Columns.Remove("ContentCode");
                             dtPO.Columns.Remove("CareCode");
@@ -123,6 +121,10 @@ namespace HITConnect.Controllers
                             dtPO.Columns.Remove("RejectedBuyDate");
                             dtPO.Columns.Remove("RejectedBuyTime");
                             dtPO.Columns.Remove("T2_Confirm_MOQQuantity");
+                            dtPO.Columns.Remove("RejectedBuyNote");
+                            dtPO.Columns.Remove("StateMailNotify");
+                            dtPO.Columns.Remove("InvoiceCmpCode");
+
 
                             /* ------------------  Rename Column ------------------ */
 
@@ -134,8 +136,8 @@ namespace HITConnect.Controllers
                             dtPO.Columns["QtyUnit"].ColumnName = "Unit";
                             dtPO.Columns["DeliveryDate"].ColumnName = "FCTYNeedDate";
                             dtPO.Columns["Custporef"].ColumnName = "EndCustomerPO";
-                            dtPO.Columns["Buy"].ColumnName = "BuyCode";
-                            dtPO.Columns["BuyNo"].ColumnName = "BuyMonth";
+                            dtPO.Columns["Buy"].ColumnName = "BuyMonth";
+                            dtPO.Columns["BuyNo"].ColumnName = "BuyCode";
                             dtPO.Columns["Program"].ColumnName = "BuyGroup";
                             dtPO.Columns["SubProgram"].ColumnName = "SubProgram";
                             dtPO.Columns["Remarkfrommer"].ColumnName = "RemarkFromMer";
@@ -156,6 +158,7 @@ namespace HITConnect.Controllers
                             dtPO.Columns["ActualQuantity"].ColumnName = "TotalPOQuantity";
                             dtPO.Columns["POUploadTime"].ColumnName = "UploadTime";
                             dtPO.Columns["POUploadBy"].ColumnName = "UploadBy";
+                            dtPO.Columns["MOQ"].ColumnName = "MOQQuantity";
 
                             //dtPO.Columns["VenderCode"].ColumnName = "VendorCode";
                             //dtPO.Columns["VendorName"].ColumnName = "VendorName";
@@ -255,20 +258,11 @@ namespace HITConnect.Controllers
             string columnPO2V = " SELECT ISNULL(VenderCode, '') AS 'VendorCode' ,ISNULL(VendorName, '') AS 'VendorName', " +
             "ISNULL(VendorLocation, '') AS 'VendorLocation' ,ISNULL(FactoryCode, '') AS 'FactoryCode' ," +
             "ISNULL(PONo, '') AS 'PONumber', RIGHT(PODate,4)+'/'+SUBSTRING(PODate,4,2)+'/'+LEFT(PODate,2)  AS 'PODate', " +
-            "ISNULL(Shipto, '') AS 'Shipto' ," +
-            "ISNULL(GarmentShipmentDestination, '') AS 'Garment Shipment Destination', " +
-            "ISNULL(MatrClass, '') AS 'MaterialType' , " +
-            "ISNULL(POItemCode, '') AS 'POItemCode' , ISNULL(MatrCode, '') AS 'MaterialCode' ," +
-            //"ISNULL(UPCCOMBOIM, '') AS 'UPC(COMBO IM#)' ,ISNULL(ContentCode, '') AS 'Content Code' ," +
-            //"ISNULL(CareCode, '') AS 'Care Code' ,
-            "ISNULL(ItemSeq, 0) AS 'ItemSeq' ," +
-            "ISNULL(Color, '') AS 'Color Code' ," +
+            "ISNULL(Shipto, '') AS 'Shipto', ISNULL(GarmentShipmentDestination, '') AS 'Garment Shipment Destination', " +
+            "ISNULL(MatrClass, '') AS 'MaterialType' , ISNULL(POItemCode, '') AS 'POItemCode' , ISNULL(MatrCode, '') AS 'MaterialCode' ," +
+            "ISNULL(ItemSeq, 0) AS 'ItemSeq', ISNULL(Color, '') AS 'Color Code' ," +
             "ISNULL(ColorName, '') AS 'Color Name' ,ISNULL(GCW, '') AS 'GCW' , ISNULL(Size, '') AS 'Size' ," +
-            //"ISNULL(SizeMatrix, '') AS 'SizeMatrix' ," +
-            "ISNULL(Currency, '') AS 'Currency' ," +
-            "ISNULL(Price, 0) AS 'Price' , " +
-            //"ISNULL(Quantity, 0) AS 'Quantity' ," +
-            "ISNULL(QtyUnit, '') AS 'Unit' ," +
+            "ISNULL(Currency, '') AS 'Currency', ISNULL(Price, 0) AS 'Price' , ISNULL(QtyUnit, '') AS 'Unit' ," +
             "RIGHT ( DeliveryDate, 4 )+ '/' + SUBSTRING( DeliveryDate, 4, 2 )+ '/' + LEFT ( DeliveryDate, 2 ) AS 'FCTYNeedDate',ISNULL(Season, '') AS 'Season' ," +
             "ISNULL(Custporef, '') AS 'EndCustomerPO' ,ISNULL(Buy, '') AS 'BuyCode' ," +
             "ISNULL(BuyNo, '') AS 'BuyMonth' , ISNULL(Category, '') AS 'Category' ," +
@@ -286,22 +280,18 @@ namespace HITConnect.Controllers
             "ISNULL(address2, '') AS 'Address 2', ISNULL(address3, '') AS 'Address 3' ," +
             "ISNULL(address4, '') AS 'Address 4' ,ISNULL(sysowner, '') AS 'Purchaser' , " +
             "ISNULL(ZeroInspection, '') AS 'Zero Inspection' ,ISNULL(GarmentShip, '') AS 'GAC Date', " +
-            //"ISNULL(OGACDate, '') AS 'OGAC Date(MM/YYYY)' ," +
-            "ISNULL(HITLink, '') AS 'HIT Job No', " +
-            "ISNULL(NIKECustomerPONo, '') AS 'NIKE Sales Order No' , ISNULL(QRS, 0) AS 'QPP/QRS Quantity', " +
+            "ISNULL(HITLink, '') AS 'HIT Job No', ISNULL(NIKECustomerPONo, '') AS 'NIKE Sales Order No' , ISNULL(QRS, 0) AS 'QPP/QRS Quantity', " +
             "ISNULL(BulkQRSSample, 0) AS 'BulkQuantity', " +
             "ISNULL(PromoQty, 0) AS 'PromoQuantity' ,ISNULL(ActualQuantity, 0) AS 'TotalQuantity' , " +
             "RIGHT ( POUploadDate, 4 )+ '/' + SUBSTRING( POUploadDate, 4, 2 )+ '/' + LEFT ( POUploadDate, 2 )  AS 'POUploadDate' ,ISNULL(POUploadTime, '') AS 'UploadTime' , " +
-            "ISNULL(POUploadBy, '') AS 'POUploadBy' ," +
-            //"ISNULL(CountryOfOrigin, '') AS 'Country Of Origin (Label)'  , " +
-            //"ISNULL(SaleOrderSaleOrderLine, '') AS 'SalesOrder Line (VAS)', " +
+            "ISNULL(POUploadBy, '') AS 'POUploadBy' , ISNULL(ItemDescription, '') AS 'ItemDescription' , ISNULL(Surcharge, 0) AS 'Surcharge' ";
+            //"ISNULL(SizeMatrix, '') AS 'SizeMatrix' , ISNULL(Quantity, 0) AS 'Quantity' ," +
+            //"ISNULL(CountryOfOrigin, '') AS 'Country Of Origin (Label)' , "ISNULL(SaleOrderSaleOrderLine, '') AS 'SalesOrder Line (VAS)', " +
             //"ISNULL(NikeSAPPOPONIKEPOLine, '') AS 'Nike PO-Line' , " +
             //"ISNULL(NikematerialStyleColorway, '') AS 'Nike Style-Colorway' ,ISNULL(Modifire1, '') AS 'Modifire 1' , " +
             //"ISNULL(Modifire2, '') AS 'Modifire 2', ISNULL(Modifire3, '') AS 'Modifire 3' ," +
             //"ISNULL(MPOHZ, '') AS 'MPOHZ' , " +
-            "ISNULL(ItemDescription, '') AS 'ItemDescription' ," +
             //"ISNULL(BulkQRSSample, '') AS 'Bulk/Sample (Care Label)' ,ISNULL(CCTotalpage, 0) AS 'CC Total page' ," +
-            "ISNULL(Surcharge, 0) AS 'Surcharge' ";
             //"ISNULL(ChinaInsertCard, '') AS 'ChinaInsertCard' , " +
             //"ISNULL(P1pc2in1, '') AS 'P1PC 2in1' , ISNULL(WovenLabelSizeLength, '') AS 'Woven Label Size Length (Avery)' , " +
             //"ISNULL(ArgentinaImportNumber, '') AS 'Argentina Import Number' ,ISNULL(DownFill, '') AS 'DownFill' ," +
@@ -318,6 +308,8 @@ namespace HITConnect.Controllers
             //"ISNULL(Fabriccode, 0) AS 'Fabric code' ,ISNULL(PRODUCTDESCRIPTION, '') AS 'PRODUCT DESCRIPTION' ," +
             //"ISNULL(GARMENTSTYLEFIELD, '') AS 'Compound Color CCI Mfor2in1CCIM' , " +
             //"ISNULL(GARMENTSTYLEFIELD, '') AS 'GARMENT STYLE FIELD' ,ISNULL(INSEAMSTYLE, '') AS 'INSEAM STYLE' ";
+            //"ISNULL(UPCCOMBOIM, '') AS 'UPC(COMBO IM#)' ,ISNULL(ContentCode, '') AS 'Content Code' ," +
+            //"ISNULL(CareCode, '') AS 'Care Code' , ISNULL(OGACDate, '') AS 'OGAC Date(MM/YYYY)' ," +
             string _Qry = "";
             int statecheck = 0;
             string msgError = "";
@@ -416,6 +408,83 @@ namespace HITConnect.Controllers
             else
             {
                 //jsondata = JsonConvert.SerializeObject(dts);
+                return new HttpResponseMessage
+                {
+                    StatusCode = HttpStatusCode.NotAcceptable,
+                    Content = new StringContent("{" + (char)34 + "Status" + (char)34 + ": " + (char)34 + statecheck +
+                    (char)34 + "," + (char)34 + "Refer" + (char)34 + ": " + (char)34 + msgError + (char)34 + "}",
+                    System.Text.Encoding.UTF8, "application/json")
+                };
+            }
+        }
+
+        [HttpPost]
+        [Route("api/RejectBuy/")]
+        public HttpResponseMessage RejectBuy([FromBody] PORejectBuy value)
+        {
+            string _Qry = "";
+            int statecheck = 0;
+            string msgError = "";
+            string jsondata = "";
+            DataTable dt = null;
+            DataTable dts = new DataTable();
+            dts.Columns.Add("Status", typeof(string));
+            dts.Columns.Add("Message", typeof(string));
+            WSM.Conn.SQLConn Cnn = new WSM.Conn.SQLConn();
+
+            // Check id + pwd + vender group
+            List<string> _result = UserAuthen.ValidateField(value.authen);
+            statecheck = int.Parse(_result[0]);
+            msgError = _result[1];
+            // End Check id + pwd + vender group
+            try
+            {
+                dt = HITConnect.UserAuthen.GetDTUserValidate(Cnn, value.authen);
+                // Delete Old Token from Database
+                UserAuthen.DelAuthenKey(Cnn, value.authen.id);
+                if (dt != null && dt.Rows.Count > 0)
+                {
+                    if (value.PORejected != null)
+                    {
+                        //STamp StateRejectedBuy = 1, RejectedBuyBy = '', RejectedBuyDate = '', RejectedBuyTime + Reject Note
+                        //StateSendMailRejected = '1', StateSendMailRejectedComplete = '0'
+                        _Qry = " declare @Date varchar(10) =Convert(varchar(10),Getdate(),103) " +
+                        " declare @Time varchar(8) = Convert(varchar(8), Getdate(), 114)" +
+                     " UPDATE " + WSM.Conn.DB.DataBaseName.DB_VENDER + ".dbo.POToVender_ACK SET StateSendMailRejected = '1', StateSendMailRejectedComplete = '0', " +
+                        " StateRejectedBuy = 1, RejectedBuyBy = '" + value.authen.id + "', RejectedBuyDate = @Date, RejectedBuyTime = @Time ";
+                        _Qry += "WHERE PONo = '" + value.PORejected.PONo + "' AND POItemCode = '" + value.PORejected.Item + "' AND Color ='" +
+                            value.PORejected.Color + "' AND Size = '" + value.PORejected.Size + "' ";
+
+                        // Send Mail Reject Buy
+                        _Qry += "exec [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].[dbo].[USP_MAILNOTIFY_REJECTBUY] @User = '" + value.authen.id + "' ";
+
+                        dt = Cnn.GetDataTable(_Qry, WSM.Conn.DB.DataBaseName.DB_VENDER);
+                        statecheck = 1;
+                        msgError = "Successful";
+                    }
+                }
+                else
+                {
+                    statecheck = 2;
+                    msgError = "Please check User authentication!!!";
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+
+            if (statecheck == 1)
+            {
+                jsondata = JsonConvert.SerializeObject(dts);
+                return new HttpResponseMessage
+                {
+                    StatusCode = HttpStatusCode.Accepted,
+                    Content = new StringContent(jsondata, System.Text.Encoding.UTF8, "application/json")
+                };
+            }
+            else
+            {
                 return new HttpResponseMessage
                 {
                     StatusCode = HttpStatusCode.NotAcceptable,
