@@ -333,14 +333,17 @@ namespace HITConnect.Controllers
                 UserAuthen.DelAuthenKey(Cnn, value.authen.id);
                 if (dt != null && dt.Rows.Count > 0)
                 {
-                    _Qry = columnPO2V + " FROM " + WSM.Conn.DB.DataBaseName.DB_VENDER + ".dbo.POToVender_ACK ";
+                    _Qry = columnPO2V + " FROM " + WSM.Conn.DB.DataBaseName.DB_VENDER + ".dbo.POToVender_ACK AS P WITH (NOLOCK)" +
+                        "WHERE P.VenderCode IN (SELECT Vender FROM " + WSM.Conn.DB.DataBaseName.DB_VENDER + ".dbo.VenderUserPermissionCmp AS V WITH (NOLOCK) " +
+                        "OUTER APPLY(SELECT* FROM " + WSM.Conn.DB.DataBaseName.DB_VENDER + ".dbo.VenderCode AS C WITH (NOLOCK) " +
+                        "WHERE V.VenderGrp = C.VenderGrp) AS A WHERE V.VenderMailLogIn = '"+ value.authen.id + "') ";
                     string _QryCondition = "";
                     if (value.startDate != "" && value.endDate != "")
                     {
                         if (Convert.ToDateTime(value.startDate) <= Convert.ToDateTime(value.endDate))
                         {
-                            _QryCondition = (_QryCondition.Length > 0) ? (" AND " + _QryCondition) : _QryCondition;
-                            _QryCondition += "(RIGHT(PODate,4)+'/'+SUBSTRING(PODate,4,2)+'/'+LEFT(PODate,2)) >= '" + value.startDate + "' " +
+                            //_QryCondition = (_QryCondition.Length > 0) ? (" AND " + _QryCondition) : _QryCondition;
+                            _QryCondition += " AND (RIGHT(PODate,4)+'/'+SUBSTRING(PODate,4,2)+'/'+LEFT(PODate,2)) >= '" + value.startDate + "' " +
                                 " AND (RIGHT(PODate,4)+'/'+SUBSTRING(PODate,4,2)+'/'+LEFT(PODate,2)) <= '" + value.endDate + "' ";
                         }
                         else
@@ -354,9 +357,9 @@ namespace HITConnect.Controllers
                     {
                         if (Convert.ToDateTime(value.startACK) <= Convert.ToDateTime(value.endACK))
                         {
-                            _QryCondition = (_QryCondition.Length > 0) ? (" AND " + _QryCondition) : _QryCondition;
+                            //_QryCondition = (_QryCondition.Length > 0) ? (" AND " + _QryCondition) : _QryCondition;
 
-                            _QryCondition += " (RIGHT(AcknowledgeDate,4)+'/'+SUBSTRING(AcknowledgeDate,4,2)+'/'+LEFT(AcknowledgeDate,2)) >= '" + value.startACK + "' " +
+                            _QryCondition += " AND (RIGHT(AcknowledgeDate,4)+'/'+SUBSTRING(AcknowledgeDate,4,2)+'/'+LEFT(AcknowledgeDate,2)) >= '" + value.startACK + "' " +
                                 " AND (RIGHT(AcknowledgeDate,4)+'/'+SUBSTRING(AcknowledgeDate,4,2)+'/'+LEFT(AcknowledgeDate,2)) <= '" + value.endACK + "' ";
                         }
                         else
@@ -367,18 +370,18 @@ namespace HITConnect.Controllers
                     }
                     if (value.PONo != "")
                     {
-                        _QryCondition = (_QryCondition.Length > 0) ? (" AND " + _QryCondition) : _QryCondition;
-                        _QryCondition += " PONo = '" + value.PONo + "'";
+                        //_QryCondition = (_QryCondition.Length > 0) ? (" AND " + _QryCondition) : _QryCondition;
+                        _QryCondition += " AND PONo = '" + value.PONo + "'";
                     }
                     if (value.AcknowledgeBy != "")
                     {
-                        _QryCondition = (_QryCondition.Length > 0) ? (" AND " + _QryCondition) : _QryCondition;
-                        _QryCondition += " AcknowledgeBy = '" + value.AcknowledgeBy + "'";
+                        //_QryCondition = (_QryCondition.Length > 0) ? (" AND " + _QryCondition) : _QryCondition;
+                        _QryCondition += " AND AcknowledgeBy = '" + value.AcknowledgeBy + "'";
                     }
 
                     if (statecheck == 0)
                     {
-                        _Qry = (_QryCondition.Length > 0) ? (_Qry + "WHERE " + _QryCondition) : _Qry;
+                        _Qry = (_QryCondition.Length > 0) ? (_Qry +  _QryCondition) : _Qry;
                         dt = Cnn.GetDataTable(_Qry, WSM.Conn.DB.DataBaseName.DB_VENDER);
                         statecheck = 1;
                         msgError = "Successful";
