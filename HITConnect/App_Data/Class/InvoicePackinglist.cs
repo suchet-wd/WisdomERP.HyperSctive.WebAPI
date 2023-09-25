@@ -1,17 +1,20 @@
 ﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
+using System.Data;
 
 namespace HITConnect
 {
-    public class InvoicePackinglist
+    public class InvoicePackingList
     {
         [JsonProperty("Authen", Required = Required.Always)]
         public UserAuthen authen { get; set; }
 
         [JsonProperty("Invoice")]
         public List<Invoice> invoice { get; set; }
-    }
 
+    }
+ 
     public class Invoice
     {
         [JsonProperty("InvoiceNo", Required = Required.Always)]
@@ -23,7 +26,7 @@ namespace HITConnect
         [JsonProperty("PackRoll")]
         public List<POPackroll> poPackRoll { get; set; }
     }
-
+    
     public class POPackroll
     {
         [JsonProperty("PONumber", Required = Required.Always)]
@@ -48,7 +51,7 @@ namespace HITConnect
 
     public class Roll
     {
-        [JsonProperty("Roll No")]
+        [JsonProperty("RollNo")]
         public string rollno { get; set; }
 
         [JsonProperty("Width")]
@@ -69,17 +72,11 @@ namespace HITConnect
         [JsonProperty("Barcode")]
         public string barcode { get; set; }
 
-        [JsonProperty("Cloth No")]
+        [JsonProperty("ClothNo")]
         public string clothno { get; set; }
 
         [JsonProperty("Stock")]
         public string stock { get; set; }
-
-        //[JsonProperty("PackingNo")]
-        //public string packno { get; set; }
-
-        //[JsonProperty("PackingType")]
-        //public string packtype { get; set; }
 
         [JsonProperty("MaterialType")]
         public string ordertype { get; set; }
@@ -90,11 +87,6 @@ namespace HITConnect
         [JsonProperty("ArticleNo")]
         public string ArticleNo { get; set; }
 
-        [JsonProperty("Composition")]
-        public string Composition { get; set; }
-
-        [JsonProperty("StandardWeight")]
-        public double StdWt { get; set; }
 
         [JsonProperty("NetWeightKG")]
         public double NetWtKG { get; set; }
@@ -105,11 +97,47 @@ namespace HITConnect
         [JsonProperty("VendorCountryOfOrigin")]
         public string Madein { get; set; }
 
+        [JsonProperty("Composition")]
+        public string Composition { get; set; }
+        
+        [JsonProperty("StandardWeight")]
+        public string StdWt { get; set; }
+        
         [JsonProperty("ShipFrom")]
         public string Shipto { get; set; }
 
-        [JsonProperty("UploadDate")]
-        public string UploadDate { get; set; }
+        [JsonProperty("POFront")]
+        public string POJobFront { get; set; }
 
+        [JsonProperty("POBack")]
+        public string POJobBack { get; set; }
+
+        [JsonProperty("POSL")]
+        public string POJobSL { get; set; }
+
+        [JsonProperty("POPant")]
+        public string POJobPant { get; set; }
+
+        /*[JsonProperty("packno")]
+        public string packno { get; set; }
+
+        [JsonProperty("packtype")]
+        public string packtype { get; set; }*/
+        /*
+        [JsonProperty("FTDateCreate")]
+        public string FTDateCreate { get; set; }
+
+        [JsonProperty("FTStateClose")]
+        public string FTStateClose { get; set; }
+
+        [JsonProperty("FTStateCloseDate")]
+        public string FTStateCloseDate { get; set; }
+
+        [JsonProperty("FTStateCloseBy")]
+        public string FTStateCloseBy { get; set; }
+
+        [JsonProperty("FTVenderCode")]
+        public string FTVenderCode { get; set; }
+        */
     }
 }

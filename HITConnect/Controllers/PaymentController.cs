@@ -21,10 +21,7 @@ namespace HITConnect.Controllers
             " ISNULL(PIQuantity, 0) AS 'PIQuantity', ISNULL(PINetAmt, 0) AS 'TotalPIAmount', ISNULL(PIDocCNAmt, 0) AS 'CreditNoteAmount', " +
             " ISNULL(PIDocDNAmt, 0) AS 'DebitNoteAmount', ISNULL(PIDocSurchargeAmt, 0) AS 'SurchargeAmount', ISNULL(PIDocNetAmt, 0) AS 'NetAmount', " +
             " ISNULL(Note, '') AS 'Remark' , FTFileRef AS 'PDFFile' ";
-        //" ISNULL(Revised, 0) AS Revised, ISNULL(RevisedDate, '') AS RevisedDate, ISNULL(RevisedBy, '') AS RevisedBy, " +
-        //" ISNULL(FTStateClose, '') AS FTStateClose, ISNULL(FTStateHasFile, '') AS FTStateHasFile " +
-        //" , ISNULL(DATALENGTH(FTFileRef), -1) AS 'PDFFile' ";
-
+       
 
         [HttpPost]
         [Route("api/GetPayment/")]
