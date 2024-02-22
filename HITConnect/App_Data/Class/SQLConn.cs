@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
 using System.Data.SqlClient;
+using System.Xml;
 
 namespace WSM.Conn
 {
@@ -21,7 +22,8 @@ namespace WSM.Conn
         #region " CONNECTTION "
 
 
-        public void ConnectionString(WSM.Conn.DB.DataBaseName DbName) {
+        public void ConnectionString(WSM.Conn.DB.DataBaseName DbName)
+        {
 
             ConnString = WSM.Conn.DB.ConnectionString(DbName);
         }
@@ -92,7 +94,8 @@ namespace WSM.Conn
             return _cnn;
         }
 
-        public void CommitTransaction() {
+        public void CommitTransaction()
+        {
             Tran.Commit();
             DisposeSqlTransaction(Tran);
             DisposeSqlConnection(Cmd);
@@ -105,7 +108,7 @@ namespace WSM.Conn
             DisposeSqlConnection(Cmd);
         }
 
-        public  int ExeTransaction(string sqlcpmmand)
+        public int ExeTransaction(string sqlcpmmand)
         {
             try
             {
@@ -122,7 +125,7 @@ namespace WSM.Conn
 
             }
             catch (Exception ex)
-            {             
+            {
                 return -1;
             }
         }
@@ -334,7 +337,7 @@ namespace WSM.Conn
 
             System.Data.SqlClient.SqlConnection _Cnn = new System.Data.SqlClient.SqlConnection();
             System.Data.SqlClient.SqlCommand _Cmd = new System.Data.SqlClient.SqlCommand();
-            System.Data.SqlClient.SqlTransaction _Tran =null ;
+            System.Data.SqlClient.SqlTransaction _Tran = null;
 
 
             try
@@ -373,7 +376,7 @@ namespace WSM.Conn
             catch (Exception ex)
             {
                 try { _Tran.Rollback(); } catch { }
-              
+
                 DisposeSqlTransaction(_Tran);
                 DisposeSqlConnection(_Cmd);
                 return false;
@@ -501,6 +504,40 @@ namespace WSM.Conn
             }
 
             return objDT;
+        }
+
+        public XmlDocument GetDataXML(string QryStr, WSM.Conn.DB.DataBaseName DbName, string TableName = "DataTalble1")
+        {
+            XmlDocument objXML = new XmlDocument();
+            string _ConnString = "";
+            System.Data.SqlClient.SqlConnection _Cnn = new System.Data.SqlClient.SqlConnection();
+            System.Data.SqlClient.SqlCommand _Cmd = new System.Data.SqlClient.SqlCommand();
+            try
+            {
+                ConnString = WSM.Conn.DB.ConnectionString(DbName);
+                XmlReader xmlreader;
+                if (_Cnn.State == ConnectionState.Open) { _Cnn.Close(); };
+                _Cnn.ConnectionString = ConnString;
+                _Cnn.Open();
+                _Cmd = _Cnn.CreateCommand();
+                _Cmd.CommandText = QryStr;
+                xmlreader = _Cmd.ExecuteXmlReader();
+
+                while (xmlreader.Read())
+                {
+                    objXML.Load(xmlreader);
+                }
+                xmlreader.Close();
+
+                DisposeSqlConnection(_Cmd);
+                DisposeSqlConnection(_Cnn);
+            }
+            catch (Exception ex)
+            {
+                DisposeSqlConnection(_Cmd);
+                DisposeSqlConnection(_Cnn);
+            }
+            return objXML;
         }
 
         public void GetDataSet(string QryStr, WSM.Conn.DB.DataBaseName DbName, ref DataSet objDataSet, string DefaultTableName = null)

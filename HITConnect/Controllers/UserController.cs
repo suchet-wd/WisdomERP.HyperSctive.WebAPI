@@ -6,7 +6,7 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 
-namespace HITConnect.Controllers
+namespace HyperConvert.Controllers
 {
     public class UserController : ApiController
     {
@@ -35,7 +35,7 @@ namespace HITConnect.Controllers
                 if (statecheck != 2)
                 {
                     WSM.Conn.SQLConn Cnn = new WSM.Conn.SQLConn();
-                    DataTable dt = HITConnect.UserToken.GetDTUserValidate(Cnn, value);
+                    DataTable dt = HyperConvert.UserToken.GetDTUserValidate(Cnn, value);
 
                     // Delete Old Token from Database
                     UserAuthen.DelAuthenKey(Cnn, value.id);
@@ -48,17 +48,17 @@ namespace HITConnect.Controllers
                             if (value.pwd == WSM.Conn.DB.FuncDecryptDataServer(row["pwd"].ToString()))
                             {
                                 string _Qry = "";
-                                _Qry = "INSERT INTO [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.AuthenKeys (VenderMailLogIn, DataKey) ";
+                                _Qry = "INSERT INTO [" + WSM.Conn.DB.DataBaseName.HITECH_MERCHAN + "].dbo.AuthenKeys (VenderMailLogIn, DataKey) ";
                                 _Qry += " VALUES ('" + row["VenderMailLogIn"].ToString() + "', NEWID())";
 
-                                if (Cnn.ExecuteOnly(_Qry, WSM.Conn.DB.DataBaseName.DB_VENDER))
+                                if (Cnn.ExecuteOnly(_Qry, WSM.Conn.DB.DataBaseName.HITECH_MERCHAN))
                                 {
                                     statecheck = 1;
                                     msgError = "Successful";
                                 }
-                                _Qry = "SELECT DataKey FROM [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.AuthenKeys WITH ( NOLOCK ) " +
+                                _Qry = "SELECT DataKey FROM [" + WSM.Conn.DB.DataBaseName.HITECH_MERCHAN + "].dbo.AuthenKeys WITH ( NOLOCK ) " +
                                     " WHERE VenderMailLogIn = '" + value.id + "'";
-                                dt = Cnn.GetDataTable(_Qry, WSM.Conn.DB.DataBaseName.DB_VENDER);
+                                dt = Cnn.GetDataTable(_Qry, WSM.Conn.DB.DataBaseName.HITECH_MERCHAN);
                                 foreach (DataRow r in dt.Rows)
                                 {
                                     token = r["DataKey"].ToString();

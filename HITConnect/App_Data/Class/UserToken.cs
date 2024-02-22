@@ -5,7 +5,7 @@ using System.Data;
 using System.Reflection;
 using WSM.Conn;
 
-namespace HITConnect
+namespace HyperConvert
 {
     public class UserToken
     {
@@ -38,10 +38,10 @@ namespace HITConnect
                     {
                         WSM.Conn.SQLConn Cnn = new WSM.Conn.SQLConn();
                         string _Qry = "SELECT V.VenderMailLogIn AS VenderMailLogIn ,V.Pwd AS pwd, ATK.VenderMailLogIn ";
-                        _Qry += "FROM [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.VenderUser AS V WITH(NOLOCK) ";
-                        _Qry += "LEFT JOIN [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.AuthenKeys AS ATK WITH(NOLOCK )  ON ATK.VenderMailLogIn = V.VenderMailLogIn ";
+                        _Qry += "FROM [" + WSM.Conn.DB.DataBaseName.HITECH_MERCHAN + "].dbo.VenderUser AS V WITH(NOLOCK) ";
+                        _Qry += "LEFT JOIN [" + WSM.Conn.DB.DataBaseName.HITECH_MERCHAN + "].dbo.AuthenKeys AS ATK WITH(NOLOCK )  ON ATK.VenderMailLogIn = V.VenderMailLogIn ";
                         _Qry += "WHERE V.VenderMailLogIn = '" + value.id + "' AND V.Pwd = '" + value.id + "'";
-                        _dataTable = Cnn.GetDataTable(_Qry, WSM.Conn.DB.DataBaseName.DB_VENDER);
+                        //_dataTable = Cnn.GetDataTable(_Qry, WSM.Conn.DB.DataBaseName.DB_VENDER);
                     }
                     catch (Exception ex)
                     {
@@ -66,13 +66,13 @@ namespace HITConnect
                 {
                     _Qry = "SELECT DISTINCT V.Pwd AS pwd, V.VenderMailLogIn, ATK.VenderMailLogIn AS ATK " +
                         //--, P.VenderGrp AS VenderGrp
-                        "FROM [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.VenderUser AS V WITH(NOLOCK) " +
-                        "OUTER APPLY(SELECT* FROM [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.AuthenKeys WITH (NOLOCK ) " +
+                        "FROM [" + WSM.Conn.DB.DataBaseName.HITECH_MERCHAN + "].dbo.VenderUser AS V WITH(NOLOCK) " +
+                        "OUTER APPLY(SELECT* FROM [" + WSM.Conn.DB.DataBaseName.HITECH_MERCHAN + "].dbo.AuthenKeys WITH (NOLOCK ) " +
                         "WHERE VenderMailLogIn = V.VenderMailLogIn) AS ATK " +
-                        "OUTER APPLY(SELECT VenderGrp FROM [" + WSM.Conn.DB.DataBaseName.DB_VENDER + "].dbo.VenderUserPermissionCmp WITH (NOLOCK ) " +
+                        "OUTER APPLY(SELECT VenderGrp FROM [" + WSM.Conn.DB.DataBaseName.HITECH_MERCHAN + "].dbo.VenderUserPermissionCmp WITH (NOLOCK ) " +
                         "WHERE VenderMailLogIn = V.VenderMailLogIn) AS P " +
                         "WHERE V.VenderMailLogIn = '" + value.id + "'";
-                    _dataTable = Cnn.GetDataTable(_Qry, WSM.Conn.DB.DataBaseName.DB_VENDER);
+                    //_dataTable = Cnn.GetDataTable(_Qry, WSM.Conn.DB.DataBaseName.DB_VENDER);
                 }
                 else
                 {

@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Data.SqlClient;
 using System.Text;
 using System.Globalization;
+using System.Xml;
 
 namespace WSM.Conn
 {
@@ -19,11 +20,14 @@ namespace WSM.Conn
         public static string[] DBName = new string[30];
 
         //public static string[] SystemDBName = { "DB_TEMPDB", "DB_VENDER" };
-        public static string[] SystemDBName = { "DB_VENDER" };
+        public static string[] SystemDBName = { "HITECH_MERCHAN", "HITECH_MASTER", "HITECH_PRODUCTION", "HITECH_SYSTEM" };
         public enum DataBaseName : int
         {
-            DB_TEMPDB = 0,
-            DB_VENDER = 1
+            //DB_TEMPDB = 0,
+            HITECH_SYSTEM = 0,
+            HITECH_MASTER = 1,
+            HITECH_MERCHAN = 2,
+            HITECH_PRODUCTION = 3
         }
 
         public static string GetDataBaseName(DataBaseName DbName)
@@ -189,6 +193,57 @@ namespace WSM.Conn
             {
                 return "";
             }
+        }
+
+        public static XmlDocument GetDataXML(string QryStr)
+        {
+            XmlDocument objXML = new XmlDocument();
+            try
+            {
+                string _ConnString = "";
+                System.Data.SqlClient.SqlConnection _Cnn = new System.Data.SqlClient.SqlConnection();
+                System.Data.SqlClient.SqlCommand _Cmd = new System.Data.SqlClient.SqlCommand();
+
+                try
+                {
+                    _ConnString = "Server=hig00svr91;Database=HITECH_PRODUCTION;User Id=sa;Password=5k,mew,;";
+                    XmlReader xmlreader;
+                    if (_Cnn.State == ConnectionState.Open) { _Cnn.Close(); };
+                    _Cnn.ConnectionString = _ConnString;
+                    _Cnn.Open();
+                    _Cmd = _Cnn.CreateCommand();
+                    _Cmd.CommandText = QryStr;
+                    xmlreader = _Cmd.ExecuteXmlReader();
+
+                    while (xmlreader.Read())
+                    {
+                        objXML.Load(xmlreader);
+                    }
+                    xmlreader.Close();
+
+                    _Cmd.Connection.Close();
+                    _Cmd.Dispose();
+                    if (_Cnn.State == ConnectionState.Open)
+                    {
+                        _Cnn.Close();
+                    }
+                    _Cnn.Dispose();
+
+                }
+                catch (Exception ex)
+                {
+                    _Cmd.Connection.Close();
+                    _Cmd.Dispose();
+                    if (_Cnn.State == ConnectionState.Open)
+                    {
+                        _Cnn.Close();
+                    }
+                    _Cnn.Dispose();
+                }
+            }
+            catch { }
+
+            return objXML;
         }
 
 

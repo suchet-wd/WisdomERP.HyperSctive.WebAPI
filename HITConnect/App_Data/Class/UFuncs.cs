@@ -10,7 +10,7 @@ using System.Windows;
 using System.Drawing;
 using System.Globalization;
 
-namespace HITConnect
+namespace HyperConvert
 {
 
     public static class UFuncs
