@@ -1,11 +1,6 @@
 ﻿using Microsoft.VisualBasic;
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Data;
-using System.Diagnostics;
-using System.Data.SqlClient;
-using System.Text;
 using System.Globalization;
 using System.Xml;
 
@@ -87,6 +82,7 @@ namespace WSM.Conn
             }
             catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
                 return false;
             }
         }
@@ -104,7 +100,7 @@ namespace WSM.Conn
                       
                         BaseName = DBName[I];
                         return true;
-                        break;
+                        //break;
                     }
                     I = I + 1;
                 }
@@ -113,6 +109,7 @@ namespace WSM.Conn
             }
             catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
                 return false;
             }
         }
@@ -232,6 +229,7 @@ namespace WSM.Conn
                 }
                 catch (Exception ex)
                 {
+                    Console.WriteLine(ex.Message);
                     _Cmd.Connection.Close();
                     _Cmd.Dispose();
                     if (_Cnn.State == ConnectionState.Open)
@@ -297,6 +295,7 @@ namespace WSM.Conn
             }
             catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
             }
             return txtDecry;
         }
@@ -349,6 +348,7 @@ namespace WSM.Conn
             }
             catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
             }
             return txtEncry;
         }
@@ -414,6 +414,7 @@ namespace WSM.Conn
             }
             catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
             }
             return txtDecry;
         }
@@ -471,6 +472,7 @@ namespace WSM.Conn
             }
             catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
             }
             return txtEncry;
         }

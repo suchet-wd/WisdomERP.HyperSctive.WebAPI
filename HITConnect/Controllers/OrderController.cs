@@ -361,6 +361,7 @@ namespace HyperConvert.Controllers
                 }
                 catch (Exception ex)
                 {
+                    Console.WriteLine(ex.Message);
                     _state = false;
                     _msg = "Connection Error!!!";
                 }

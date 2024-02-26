@@ -38,7 +38,7 @@ namespace HyperConvert
             {
                 state = false;
             }
-            return true; // (DateTime.Compare(tempDateStart, tempDateEnd) <= 1) ? true : false;
+            return state; // (DateTime.Compare(tempDateStart, tempDateEnd) <= 1) ? true : false;
         }
 
     } // End Class

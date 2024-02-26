@@ -126,6 +126,7 @@ namespace WSM.Conn
             }
             catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
                 return -1;
             }
         }
@@ -243,6 +244,7 @@ namespace WSM.Conn
             }
             catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
                 Tran.Rollback();
                 DisposeSqlTransaction(Tran);
                 DisposeSqlConnection(Cmd);
@@ -324,6 +326,7 @@ namespace WSM.Conn
             }
             catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
                 DisposeSqlConnection(_Cmd);
                 DisposeSqlConnection(_Cnn);
                 //Interaction.MsgBox(ex.Message);
@@ -375,6 +378,7 @@ namespace WSM.Conn
 
             catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
                 try { _Tran.Rollback(); } catch { }
 
                 DisposeSqlTransaction(_Tran);
@@ -437,6 +441,7 @@ namespace WSM.Conn
             }
             catch (SqlException ex)
             {
+                Console.WriteLine(ex.Message);
                 return null;
             }
             finally
@@ -460,6 +465,7 @@ namespace WSM.Conn
             }
             catch (SqlException ex)
             {
+                Console.WriteLine(ex.Message);
                 return null;
             }
             finally
@@ -499,6 +505,7 @@ namespace WSM.Conn
             }
             catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
                 DisposeSqlConnection(_Cmd);
                 DisposeSqlConnection(_Cnn);
             }
@@ -509,7 +516,7 @@ namespace WSM.Conn
         public XmlDocument GetDataXML(string QryStr, WSM.Conn.DB.DataBaseName DbName, string TableName = "DataTalble1")
         {
             XmlDocument objXML = new XmlDocument();
-            string _ConnString = "";
+            //string _ConnString = "";
             System.Data.SqlClient.SqlConnection _Cnn = new System.Data.SqlClient.SqlConnection();
             System.Data.SqlClient.SqlCommand _Cmd = new System.Data.SqlClient.SqlCommand();
             try
@@ -534,6 +541,7 @@ namespace WSM.Conn
             }
             catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
                 DisposeSqlConnection(_Cmd);
                 DisposeSqlConnection(_Cnn);
             }
@@ -577,6 +585,7 @@ namespace WSM.Conn
             }
             catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
                 DisposeSqlConnection(_Cmd);
                 DisposeSqlConnection(_Cnn);
             }
@@ -611,6 +620,7 @@ namespace WSM.Conn
             }
             catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
                 DisposeSqlConnection(_Cmd);
                 DisposeSqlConnection(_Cnn);
             }
@@ -645,6 +655,7 @@ namespace WSM.Conn
             }
             catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
                 _cmd.Dispose();
             }
 
@@ -676,6 +687,7 @@ namespace WSM.Conn
             }
             catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
             }
 
             dt.Dispose();
@@ -706,6 +718,7 @@ namespace WSM.Conn
             }
             catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
             }
 
             dt.Dispose();
@@ -745,6 +758,7 @@ namespace WSM.Conn
             }
             catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
             }
 
             dt.Dispose();
@@ -775,6 +789,7 @@ namespace WSM.Conn
             }
             catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
             }
 
             dt.Dispose();
@@ -814,6 +829,7 @@ namespace WSM.Conn
             }
             catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
             }
 
             dt.Dispose();

@@ -17,7 +17,7 @@ namespace HyperConvert
 
         public static List<string> ValidateField(UserToken value)
         {
-            DataTable _dataTable = null;
+            //DataTable _dataTable = null;
             string msgError = "";
             string statecheck = "0";
             if (value.id == "")
