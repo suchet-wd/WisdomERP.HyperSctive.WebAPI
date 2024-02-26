@@ -19,6 +19,36 @@ namespace HyperConvert.Controllers
             DataTable dts = new DataTable();
             dts.Columns.Add("Status", typeof(string));
             dts.Columns.Add("Message", typeof(string));
+
+            // Checking All Barcode
+            foreach (APIRfidBarcode rb in value.BundleRfidBarcodeList)
+            {
+                if (APIRfidBarcode.isParentBundleBarcode(rb.ParentBundleBarcode) == false)
+                {
+                    dts.Rows.Add(new Object[] { "1", "Please check Parent Bundle Barcode (" + rb.ParentBundleBarcode + ")" });
+                    jsondata = JsonConvert.SerializeObject(dts);
+                    return new HttpResponseMessage
+                    {
+                        StatusCode = HttpStatusCode.NotAcceptable,
+                        Content = new StringContent(jsondata, System.Text.Encoding.UTF8, "application/json")
+                    };
+                }
+
+                foreach (string s in rb.BundleBarcode)
+                {
+                    if (APIRfidBarcode.isBundleBarcode(s) == false)
+                    {
+                        dts.Rows.Add(new Object[] { "1", "Please check Bundle Barcode (" + s + ")" });
+                        jsondata = JsonConvert.SerializeObject(dts);
+                        return new HttpResponseMessage
+                        {
+                            StatusCode = HttpStatusCode.NotAcceptable,
+                            Content = new StringContent(jsondata, System.Text.Encoding.UTF8, "application/json")
+                        };
+                    }
+                }
+            }
+
             int i = 1;
             int j = 1;
 
