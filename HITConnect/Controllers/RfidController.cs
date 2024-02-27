@@ -5,7 +5,7 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 
-namespace HyperConvert.Controllers
+namespace HyperActive.Controllers
 {
     public class RfidController : ApiController
     {

@@ -10,9 +10,8 @@ using System.Windows;
 using System.Drawing;
 using System.Globalization;
 
-namespace HyperConvert
+namespace HyperActive
 {
-
     public static class UFuncs
     {
 
@@ -44,8 +43,6 @@ namespace HyperConvert
 
                 System.Threading.Thread.CurrentThread.CurrentCulture = _Culture;
                 System.Threading.Thread.CurrentThread.CurrentUICulture = _Culture;
-
-
 
                 string _Date = "";
                 _Date = Strings.Format(Convert.ToDateTime(Obj), "dd/MM/yyyy");
@@ -81,9 +78,7 @@ namespace HyperConvert
                 strDate = "";
             }
 
-
             return strDate;
-
         }
     }
 }

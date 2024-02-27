@@ -4,18 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HyperConvert
+namespace HyperActive
 {
     class ResponseAPI
     {
         private string code;
         private string msg;
-
-        //public ResponseAPI()
-        //{
-        //    this.Code = code;
-        //    this.msg = msg;
-        //}
 
         public ResponseAPI(string code, string msg)
         {

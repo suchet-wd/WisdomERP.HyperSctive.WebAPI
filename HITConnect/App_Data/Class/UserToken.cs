@@ -5,7 +5,7 @@ using System.Data;
 using System.Reflection;
 using WSM.Conn;
 
-namespace HyperConvert
+namespace HyperActive
 {
     public class UserToken
     {
@@ -15,6 +15,5 @@ namespace HyperConvert
         [JsonProperty("pwd", Required = Required.Always)]
         public string pwd { get; set; }
 
-        
     }
 }

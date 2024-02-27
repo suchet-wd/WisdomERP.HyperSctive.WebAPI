@@ -1,12 +1,8 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Globalization;
-using System.Reflection;
-using WSM.Conn;
 
-namespace HyperConvert
+namespace HyperActive
 {
     public class APIRfid
     {
