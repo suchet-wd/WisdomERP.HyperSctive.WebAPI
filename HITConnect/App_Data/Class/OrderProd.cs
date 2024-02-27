@@ -28,23 +28,23 @@ namespace HyperConvert
         public List<OrderProdDetails> OrderProdDetails { get; set; }
 
 
-        public static DataTable getOrder()
-        {
-            DataTable _dataTable = new DataTable();
-            WSM.Conn.SQLConn Cnn = new WSM.Conn.SQLConn();
+        //public static DataTable getOrder()
+        //{
+        //    DataTable _dataTable = new DataTable();
+        //    WSM.Conn.SQLConn Cnn = new WSM.Conn.SQLConn();
 
-            string _Qry = " SELECT TOP 1 *  FROM [" + WSM.Conn.DB.DataBaseName.HITECH_MERCHAN + "].dbo.TMERTOrder AS od WITH ( NOLOCK ) ";
+        //    string _Qry = " SELECT TOP 1 *  FROM [" + WSM.Conn.DB.DataBaseName.HITECH_MERCHAN + "].dbo.TMERTOrder AS od WITH ( NOLOCK ) ";
 
-            try
-            {
-                _dataTable = Cnn.GetDataTable(_Qry, WSM.Conn.DB.DataBaseName.HITECH_MERCHAN);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-            }
-            return _dataTable;
-        }
+        //    try
+        //    {
+        //        _dataTable = Cnn.GetDataTable(_Qry, WSM.Conn.DB.DataBaseName.HITECH_MERCHAN);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Console.WriteLine(ex);
+        //    }
+        //    return _dataTable;
+        //}
 
     }
 }

@@ -15,14 +15,15 @@ namespace WSM.Conn
         public static string[] DBName = new string[30];
 
         //public static string[] SystemDBName = { "DB_TEMPDB", "DB_VENDER" };
-        public static string[] SystemDBName = { "HITECH_MERCHAN", "HITECH_MASTER", "HITECH_PRODUCTION", "HITECH_SYSTEM" };
+        public static string[] SystemDBName = { "HITECH_MERCHAN", "HITECH_MASTER", "HITECH_PRODUCTION", "HITECH_SYSTEM", "HITECH_HYPERACTIVE" };
         public enum DataBaseName : int
         {
             //DB_TEMPDB = 0,
             HITECH_SYSTEM = 0,
             HITECH_MASTER = 1,
             HITECH_MERCHAN = 2,
-            HITECH_PRODUCTION = 3
+            HITECH_PRODUCTION = 3,
+            HITECH_HYPERACTIVE = 4
         }
 
         public static string GetDataBaseName(DataBaseName DbName)
@@ -75,7 +76,7 @@ namespace WSM.Conn
         {
             try
             {
-       
+
                 BaseName = DBName[(int)DbName];
                 return true;
 
@@ -97,7 +98,7 @@ namespace WSM.Conn
                     if (StrDBName.ToUpper().Contains(DbName.ToUpper()) == true)
 
                     {
-                      
+
                         BaseName = DBName[I];
                         return true;
                         //break;

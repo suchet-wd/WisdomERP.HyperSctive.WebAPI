@@ -65,7 +65,7 @@ namespace HyperConvert.Controllers
                 j++;
                 foreach (string s in b.BundleBarcode)
                 {
-                    _Qry += "INSERT INTO HITECH_PRODUCTION.dbo.TSMGtoWisdom_Staging \n";
+                    _Qry += "INSERT INTO [" + WSM.Conn.DB.DataBaseName.HITECH_HYPERACTIVE + "].dbo.TSMGtoWisdom_Staging \n";
                     _Qry += "(FTInsUser, FDInsDate, FTInsTime, FTBoxRfId, FTBoxBarCode, FTBundleRfId, FTBundleParentBarcode, FTBundleBarcode, FTStateProcess, FTSMTimeStamp) \n";
                     _Qry += "VALUES('', @Date, @Time, ";
                     _Qry += "'" + value.BoxRfid + "', '" + value.BoxBarcode + "', '" + b.Rfid + "', '" + b.ParentBundleBarcode + "', '" + s + "', '0', '" + value.TimeStamp + "'";
@@ -93,7 +93,7 @@ namespace HyperConvert.Controllers
 
             _Qry += " END CATCH \n";
 
-            if (new WSM.Conn.SQLConn().ExecuteOnly(_Qry, WSM.Conn.DB.DataBaseName.HITECH_PRODUCTION))
+            if (new WSM.Conn.SQLConn().ExecuteOnly(_Qry, WSM.Conn.DB.DataBaseName.HITECH_HYPERACTIVE))
             {
                 dts.Rows.Add(new Object[] { "0", "Save total " + j + " Rfid (Total " + i + " Records) Successful." });
                 jsondata = JsonConvert.SerializeObject(dts);
