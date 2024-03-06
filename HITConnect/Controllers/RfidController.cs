@@ -20,6 +20,7 @@ namespace HyperActive.Controllers
             dts.Columns.Add("Status", typeof(string));
             dts.Columns.Add("Message", typeof(string));
 
+
             // Checking All Barcode
             foreach (APIRfidBarcode rb in value.BundleRfidBarcodeList)
             {
@@ -67,7 +68,7 @@ namespace HyperActive.Controllers
                 {
                     _Qry += "INSERT INTO [" + WSM.Conn.DB.DataBaseName.HITECH_HYPERACTIVE + "].dbo.TSMGtoWisdom_Staging \n";
                     _Qry += "(FTInsUser, FDInsDate, FTInsTime, FTBoxRfId, FTBoxBarCode, FTBundleRfId, FTBundleParentBarcode, FTBundleBarcode, FTStateProcess, FTSMTimeStamp) \n";
-                    _Qry += "VALUES('', @Date, @Time, ";
+                    _Qry += "VALUES('" + value.authen.id + "', @Date, @Time, ";
                     _Qry += "'" + value.BoxRfid + "', '" + value.BoxBarcode + "', '" + b.Rfid + "', '" + b.ParentBundleBarcode + "', '" + s + "', '0', '" + value.TimeStamp + "'";
                     _Qry += "); \n";
                     _Qry += "SET @RecCount = @RecCount + @@ROWCOUNT \n\n";

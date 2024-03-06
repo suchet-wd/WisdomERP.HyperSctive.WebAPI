@@ -6,16 +6,19 @@ namespace HyperActive
 {
     public class APIRfid
     {
-        [JsonProperty("BoxRfid")]
+        [JsonProperty("Authen", Required = Required.Always)]
+        public UserAuthen authen { get; set; }
+
+        [JsonProperty("BoxRfid", Required = Required.Always)]
         public string BoxRfid { get; set; }
 
-        [JsonProperty("BoxBarcode")]
+        [JsonProperty("BoxBarcode", Required = Required.Always)]
         public string BoxBarcode { get; set; }
 
-        [JsonProperty("BundleRfidBarcodeList")]
+        [JsonProperty("BundleRfidBarcodeList", Required = Required.Always)]
         public List<APIRfidBarcode> BundleRfidBarcodeList { get; set; }
 
-        [JsonProperty("TimeStamp")]
+        [JsonProperty("TimeStamp", Required = Required.Always)]
         public DateTime TimeStamp { get; set; }
 
         //public static bool isBoxBarcode(string value)

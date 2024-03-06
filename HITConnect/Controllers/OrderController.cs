@@ -37,14 +37,14 @@ namespace HyperActive.Controllers
 
             if (UserController.CheckUserPermission(Cnn, value.authen) == true)
             {
-                _Qry = "EXEC [" + WSM.Conn.DB.DataBaseName.HITECH_MERCHAN + "].dbo.SP_Send_Data_To_Hyperconvert_API1 '" + value.OrderNo + "'";
+                _Qry = "EXEC [" + WSM.Conn.DB.DataBaseName.HITECH_HYPERACTIVE + "].dbo.SP_Send_Data_To_Hyperconvert_API1 '" + value.OrderNo + "'";
                 try
                 {
                     if (UserController.CheckUserPermission(Cnn, value.authen) == true)
                     {
 
                     }
-                    docXML = Cnn.GetDataXML(_Qry, WSM.Conn.DB.DataBaseName.HITECH_MERCHAN);
+                    docXML = Cnn.GetDataXML(_Qry, WSM.Conn.DB.DataBaseName.HITECH_HYPERACTIVE);
                     JSONresult = JsonConvert.SerializeObject(docXML);
                     //JsonConvert.SerializeXmlNode(docXML); //, Newtonsoft.Json.Formatting.Indented
                     JSONresult = JSONresult.Replace("\"[]\"", "[]");
@@ -118,10 +118,10 @@ namespace HyperActive.Controllers
 
             if (UserController.CheckUserPermission(Cnn, value.authen) == true)
             {
-                _Qry = "EXEC [" + WSM.Conn.DB.DataBaseName.HITECH_MERCHAN + "].dbo.SP_Send_Data_To_Hyperconvert_API2 '" + value.OrderNo + "'";
+                _Qry = "EXEC [" + WSM.Conn.DB.DataBaseName.HITECH_HYPERACTIVE + "].dbo.SP_Send_Data_To_Hyperconvert_API2 '" + value.OrderNo + "'";
                 try
                 {
-                    docXML = Cnn.GetDataXML(_Qry, WSM.Conn.DB.DataBaseName.HITECH_MERCHAN);
+                    docXML = Cnn.GetDataXML(_Qry, WSM.Conn.DB.DataBaseName.HITECH_HYPERACTIVE);
                     JSONresult = JsonConvert.SerializeObject(docXML);
                     JSONresult = JSONresult.Replace("PartDetail\":[\"[]\",{", "PartDetail\":[{");
                     JSONresult = JSONresult.Replace("PooDetail\":[\"[]\",", "PooDetail\":[");

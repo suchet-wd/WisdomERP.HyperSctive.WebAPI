@@ -12,7 +12,7 @@ namespace HyperActive.Controllers
     {
         [HttpPost]
         [Route("api/GetAuthorization/")]
-        public HttpResponseMessage GetToken([FromBody] UserToken value)
+        public HttpResponseMessage GetAuthorization([FromBody] UserToken value)
         {
             string JSONresult = "";
             DataTable dts = new DataTable();
@@ -122,18 +122,44 @@ namespace HyperActive.Controllers
             return _result;
         }
 
-        //public static bool CheckUserPermission(WSM.Conn.SQLConn Cnn, UserToken value)
+
         public static bool CheckUserPermission(WSM.Conn.SQLConn Cnn, UserAuthen value)
         {
             bool _state = false;
             if (value.id != "" && value.pwd != "")
             {
-                string _Qry = "SELECT TOP 1 hu.Pwd FROM [" + WSM.Conn.DB.DataBaseName.HITECH_HYPERACTIVE + "].dbo.HyperUser AS hu WITH(NOLOCK) " +
-                    "WHERE hu.HyperLogIn = '" + value.id + "' AND hu.TokenKey = '" + value.token + "' ";
+                string _Qry = "";
+                if (value.token == null)
+                {
+                    _Qry = "SELECT TOP 1 hu.Pwd FROM [" + WSM.Conn.DB.DataBaseName.HITECH_HYPERACTIVE + "].dbo.HyperUser AS hu WITH(NOLOCK) \n";
+                    _Qry += "WHERE hu.HyperLogIn = '" + value.id + "' \n";
+                }
+                else
+                {
+                    _Qry = "SELECT TOP 1 hu.Pwd FROM [" + WSM.Conn.DB.DataBaseName.HITECH_HYPERACTIVE + "].dbo.HyperUser AS hu WITH(NOLOCK) \n";
+                    _Qry += "WHERE hu.HyperLogIn = '" + value.id + "' AND hu.TokenKey = '" + value.token + "' \n";
+                    // Token Expired after 5 min
+                    _Qry += "AND dateadd(minute, 0, hu.FDLastUpdate) >= dateadd(minute, -5, getdate())";
+                }
+                
                 try
                 {
                     string s = WSM.Conn.DB.FuncDecryptDataServer(Cnn.GetField(_Qry, WSM.Conn.DB.DataBaseName.HITECH_HYPERACTIVE, ""));
                     _state = (s == value.pwd) ? true : false;
+                    if (_state == false)
+                    {
+                        _Qry = "UPDATE [" + WSM.Conn.DB.DataBaseName.HITECH_HYPERACTIVE + "].dbo.HyperUser SET FNLoginFailed =  ";
+                        _Qry += "(SELECT ISNULL(FNLoginFailed,0) + 1 ) ";
+                        _Qry += "WHERE HyperLogIn = '" + value.id + "' ";
+                        Cnn.ExecuteOnly(_Qry, WSM.Conn.DB.DataBaseName.HITECH_HYPERACTIVE);
+
+                    }
+                    else
+                    {
+                        _Qry = "UPDATE [" + WSM.Conn.DB.DataBaseName.HITECH_HYPERACTIVE + "].dbo.HyperUser SET FNLoginFailed = 0 ";
+                        _Qry += "WHERE HyperLogIn = '" + value.id + "' ";
+                        Cnn.ExecuteOnly(_Qry, WSM.Conn.DB.DataBaseName.HITECH_HYPERACTIVE);
+                    }
                     DelAuthenKey(Cnn, value);
                 }
                 catch (Exception ex)
@@ -149,8 +175,8 @@ namespace HyperActive.Controllers
             bool _result = false;
             try
             {
-                string _Qry = "UPDATE [" + WSM.Conn.DB.DataBaseName.HITECH_HYPERACTIVE + "].dbo.HyperUser SET TokenKey = '' ";
-                _Qry += "WHERE HyperLogIn = '" + value.id + "'";
+                string _Qry = "UPDATE [" + WSM.Conn.DB.DataBaseName.HITECH_HYPERACTIVE + "].dbo.HyperUser SET TokenKey = '', FDLastUpdate = Getdate() ";
+                _Qry += "WHERE HyperLogIn = '" + value.id + "' ";
                 _result = Cnn.ExecuteOnly(_Qry, WSM.Conn.DB.DataBaseName.HITECH_HYPERACTIVE);
             }
             catch (Exception ex)
@@ -165,13 +191,13 @@ namespace HyperActive.Controllers
             string _result = "";
             // Save ID & Token to DB then send JSON file
             string _Qry = "";
-            _Qry = "UPDATE [" + WSM.Conn.DB.DataBaseName.HITECH_HYPERACTIVE + "].dbo.HyperUser SET TokenKey = NEWID() ";
-            _Qry += "WHERE HyperLogIn = '" + value.id + "'";
+            _Qry = "UPDATE [" + WSM.Conn.DB.DataBaseName.HITECH_HYPERACTIVE + "].dbo.HyperUser SET TokenKey = NEWID() ,FDLastUpdate = Getdate() ";
+            _Qry += "WHERE HyperLogIn = '" + value.id + "' ";
 
             if (Cnn.ExecuteOnly(_Qry, WSM.Conn.DB.DataBaseName.HITECH_HYPERACTIVE))
             {
                 _Qry = "SELECT TOP 1 TokenKey FROM [" + WSM.Conn.DB.DataBaseName.HITECH_HYPERACTIVE + "].dbo.HyperUser WITH (NOLOCK) ";
-                _Qry += "WHERE HyperLogIn = '" + value.id + "'";
+                _Qry += "WHERE HyperLogIn = '" + value.id + "' ";
 
                 try
                 {

@@ -40,7 +40,7 @@ namespace HyperActive.Controllers
                 if (CuttingOrder.isPooNo(value.PooNo))
                 {
                     //// Start API 3:  Bundle Info
-                    _Qry = "EXEC [HITECH_MERCHAN].dbo.SP_Send_Data_To_Hyperconvert_API3 " + value.PooNo;
+                    _Qry = "EXEC [" + WSM.Conn.DB.DataBaseName.HITECH_HYPERACTIVE + "].dbo.SP_Send_Data_To_Hyperconvert_API3 " + value.PooNo;
                     docXML = WSM.Conn.DB.GetDataXML(_Qry);
 
                     JSONresult = JsonConvert.SerializeObject(docXML);
