@@ -125,6 +125,7 @@ namespace HyperActive.Controllers
                     JSONresult = JsonConvert.SerializeObject(docXML);
                     JSONresult = JSONresult.Replace("PartDetail\":[\"[]\",{", "PartDetail\":[{");
                     JSONresult = JSONresult.Replace("PooDetail\":[\"[]\",", "PooDetail\":[");
+                    JSONresult = JSONresult.Replace("\"SpreadingRatio\":[\"[]\",", "\"SpreadingRatio\":[");
                     JSONresult = JSONresult.Replace("\"\",", "");
                     JSONresult = JSONresult.Replace("{\"root\":", "");
                     JSONresult = JSONresult.Replace("\"Route\":[\"[]\",{\"Station", "\"Route\":[{\"Station");

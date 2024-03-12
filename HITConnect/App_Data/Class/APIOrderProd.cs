@@ -16,7 +16,7 @@ namespace HyperActive
         {
             DataTable dt = new DataTable();
 
-            string _Qry = "SELECT o.FTOrderNo, o.FTOrderProdNo \n\n"; //,cmp.FTCmpCode
+            string _Qry = "SELECT o.FTOrderNo, o.FTOrderProdNo \n\n"; 
             _Qry += "FROM [" + WSM.Conn.DB.DataBaseName.HITECH_PRODUCTION + "].dbo.TPRODTOrderProd  AS o WITH ( NOLOCK ) \n\n";
             _Qry += "WHERE o.FTOrderNo <> '' \n";
 
@@ -38,10 +38,3 @@ namespace HyperActive
         }
     }
 }
-
-//_Qry += "OUTER APPLY (SELECT * " +
-//    "FROM [" + WSM.Conn.DB.DataBaseName.HITECH_PRODUCTION + "].dbo.TPRODTOrderProd_MarkMain AS m WITH (NOLOCK ) " +
-//    "WHERE o.FTOrderProdNo = m.FTOrderProdNo ) AS m   \n\n";
-
-//_Qry += "OUTER APPLY (SELECT cmp.FTCmpCode FROM [" + WSM.Conn.DB.DataBaseName.HITECH_MASTER + "].dbo.TCNMCmp AS cmp WITH (NOLOCK ) " +
-//    "WHERE cmp.FNHSysCmpId = m.FNHSysCmpId) AS cmp \n\n";

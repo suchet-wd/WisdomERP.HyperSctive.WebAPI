@@ -210,28 +210,5 @@ namespace HyperActive.Controllers
             }
             return _result;
         }
-
-
-        //private bool checkToken(WSM.Conn.SQLConn Cnn, UserAuthen value)
-        //{
-        //    bool state = false;
-
-        //    if (CheckUserPermission(Cnn, value) == true)
-        //    {
-        //    }
-        //    string _Qry = "SELECT TOP 1 TokenKey FROM [" + WSM.Conn.DB.DataBaseName.HITECH_HYPERACTIVE + "].dbo.HyperUser WITH (NOLOCK) ";
-        //    _Qry += "WHERE HyperLogIn = '" + value.id + "'";
-
-        //    try
-        //    {
-        //        string s = new WSM.Conn.SQLConn().GetField(_Qry, WSM.Conn.DB.DataBaseName.HITECH_PRODUCTION, "");
-        //        //dts.Rows.Add(new Object[] { value.id, 0, s, "Successful" });
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Console.WriteLine(ex);
-        //    }
-        //    return state;
-        //}
     }
 }
