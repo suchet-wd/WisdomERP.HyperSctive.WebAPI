@@ -91,6 +91,6 @@ namespace HyperActive.Controllers
                     Content = new StringContent(JSONresult, System.Text.Encoding.UTF8, "application/json")
                 };
             }
-        }
+        } // End API GetCuttingInfo
     }
 }

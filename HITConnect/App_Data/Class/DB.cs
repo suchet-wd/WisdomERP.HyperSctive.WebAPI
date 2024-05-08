@@ -204,7 +204,7 @@ namespace WSM.Conn
 
                 try
                 {
-                    _ConnString = "Server=hig00svr91;Database=HITECH_PRODUCTION;User Id=sa;Password=5k,mew,;";
+                    _ConnString = "Server=hig00svr91;Database=HITECH_PRODUCTION;User Id=sa;Password=!@#5k,mew,;";
                     XmlReader xmlreader;
                     if (_Cnn.State == ConnectionState.Open) { _Cnn.Close(); };
                     _Cnn.ConnectionString = _ConnString;

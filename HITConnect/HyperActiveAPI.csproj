@@ -183,6 +183,7 @@
     <Compile Include="App_Data\Class\OrderProd.cs" />
     <Compile Include="App_Data\Class\ResponseAPI.cs" />
     <Compile Include="App_Data\Class\SQLConn.cs" />
+    <Compile Include="App_Data\Class\APIStationInOut.cs" />
     <Compile Include="App_Data\Class\UserToken.cs" />
     <Compile Include="App_Data\Class\UserAuthen.cs" />
     <Compile Include="App_Data\Class\UFuncs.cs" />
