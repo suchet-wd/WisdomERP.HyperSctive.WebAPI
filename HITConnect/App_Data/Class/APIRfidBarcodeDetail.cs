@@ -4,17 +4,22 @@ using System.Collections.Generic;
 
 namespace HyperActive
 {
-    public class APIRfidBarcode
+    public class APIRfidBarcodeDetail
     {
-        [JsonProperty("Rfid")]
-        public string Rfid { get; set; }
+        [JsonProperty("Job")]
+        public string Job { get; set; }
 
-        [JsonProperty("ParentBundleBarcode")]
-        public string ParentBundleBarcode { get; set; }
+        [JsonProperty("ColorWay")]
+        public string ColorWay { get; set; }
+
+        [JsonProperty("Size")]
+        public string Size { get; set; }
 
         [JsonProperty("BundleBarcode")]
-        public List<APIRfidBarcodeDetail> BundleBarcode { get; set; }
-        //public List<string> BundleBarcode { get; set; }
+        public string BundleBarcode { get; set; }
+
+        [JsonProperty("BundleQuantity")]
+        public string BundleQuantity { get; set; }
 
 
         public static bool isParentBundleBarcode(string value)
@@ -40,25 +45,13 @@ namespace HyperActive
             return state; // (DateTime.Compare(tempDateStart, tempDateEnd) <= 1) ? true : false;
         }
 
-        public static bool isBundleBarcode(APIRfidBarcodeDetail value)
+        public static bool isBundleBarcode(string value)
         {
             bool state = false;
-            if (value.BundleBarcode != "")
+            if (value != "")
             {
-                //string _Qry = "SELECT TOP 1 ss.FTBarcodeBundleNo as 'BundleBarcode' " +
-                //    "FROM " + WSM.Conn.DB.DataBaseName.HITECH_PRODUCTION + ".dbo.TPRODBarcode_SendSupl AS ss WITH (NOLOCK)\n";
-                //_Qry += "WHERE ss.FTBarcodeSendSuplNo  = '" + value + "'";
-                string _Qry = "SELECT TOP 1ss.FTBarcodeBundleNo as 'BundleBarcode' \n";
-
-                _Qry += "FROM " + WSM.Conn.DB.DataBaseName.HITECH_PRODUCTION + ".dbo.TPRODBarcode_SendSupl AS ss WITH(NOLOCK) \n";
-                _Qry += "OUTER APPLY(SELECT TOP 1 * FROM " + WSM.Conn.DB.DataBaseName.HITECH_PRODUCTION + ".dbo.TPRODTOrderProd AS p WITH(NOLOCK) \n";
-                _Qry += "WHERE p.FTOrderProdNo = ss.FTOrderProdNo) as p \n";
-                _Qry += "OUTER APPLY(SELECT TOP 1 * FROM " + WSM.Conn.DB.DataBaseName.HITECH_PRODUCTION + ".dbo.TPRODTBundle AS b WITH (NOLOCK) \n";
-                _Qry += "WHERE b.FTBarcodeBundleNo = ss.FTBarcodeBundleNo ) as b \n";
-                _Qry += "WHERE ss.FTBarcodeSendSuplNo = '" + value.BundleBarcode + "' AND p.FTOrderNo = '" + value.Job + "'  \n";
-                _Qry += "AND b.FTColorway = '" + value.ColorWay + "' AND b.FTSizeBreakDown = '" + value.Size + "'";
-
-
+                string _Qry = "SELECT TOP 1 ss.FTBarcodeBundleNo as 'BundleBarcode' FROM " + WSM.Conn.DB.DataBaseName.HITECH_PRODUCTION + ".dbo.TPRODBarcode_SendSupl AS ss WITH (NOLOCK)\n";
+                _Qry += "WHERE ss.FTBarcodeSendSuplNo  = '" + value + "'";
                 //If HI.Conn.SQLConn.GetField(_Qry, Conn.DB.DataBaseName.DB_MERCHAN, "") = "" Then
                 try
                 {

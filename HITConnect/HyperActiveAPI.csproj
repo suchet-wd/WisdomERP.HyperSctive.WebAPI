@@ -168,16 +168,20 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="App_Data\Class\APIRfidBarcodeDetail.cs" />
     <Compile Include="App_Data\Class\APIRfidBarcode.cs" />
     <Compile Include="App_Data\Class\APIRfid.cs" />
     <Compile Include="App_Data\Class\APIOrderProd.cs" />
     <Compile Include="App_Data\Class\APICutting.cs" />
+    <Compile Include="App_Data\Class\APIBoxinfo.cs" />
+    <Compile Include="App_Data\Class\BoxInfoDetail.cs" />
     <Compile Include="App_Data\Class\CuttingPartRoute.cs" />
     <Compile Include="App_Data\Class\CuttingPartDetails.cs" />
     <Compile Include="App_Data\Class\DB.cs" />
     <Compile Include="App_Data\Class\APIOrder.cs" />
     <Compile Include="App_Data\Class\CuttingOrder.cs" />
     <Compile Include="App_Data\Class\CuttingOrderDetails.cs" />
+    <Compile Include="App_Data\Class\BoxInfo.cs" />
     <Compile Include="App_Data\Class\OrderProdDetailsRatio.cs" />
     <Compile Include="App_Data\Class\OrderProdDetails.cs" />
     <Compile Include="App_Data\Class\OrderProd.cs" />
