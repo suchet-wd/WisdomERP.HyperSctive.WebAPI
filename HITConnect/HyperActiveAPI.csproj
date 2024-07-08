@@ -168,12 +168,15 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="App_Data\Class\APISystemConfig.cs" />
+    <Compile Include="App_Data\Class\APIStationResults.cs" />
     <Compile Include="App_Data\Class\APIRfidBarcodeDetail.cs" />
     <Compile Include="App_Data\Class\APIRfidBarcode.cs" />
     <Compile Include="App_Data\Class\APIRfid.cs" />
     <Compile Include="App_Data\Class\APIOrderProd.cs" />
     <Compile Include="App_Data\Class\APICutting.cs" />
     <Compile Include="App_Data\Class\APIBoxinfo.cs" />
+    <Compile Include="App_Data\Class\APIBundleUpdate.cs" />
     <Compile Include="App_Data\Class\BoxInfoDetail.cs" />
     <Compile Include="App_Data\Class\CuttingPartRoute.cs" />
     <Compile Include="App_Data\Class\CuttingPartDetails.cs" />
@@ -181,7 +184,6 @@
     <Compile Include="App_Data\Class\APIOrder.cs" />
     <Compile Include="App_Data\Class\CuttingOrder.cs" />
     <Compile Include="App_Data\Class\CuttingOrderDetails.cs" />
-    <Compile Include="App_Data\Class\BoxInfo.cs" />
     <Compile Include="App_Data\Class\OrderProdDetailsRatio.cs" />
     <Compile Include="App_Data\Class\OrderProdDetails.cs" />
     <Compile Include="App_Data\Class\OrderProd.cs" />
@@ -224,10 +226,12 @@
     <Compile Include="Areas\HelpPage\SampleGeneration\SampleDirection.cs" />
     <Compile Include="Areas\HelpPage\SampleGeneration\TextSample.cs" />
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
+    <Compile Include="Controllers\APIlogController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\CuttingController.cs" />
     <Compile Include="Controllers\RfidController.cs" />
     <Compile Include="Controllers\OrderController.cs" />
+    <Compile Include="Controllers\SystemController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -332,6 +336,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <Content Include="Views\APIlog\Index.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

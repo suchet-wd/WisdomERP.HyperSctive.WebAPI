@@ -4,13 +4,14 @@ using System.Data;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using System.Xml;
 
 namespace HyperActive.Controllers
 {
     public class RfidController : ApiController
     {
         [HttpPost]
-        [Route("api/GetRfidInfo/")]
+        [Route("api/GetRfidInfo/")] // API 4 : GetRfidInfo
         public HttpResponseMessage GetRfidInfo([FromBody] APIRfid value)
         {
             string _Qry = "";
@@ -24,7 +25,7 @@ namespace HyperActive.Controllers
             // Checking All Barcode
             foreach (APIRfidBarcode rb in value.BundleRfidBarcodeList)
             {
-                if (APIRfidBarcode.isParentBundleBarcode(rb.ParentBundleBarcode) == false)
+                if (APIRfidBarcode.isParentBundleBarcode(rb) == false)
                 {
                     dts.Rows.Add(new Object[] { "1", "Please check Parent Bundle Barcode (" + rb.ParentBundleBarcode + ")" });
                     jsondata = JsonConvert.SerializeObject(dts);
@@ -117,9 +118,11 @@ namespace HyperActive.Controllers
                     Content = new StringContent(jsondata, System.Text.Encoding.UTF8, "application/json")
                 };
             }
-        } // End GetRfidInfo
+        } // End API 4 : GetRfidInfo
 
+        // -------------------------------------------------------------------------------------------------------------------
 
+        // // Start GetStationInOut API_5 : Station In Out SM -> WSM
         [HttpPost]
         [Route("api/GetStationInOut/")]
         public HttpResponseMessage GetStationInOut([FromBody] APIStationInOut value)
@@ -189,9 +192,160 @@ namespace HyperActive.Controllers
                     Content = new StringContent(jsondata, System.Text.Encoding.UTF8, "application/json")
                 };
             }
-        } // End GetStationInOut
+        } // End GetStationInOut API_5 : Station In Out
 
 
+        // // Start GetStationInOut API_6 : Bundle Update WSM -> SM
+        [HttpPost]
+        [Route("api/GetBundleUpdate/")]
+        public HttpResponseMessage GetBundleUpdate([FromBody] APIBundleUpdate value)
+        {
+            string _Qry = "";
+            string JSONresult = "";
+            XmlDocument docXML = new XmlDocument();
+            WSM.Conn.SQLConn Cnn = new WSM.Conn.SQLConn();
+            DataTable dts = new DataTable();
+            dts.Columns.Add("Status", typeof(string));
+            dts.Columns.Add("Message", typeof(string));
+
+            if (value.BundleBarCode == "")
+            {
+                dts.Rows.Add(new Object[] { 1, "Please send BundleBarCode for get information!!!" });
+                JSONresult = JsonConvert.SerializeObject(dts);
+                return new HttpResponseMessage
+                {
+                    StatusCode = HttpStatusCode.NotAcceptable,
+                    Content = new StringContent(JSONresult, System.Text.Encoding.UTF8, "application/json")
+                };
+            }
+
+            _Qry = "EXEC [" + WSM.Conn.DB.DataBaseName.HITECH_HYPERACTIVE + "].dbo.SP_Send_Data_To_Hyperconvert_API6 @BundleBarCode = '" + value.BundleBarCode + "'";
+            try
+            {
+                docXML = Cnn.GetDataXML(_Qry, WSM.Conn.DB.DataBaseName.HITECH_HYPERACTIVE);
+                JSONresult = JsonConvert.SerializeObject(docXML);
+                //JsonConvert.SerializeXmlNode(docXML); //, Newtonsoft.Json.Formatting.Indented
+                JSONresult = JSONresult.Replace("\"[]\"", "[]");
+                JSONresult = JSONresult.Replace("[[],", "[");
+                JSONresult = JSONresult.Replace(":\"_", ":\"");
+                //JSONresult = JSONresult.Replace("}}", "}");
+                JSONresult = JSONresult.Replace("{\"root\":", "");
+                JSONresult = JSONresult.Replace("\"_\",", "");
+                JSONresult = JSONresult.Replace("{\"DefectDetails\":[{", "[{");
+                JSONresult = JSONresult.Replace("\"}]}}", "\"}]");
+                //JSONresult = JSONresult.Replace("{\"DefectDetails\":[\"[]\",", "[");
+                //JSONresult = JSONresult.Replace("{\"DefectDetails\":[{", "[");
+                //JSONresult = JSONresult.Substring(0, JSONresult.Length - 1);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return new HttpResponseMessage
+                {
+                    StatusCode = HttpStatusCode.NotAcceptable,
+                    Content = new StringContent(JSONresult, System.Text.Encoding.UTF8, "application/json")
+                };
+            }
+
+            if (JSONresult.Length > 0)
+            {
+                return new HttpResponseMessage
+                {
+                    StatusCode = HttpStatusCode.Accepted,
+                    Content = new StringContent(JSONresult, System.Text.Encoding.UTF8, "application/json")
+                };
+            }
+            else
+            {
+                return new HttpResponseMessage
+                {
+                    StatusCode = HttpStatusCode.NotAcceptable,
+                    Content = new StringContent(JSONresult, System.Text.Encoding.UTF8, "application/json")
+                };
+            }
+        } // End GetStationInOut API_6 : Station In Out
+
+        // -------------------------------------------------------------------------------------------------------------------
+
+
+        // // Start GetStationInOut API_7 : Station Results WSM -> SM
+        [HttpPost]
+        [Route("api/GetStationResults/")]
+        public HttpResponseMessage GetStationResults([FromBody] APIStationResults value)
+        {
+            string _Qry = "";
+            string JSONresult = "";
+            XmlDocument docXML = new XmlDocument();
+            WSM.Conn.SQLConn Cnn = new WSM.Conn.SQLConn();
+            DataTable dts = new DataTable();
+            dts.Columns.Add("Status", typeof(string));
+            dts.Columns.Add("Message", typeof(string));
+
+            if (value.BoxRfid == "" && value.BoxBarcode == "")
+            {
+                dts.Rows.Add(new Object[] { 1, "Please send Box RFID or Box Barcode for get information!!!" });
+                JSONresult = JsonConvert.SerializeObject(dts);
+                return new HttpResponseMessage
+                {
+                    StatusCode = HttpStatusCode.NotAcceptable,
+                    Content = new StringContent(JSONresult, System.Text.Encoding.UTF8, "application/json")
+                };
+            }
+
+            if (value.BoxRfid == "")
+            {
+                _Qry = "EXEC [" + WSM.Conn.DB.DataBaseName.HITECH_HYPERACTIVE + "].dbo.SP_Send_Data_To_Hyperconvert_API7 @BoxRfid = '" + value.BoxRfid + "'";
+
+            }
+            else if (value.BoxBarcode == "")
+            {
+                _Qry = "EXEC [" + WSM.Conn.DB.DataBaseName.HITECH_HYPERACTIVE + "].dbo.SP_Send_Data_To_Hyperconvert_API7 @BoxBarcode = '" + value.BoxBarcode + "'";
+            }
+
+            try
+            {
+                docXML = Cnn.GetDataXML(_Qry, WSM.Conn.DB.DataBaseName.HITECH_HYPERACTIVE);
+                JSONresult = JsonConvert.SerializeObject(docXML);
+                //JsonConvert.SerializeXmlNode(docXML); //, Newtonsoft.Json.Formatting.Indented
+                JSONresult = JSONresult.Replace("\"[]\"", "[]");
+                JSONresult = JSONresult.Replace("[[],", "[");
+                JSONresult = JSONresult.Replace(":\"_", ":\"");
+                //JSONresult = JSONresult.Replace("}}", "}");
+                JSONresult = JSONresult.Replace("{\"root\":", "");
+                JSONresult = JSONresult.Replace("\"_\",", "");
+                JSONresult = JSONresult.Substring(0, JSONresult.Length - 1);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return new HttpResponseMessage
+                {
+                    StatusCode = HttpStatusCode.NotAcceptable,
+                    Content = new StringContent(JSONresult, System.Text.Encoding.UTF8, "application/json")
+                };
+            }
+
+            if (JSONresult.Length > 0)
+            {
+                return new HttpResponseMessage
+                {
+                    StatusCode = HttpStatusCode.Accepted,
+                    Content = new StringContent(JSONresult, System.Text.Encoding.UTF8, "application/json")
+                };
+            }
+            else
+            {
+                return new HttpResponseMessage
+                {
+                    StatusCode = HttpStatusCode.NotAcceptable,
+                    Content = new StringContent(JSONresult, System.Text.Encoding.UTF8, "application/json")
+                };
+            }
+        } // End GetStationInOut API_7 : Station Results WSM -> SM
+
+        // -------------------------------------------------------------------------------------------------------------------
+
+        // Start GetBoxInfo API_8 : Finish Box Status
         [HttpPost]
         [Route("api/GetBoxInfo/")]
         public HttpResponseMessage GetBoxInfo([FromBody] APIBoxInfo value)
@@ -217,15 +371,15 @@ namespace HyperActive.Controllers
                 _Qry += "   FROM [" + WSM.Conn.DB.DataBaseName.HITECH_HYPERACTIVE + "].dbo.TSMGtoWisdom_FinishBoxStatus AS fb WITH (NOLOCK) \n";
                 _Qry += "   WHERE fb.FinishBoxRfid = '" + b.FinishBoxRfid + "' AND FinishBoxBarcode = '" + b.FinishBoxBarcode + "' \n";
                 _Qry += ") \n";
-                
+
                 _Qry += "   BEGIN \n";
-                _Qry += "      UPDATE [" + WSM.Conn.DB.DataBaseName.HITECH_HYPERACTIVE + "].dbo.TSMGtoWisdom_FinishBoxStatus ";
+                _Qry += "      UPDATE [" + WSM.Conn.DB.DataBaseName.HITECH_HYPERACTIVE + "].dbo.TSMGtoWisdom_FinishBoxStatus \n";
                 _Qry += "      SET FinishBoxIsEmpty = '" + ((b.FinishBoxIsEmpty) ? "1" : "0") + "' \n";
                 _Qry += "      WHERE FinishBoxRfid = '" + b.FinishBoxRfid + "' AND FinishBoxBarcode = '" + b.FinishBoxBarcode + "' \n";
                 _Qry += "   END \n";
 
                 _Qry += "ELSE \n";
-                
+
                 _Qry += "   BEGIN \n";
                 _Qry += "      INSERT INTO [" + WSM.Conn.DB.DataBaseName.HITECH_HYPERACTIVE + "].dbo.TSMGtoWisdom_FinishBoxStatus \n";
                 _Qry += "      (FTInsUser, FDInsDate, FTInsTime, FinishBoxRfid, FinishBoxBarcode, FinishBoxIsEmpty ) \n";
@@ -236,7 +390,7 @@ namespace HyperActive.Controllers
                 _Qry += "SET @RecCount = @RecCount + @@ROWCOUNT \n\n";
                 i++;
             }
-            _Qry += " IF @RecCount = " + i;
+            _Qry += " IF @RecCount = " + i + "\n";
             _Qry += "   BEGIN \n";
             _Qry += "       COMMIT TRANSACTION \n";
             _Qry += "   END \n\n";
@@ -275,7 +429,7 @@ namespace HyperActive.Controllers
                     Content = new StringContent(jsondata, System.Text.Encoding.UTF8, "application/json")
                 };
             }
-        } // End GetBoxInfo
+        } // End GetBoxInfo API_8 : Finish Box Status
 
     } // End Class
 } // End namespace

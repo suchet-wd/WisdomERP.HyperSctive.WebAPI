@@ -15,7 +15,8 @@ namespace WSM.Conn
         public static string[] DBName = new string[30];
 
         //public static string[] SystemDBName = { "DB_TEMPDB", "DB_VENDER" };
-        public static string[] SystemDBName = { "HITECH_MERCHAN", "HITECH_MASTER", "HITECH_PRODUCTION", "HITECH_SYSTEM", "HITECH_HYPERACTIVE" };
+        public static string[] SystemDBName = { "HITECH_MERCHAN", "HITECH_MASTER", 
+            "HITECH_PRODUCTION", "HITECH_SYSTEM", "HITECH_HYPERACTIVE" };
         public enum DataBaseName : int
         {
             //DB_TEMPDB = 0,
@@ -61,7 +62,6 @@ namespace WSM.Conn
                     if (StrDBName.ToUpper().Contains(DbName.ToUpper()) == true)
                     {
                         return DBName[I];
-
                     }
                     I = I + 1;
                 }
@@ -76,10 +76,8 @@ namespace WSM.Conn
         {
             try
             {
-
                 BaseName = DBName[(int)DbName];
                 return true;
-
             }
             catch (Exception ex)
             {
@@ -98,7 +96,6 @@ namespace WSM.Conn
                     if (StrDBName.ToUpper().Contains(DbName.ToUpper()) == true)
 
                     {
-
                         BaseName = DBName[I];
                         return true;
                         //break;
@@ -126,10 +123,10 @@ namespace WSM.Conn
 
         public static string ConnectionString(DataBaseName DbName)
         {
-
             try
             {
-                _ConnectString = "SERVER=" + WSM.Conn.DB.ServerName + ";UID=" + UserName + ";PWD=" + UserPassword + ";Initial Catalog=" + DBName[(int)DbName];
+                _ConnectString = "SERVER=" + WSM.Conn.DB.ServerName + ";UID=" + UserName + ";PWD=" + 
+                    UserPassword + ";Initial Catalog=" + DBName[(int)DbName];
                 return _ConnectString;
             }
             catch (Exception ex)

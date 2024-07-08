@@ -130,6 +130,8 @@ namespace HyperActive.Controllers
                     JSONresult = JSONresult.Replace("\"\",", "");
                     JSONresult = JSONresult.Replace("{\"root\":", "");
                     JSONresult = JSONresult.Replace("\"Route\":[\"[]\",{\"Station", "\"Route\":[{\"Station");
+                    JSONresult = JSONresult.Replace("PartDetail\":[\"[]\"],{", "PartDetail\":[],{");
+                    JSONresult = JSONresult.Replace("[{\"Station\":null,\"FactoryNo\":null}]", "[]");
                     JSONresult = JSONresult.Substring(0, JSONresult.Length - 1);
                 }
                 catch (Exception ex)
