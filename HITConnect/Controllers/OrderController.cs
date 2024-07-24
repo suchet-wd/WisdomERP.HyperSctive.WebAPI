@@ -12,7 +12,7 @@ namespace HyperActive.Controllers
     public class ProductionController : ApiController
     {
         [HttpPost]
-        [Route("api/GetOrderInfo/")]
+        [Route("api/GetOrderInfo/")] // API 1 Order Info
         public HttpResponseMessage GetOrderInfo([FromBody] APIOrder value)
         {
             string _Qry = "";
@@ -60,6 +60,13 @@ namespace HyperActive.Controllers
                 catch (Exception ex)
                 {
                     Console.WriteLine(ex);
+                    dts.Rows.Add(new Object[] { 1, "Please check Doc No!!!" });
+                    JSONresult = JsonConvert.SerializeObject(dts);
+                    return new HttpResponseMessage
+                    {
+                        StatusCode = HttpStatusCode.NotAcceptable,
+                        Content = new StringContent(JSONresult, System.Text.Encoding.UTF8, "application/json")
+                    };
                 }
             }
             else
@@ -94,7 +101,7 @@ namespace HyperActive.Controllers
 
 
         [HttpPost]
-        [Route("api/GetOrderDetailInfo/")]
+        [Route("api/GetOrderDetailInfo/")] //API 2 Order Details Info (Production Details)
         public HttpResponseMessage GetOrderDetailInfo([FromBody] APIOrder value)
         {
             string _Qry = "";
@@ -124,19 +131,29 @@ namespace HyperActive.Controllers
                 {
                     docXML = Cnn.GetDataXML(_Qry, WSM.Conn.DB.DataBaseName.HITECH_HYPERACTIVE);
                     JSONresult = JsonConvert.SerializeObject(docXML);
-                    JSONresult = JSONresult.Replace("PartDetail\":[\"[]\",{", "PartDetail\":[{");
-                    JSONresult = JSONresult.Replace("PooDetail\":[\"[]\",", "PooDetail\":[");
-                    JSONresult = JSONresult.Replace("\"SpreadingRatio\":[\"[]\",", "\"SpreadingRatio\":[");
+                    JSONresult = JSONresult.Replace("PartDetail\":[\"[]\",{", "PartDetail\":[{");               // Case One Record
+                    JSONresult = JSONresult.Replace("PooDetail\":[\"[]\",", "PooDetail\":[");                   // Case One Record
+                    JSONresult = JSONresult.Replace("\"SpreadingRatio\":[\"[]\",", "\"SpreadingRatio\":[");     // Case one record
+                    JSONresult = JSONresult.Replace("\"SpreadingRatio\":\"[]\",", "\"SpreadingRatio\":[],");  // Case Null
                     JSONresult = JSONresult.Replace("\"\",", "");
                     JSONresult = JSONresult.Replace("{\"root\":", "");
                     JSONresult = JSONresult.Replace("\"Route\":[\"[]\",{\"Station", "\"Route\":[{\"Station");
+                    JSONresult = JSONresult.Replace("\"Route\": \"[]\",", "\"Route\": [],");                    // Case Null
                     JSONresult = JSONresult.Replace("PartDetail\":[\"[]\"],{", "PartDetail\":[],{");
+                    JSONresult = JSONresult.Replace("\"PartDetail\":\"[]\",", "\"PartDetail\":[],");          // Case Null
                     JSONresult = JSONresult.Replace("[{\"Station\":null,\"FactoryNo\":null}]", "[]");
                     JSONresult = JSONresult.Substring(0, JSONresult.Length - 1);
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine(ex);
+                    dts.Rows.Add(new Object[] { 1, "Please check Doc No!!!" });
+                    JSONresult = JsonConvert.SerializeObject(dts);
+                    return new HttpResponseMessage
+                    {
+                        StatusCode = HttpStatusCode.NotAcceptable,
+                        Content = new StringContent(JSONresult, System.Text.Encoding.UTF8, "application/json")
+                    };
                 }
             }
             else

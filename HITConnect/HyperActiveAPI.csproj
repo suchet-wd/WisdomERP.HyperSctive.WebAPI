@@ -168,6 +168,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="App_Data\Class\APIPackResults.cs" />
     <Compile Include="App_Data\Class\APISystemConfig.cs" />
     <Compile Include="App_Data\Class\APIStationResults.cs" />
     <Compile Include="App_Data\Class\APIRfidBarcodeDetail.cs" />
@@ -232,6 +233,7 @@
     <Compile Include="Controllers\RfidController.cs" />
     <Compile Include="Controllers\OrderController.cs" />
     <Compile Include="Controllers\SystemController.cs" />
+    <Compile Include="Controllers\PackController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>

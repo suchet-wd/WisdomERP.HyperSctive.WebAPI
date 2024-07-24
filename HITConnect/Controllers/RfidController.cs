@@ -195,7 +195,7 @@ namespace HyperActive.Controllers
         } // End GetStationInOut API_5 : Station In Out
 
 
-        // // Start GetStationInOut API_6 : Bundle Update WSM -> SM
+        // // Start GetStationInOut API_6.1 : Bundle Update WSM -> SM
         [HttpPost]
         [Route("api/GetBundleUpdate/")]
         public HttpResponseMessage GetBundleUpdate([FromBody] APIBundleUpdate value)
@@ -210,7 +210,7 @@ namespace HyperActive.Controllers
 
             if (value.BundleBarCode == "")
             {
-                dts.Rows.Add(new Object[] { 1, "Please send BundleBarCode for get information!!!" });
+                dts.Rows.Add(new Object[] { 1, "Please send Bundle BarCode for get information!!!" });
                 JSONresult = JsonConvert.SerializeObject(dts);
                 return new HttpResponseMessage
                 {
@@ -227,15 +227,8 @@ namespace HyperActive.Controllers
                 //JsonConvert.SerializeXmlNode(docXML); //, Newtonsoft.Json.Formatting.Indented
                 JSONresult = JSONresult.Replace("\"[]\"", "[]");
                 JSONresult = JSONresult.Replace("[[],", "[");
-                JSONresult = JSONresult.Replace(":\"_", ":\"");
-                //JSONresult = JSONresult.Replace("}}", "}");
                 JSONresult = JSONresult.Replace("{\"root\":", "");
-                JSONresult = JSONresult.Replace("\"_\",", "");
-                JSONresult = JSONresult.Replace("{\"DefectDetails\":[{", "[{");
-                JSONresult = JSONresult.Replace("\"}]}}", "\"}]");
-                //JSONresult = JSONresult.Replace("{\"DefectDetails\":[\"[]\",", "[");
-                //JSONresult = JSONresult.Replace("{\"DefectDetails\":[{", "[");
-                //JSONresult = JSONresult.Substring(0, JSONresult.Length - 1);
+                JSONresult = JSONresult.Replace("\"}]}}", "\"}]}");
             }
             catch (Exception ex)
             {
@@ -263,8 +256,99 @@ namespace HyperActive.Controllers
                     Content = new StringContent(JSONresult, System.Text.Encoding.UTF8, "application/json")
                 };
             }
-        } // End GetStationInOut API_6 : Station In Out
+        } // End GetStationInOut API_6.1 : Bundle Update WSM -> SM
 
+
+        // // Start GetStationInOut API_6.2 : All Bundle Update WSM -> SM
+        [HttpPost]
+        [Route("api/GetBundleUpdatePeriod/")]
+        public HttpResponseMessage GetAllBundleUpdate([FromBody] APIBundleUpdatePeriod value)
+        {
+            string _Qry = "";
+            string JSONresult = "";
+            XmlDocument docXML = new XmlDocument();
+            WSM.Conn.SQLConn Cnn = new WSM.Conn.SQLConn();
+            DataTable dts = new DataTable();
+            dts.Columns.Add("Status", typeof(string));
+            dts.Columns.Add("Message", typeof(string));
+
+            if (value.StateGetAll == "1")
+            {
+                _Qry = "EXEC [" + WSM.Conn.DB.DataBaseName.HITECH_HYPERACTIVE + "].dbo.SP_Send_Data_To_Hyperconvert_API6_All ";
+                _Qry += "@StateGetAll = '" + value.StateGetAll + "'";
+                if (value.DateStart != "" && value.DateEnd != "")
+                {
+                    _Qry += ", @DateStart = '" + value.DateStart + "'";
+                    _Qry += ", @DateEnd = '" + value.DateEnd + "'";
+                }
+                else if (value.DateStart == "" && value.DateEnd == "9999/99/99")
+                {
+                    _Qry += ", @DateStart = '" + value.DateStart + "'";
+                    _Qry += ", @DateEnd = '" + value.DateEnd + "'";
+                }
+                else
+                {
+                    if (value.DateStart == "" && value.DateEnd != "")
+                    {
+                        dts.Rows.Add(new Object[] { 1, "Start Date Not Found !!!" });
+                        JSONresult = JsonConvert.SerializeObject(dts);
+                        return new HttpResponseMessage
+                        {
+                            StatusCode = HttpStatusCode.NotAcceptable,
+                            Content = new StringContent(JSONresult, System.Text.Encoding.UTF8, "application/json")
+                        };
+                    }
+                    else if (value.DateStart != "" && value.DateEnd == "")
+                    {
+                        dts.Rows.Add(new Object[] { 1, "End Date Not Found!!!" });
+                        JSONresult = JsonConvert.SerializeObject(dts);
+                        return new HttpResponseMessage
+                        {
+                            StatusCode = HttpStatusCode.NotAcceptable,
+                            Content = new StringContent(JSONresult, System.Text.Encoding.UTF8, "application/json")
+                        };
+                    }
+                }
+
+                try
+                {
+                    docXML = Cnn.GetDataXML(_Qry, WSM.Conn.DB.DataBaseName.HITECH_HYPERACTIVE);
+                    JSONresult = JsonConvert.SerializeObject(docXML);
+                    //JsonConvert.SerializeXmlNode(docXML); //, Newtonsoft.Json.Formatting.Indented
+                    JSONresult = JSONresult.Replace("\"[]\"", "[]");
+                    JSONresult = JSONresult.Replace("[[],", "[");
+                    //JSONresult = JSONresult.Replace("}}", "}");
+                    JSONresult = JSONresult.Replace("{\"root\":", "");
+                    JSONresult = JSONresult.Replace("\"}]}}", "\"}]}");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                    return new HttpResponseMessage
+                    {
+                        StatusCode = HttpStatusCode.NotAcceptable,
+                        Content = new StringContent(JSONresult, System.Text.Encoding.UTF8, "application/json")
+                    };
+                }
+            }
+
+            if (JSONresult.Length > 0)
+            {
+                return new HttpResponseMessage
+                {
+                    StatusCode = HttpStatusCode.Accepted,
+                    Content = new StringContent(JSONresult, System.Text.Encoding.UTF8, "application/json")
+                };
+            }
+            else
+            {
+                return new HttpResponseMessage
+                {
+                    StatusCode = HttpStatusCode.NotAcceptable,
+                    Content = new StringContent(JSONresult, System.Text.Encoding.UTF8, "application/json")
+                };
+            }
+        } // End GetStationInOut API_6.2 : All Bundle Update WSM -> SM
         // -------------------------------------------------------------------------------------------------------------------
 
 
@@ -367,27 +451,49 @@ namespace HyperActive.Controllers
 
             foreach (BoxInfo b in value.BoxRfidList)
             {
-                _Qry += "IF EXISTS( \n   SELECT TOP 1 fb.FinishBoxIsEmpty \n";
-                _Qry += "   FROM [" + WSM.Conn.DB.DataBaseName.HITECH_HYPERACTIVE + "].dbo.TSMGtoWisdom_FinishBoxStatus AS fb WITH (NOLOCK) \n";
-                _Qry += "   WHERE fb.FinishBoxRfid = '" + b.FinishBoxRfid + "' AND FinishBoxBarcode = '" + b.FinishBoxBarcode + "' \n";
-                _Qry += ") \n";
+                if (b.FinishBoxIsEmpty == true)
+                {
+                    _Qry += "IF EXISTS( SELECT TOP 1 ss.FTStateClearBox \n";
+                    _Qry += "   FROM [" + WSM.Conn.DB.DataBaseName.HITECH_HYPERACTIVE + "].dbo.TPROSendSuplDefect AS ss WITH (NOLOCK)  \n";
+                    _Qry += "    WHERE ss.FTStateClearBox = 0 AND ";
+                    _Qry += "    (ss.FTRFIDNo = '" + b.FinishBoxRfid + "' " + " OR ss.FTBoxNo = '" + b.FinishBoxRfid + "' ";
+                    _Qry += "     OR ss.FTBoxNo = '" + b.FinishBoxBarcode + "' OR ss.FTBoxNo = '" + b.FinishBoxBarcode + "') \n";
+                    _Qry += ") \n";
 
-                _Qry += "   BEGIN \n";
-                _Qry += "      UPDATE [" + WSM.Conn.DB.DataBaseName.HITECH_HYPERACTIVE + "].dbo.TSMGtoWisdom_FinishBoxStatus \n";
-                _Qry += "      SET FinishBoxIsEmpty = '" + ((b.FinishBoxIsEmpty) ? "1" : "0") + "' \n";
-                _Qry += "      WHERE FinishBoxRfid = '" + b.FinishBoxRfid + "' AND FinishBoxBarcode = '" + b.FinishBoxBarcode + "' \n";
-                _Qry += "   END \n";
+                    _Qry += "   BEGIN \n";
+                    _Qry += "      UPDATE [" + WSM.Conn.DB.DataBaseName.HITECH_HYPERACTIVE + "].dbo.TPROSendSuplDefect \n";
+                    _Qry += "      SET FTStateClearBox = 1, FDClearBoxDate =  @Date, FTClearBoxTime = @Time \n";
+                    _Qry += "      WHERE FTStateClearBox = 0 AND ";
+                    _Qry += "      (FTRFIDNo = '" + b.FinishBoxRfid + "' " + " OR FTRFIDNo = '" + b.FinishBoxRfid + "' ";
+                    _Qry += "       OR FTBoxNo = '" + b.FinishBoxBarcode + "' OR FTBoxNo = '" + b.FinishBoxBarcode + "'); \n";
+                    _Qry += "\n";
+                    _Qry += "      INSERT INTO [" + WSM.Conn.DB.DataBaseName.HITECH_HYPERACTIVE + "].dbo.TSMGtoWisdom_FinishBoxStatus \n";
+                    _Qry += "      (FTInsUser, FDInsDate, FTInsTime, FinishBoxRfid, FinishBoxBarcode, FinishBoxIsEmpty ) \n";
+                    _Qry += "      VALUES('', @Date, @Time, \n";
+                    _Qry += "      '" + b.FinishBoxRfid + "', '" + b.FinishBoxBarcode + "', '" + ((b.FinishBoxIsEmpty) ? "1" : "0") + "' \n";
+                    _Qry += "      ); \n";
+                    _Qry += "   END \n";
 
-                _Qry += "ELSE \n";
+                    _Qry += "ELSE \n";
 
-                _Qry += "   BEGIN \n";
-                _Qry += "      INSERT INTO [" + WSM.Conn.DB.DataBaseName.HITECH_HYPERACTIVE + "].dbo.TSMGtoWisdom_FinishBoxStatus \n";
-                _Qry += "      (FTInsUser, FDInsDate, FTInsTime, FinishBoxRfid, FinishBoxBarcode, FinishBoxIsEmpty ) \n";
-                _Qry += "      VALUES('', @Date, @Time, \n";
-                _Qry += "      '" + b.FinishBoxRfid + "', '" + b.FinishBoxBarcode + "', '" + ((b.FinishBoxIsEmpty) ? "1" : "0") + "' \n";
-                _Qry += "      ); \n";
-                _Qry += "   END \n\n";
-                _Qry += "SET @RecCount = @RecCount + @@ROWCOUNT \n\n";
+                    _Qry += "   BEGIN \n";
+                    _Qry += "      INSERT INTO [" + WSM.Conn.DB.DataBaseName.HITECH_HYPERACTIVE + "].dbo.TSMGtoWisdom_FinishBoxStatus \n";
+                    _Qry += "      (FTInsUser, FDInsDate, FTInsTime, FinishBoxRfid, FinishBoxBarcode, FinishBoxIsEmpty ) \n";
+                    _Qry += "      VALUES('', @Date, @Time, \n";
+                    _Qry += "      '" + b.FinishBoxRfid + "', '" + b.FinishBoxBarcode + "', '" + ((b.FinishBoxIsEmpty) ? "1" : "0") + "' \n";
+                    _Qry += "      ); \n";
+                    _Qry += "   END \n\n";
+                    _Qry += "SET @RecCount = @RecCount + @@ROWCOUNT \n\n";
+                }
+                else
+                {
+                    _Qry += "INSERT INTO [" + WSM.Conn.DB.DataBaseName.HITECH_HYPERACTIVE + "].dbo.TSMGtoWisdom_FinishBoxStatus \n";
+                    _Qry += "(FTInsUser, FDInsDate, FTInsTime, FinishBoxRfid, FinishBoxBarcode, FinishBoxIsEmpty ) \n";
+                    _Qry += "VALUES('', @Date, @Time, \n";
+                    _Qry += "'" + b.FinishBoxRfid + "', '" + b.FinishBoxBarcode + "', '" + ((b.FinishBoxIsEmpty) ? "1" : "0") + "' \n";
+                    _Qry += "); \n";
+                    _Qry += "SET @RecCount = @RecCount + @@ROWCOUNT \n\n";
+                }
                 i++;
             }
             _Qry += " IF @RecCount = " + i + "\n";
@@ -430,6 +536,9 @@ namespace HyperActive.Controllers
                 };
             }
         } // End GetBoxInfo API_8 : Finish Box Status
+
+        // -------------------------------------------------------------------------------------------------------------------
+
 
     } // End Class
 } // End namespace

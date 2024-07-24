@@ -6,13 +6,13 @@ using System.Web;
 
 namespace HyperActive
 {
-    public class APIBundleUpdate
-    {
-        [JsonProperty("BundleBarCode", Required = Required.Always)]
-        public string BundleBarCode { get; set; }
-    }
+    //public class APIPackResults
+    //{
+    //    [JsonProperty("BundleBarCode", Required = Required.Always)]
+    //    public string BundleBarCode { get; set; }
+    //}
 
-    public class APIBundleUpdatePeriod
+    public class APIPackResults
     {
         [JsonProperty("StateGetAll", Required = Required.Always)]
         public string StateGetAll { get; set; }
