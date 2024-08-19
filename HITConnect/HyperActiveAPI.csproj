@@ -169,6 +169,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Data\Class\APIPackResults.cs" />
+    <Compile Include="App_Data\Class\APIOutSourseStatus.cs" />
     <Compile Include="App_Data\Class\APISystemConfig.cs" />
     <Compile Include="App_Data\Class\APIStationResults.cs" />
     <Compile Include="App_Data\Class\APIRfidBarcodeDetail.cs" />
@@ -230,6 +231,7 @@
     <Compile Include="Controllers\APIlogController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\CuttingController.cs" />
+    <Compile Include="Controllers\JobController.cs" />
     <Compile Include="Controllers\RfidController.cs" />
     <Compile Include="Controllers\OrderController.cs" />
     <Compile Include="Controllers\SystemController.cs" />
@@ -295,6 +297,9 @@
     <Content Include="Scripts\vectormap-utils\dx.vectormaputils.debug.js" />
     <Content Include="Scripts\vectormap-utils\dx.vectormaputils.js" />
     <Content Include="Scripts\vectormap-utils\dx.vectormaputils.node.js" />
+    <Content Include="Views\Shared\jquery-3.7.1.min.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>

@@ -71,7 +71,7 @@ namespace HyperActive.Controllers
                 JSONresult = JSONresult.Replace(":\"_", ":\"");
                 //JSONresult = JSONresult.Replace("}}", "}");
                 JSONresult = JSONresult.Replace("{\"root\":", "");
-                JSONresult = JSONresult.Replace("\"_\",", "");
+                JSONresult = JSONresult.Replace("\"_\",", "\"\",");
                 JSONresult = JSONresult.Substring(0, JSONresult.Length - 1);
             }
             catch (Exception ex)
@@ -116,14 +116,9 @@ namespace HyperActive.Controllers
             dts.Columns.Add("Status", typeof(string));
             dts.Columns.Add("Message", typeof(string));
 
-            _Qry = "EXEC [" + WSM.Conn.DB.DataBaseName.HITECH_HYPERACTIVE + "].dbo.SP_Send_Data_To_Hyperconvert_API9 ";
+            _Qry = "EXEC [" + WSM.Conn.DB.DataBaseName.HITECH_HYPERACTIVE + "].dbo.SP_Send_Data_To_Hyperconvert_API9byDate ";
             //_Qry += "@StateGetAll = '" + value.StateGetAll + "'";
             if (value.DateStart != "" && value.DateEnd != "")
-            {
-                _Qry += "@DateStart = '" + value.DateStart + "'";
-                _Qry += ", @DateEnd = '" + value.DateEnd + "'";
-            }
-            else if (value.DateStart == "" && value.DateEnd == "9999/99/99")
             {
                 _Qry += "@DateStart = '" + value.DateStart + "'";
                 _Qry += ", @DateEnd = '" + value.DateEnd + "'";
@@ -150,6 +145,16 @@ namespace HyperActive.Controllers
                         Content = new StringContent(JSONresult, System.Text.Encoding.UTF8, "application/json")
                     };
                 }
+                else if (value.DateStart == "" && value.DateEnd == "")
+                {
+                    dts.Rows.Add(new Object[] { 1, "Start & End Date Not Found!!!" });
+                    JSONresult = JsonConvert.SerializeObject(dts);
+                    return new HttpResponseMessage
+                    {
+                        StatusCode = HttpStatusCode.NotAcceptable,
+                        Content = new StringContent(JSONresult, System.Text.Encoding.UTF8, "application/json")
+                    };
+                }
             }
 
             try
@@ -162,7 +167,7 @@ namespace HyperActive.Controllers
                 JSONresult = JSONresult.Replace(":\"_", ":\"");
                 //JSONresult = JSONresult.Replace("}}", "}");
                 JSONresult = JSONresult.Replace("{\"root\":", "");
-                JSONresult = JSONresult.Replace("\"_\",", "");
+                JSONresult = JSONresult.Replace("\"_\",", "\"\",");
                 JSONresult = JSONresult.Substring(0, JSONresult.Length - 1);
             }
             catch (Exception ex)

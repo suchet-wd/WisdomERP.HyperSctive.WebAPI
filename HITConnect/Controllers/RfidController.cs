@@ -195,6 +195,9 @@ namespace HyperActive.Controllers
         } // End GetStationInOut API_5 : Station In Out
 
 
+        // -------------------------------------------------------------------------------------------------------------------
+
+
         // // Start GetStationInOut API_6.1 : Bundle Update WSM -> SM
         [HttpPost]
         [Route("api/GetBundleUpdate/")]
@@ -228,7 +231,9 @@ namespace HyperActive.Controllers
                 JSONresult = JSONresult.Replace("\"[]\"", "[]");
                 JSONresult = JSONresult.Replace("[[],", "[");
                 JSONresult = JSONresult.Replace("{\"root\":", "");
-                JSONresult = JSONresult.Replace("\"}]}}", "\"}]}");
+                JSONresult = JSONresult.Replace("\"_\",", "\"\"");
+                JSONresult = JSONresult.Substring(0, JSONresult.Length - 1);
+
             }
             catch (Exception ex)
             {
@@ -257,6 +262,8 @@ namespace HyperActive.Controllers
                 };
             }
         } // End GetStationInOut API_6.1 : Bundle Update WSM -> SM
+
+        // -------------------------------------------------------------------------------------------------------------------
 
 
         // // Start GetStationInOut API_6.2 : All Bundle Update WSM -> SM
@@ -314,12 +321,11 @@ namespace HyperActive.Controllers
                 {
                     docXML = Cnn.GetDataXML(_Qry, WSM.Conn.DB.DataBaseName.HITECH_HYPERACTIVE);
                     JSONresult = JsonConvert.SerializeObject(docXML);
-                    //JsonConvert.SerializeXmlNode(docXML); //, Newtonsoft.Json.Formatting.Indented
                     JSONresult = JSONresult.Replace("\"[]\"", "[]");
                     JSONresult = JSONresult.Replace("[[],", "[");
-                    //JSONresult = JSONresult.Replace("}}", "}");
                     JSONresult = JSONresult.Replace("{\"root\":", "");
-                    JSONresult = JSONresult.Replace("\"}]}}", "\"}]}");
+                    JSONresult = JSONresult.Replace("\"_\",", "\"\"");
+                    JSONresult = JSONresult.Substring(0, JSONresult.Length - 1);
                 }
                 catch (Exception ex)
                 {
@@ -349,6 +355,7 @@ namespace HyperActive.Controllers
                 };
             }
         } // End GetStationInOut API_6.2 : All Bundle Update WSM -> SM
+
         // -------------------------------------------------------------------------------------------------------------------
 
 
@@ -376,12 +383,12 @@ namespace HyperActive.Controllers
                 };
             }
 
-            if (value.BoxRfid == "")
+            if (value.BoxRfid != "")
             {
                 _Qry = "EXEC [" + WSM.Conn.DB.DataBaseName.HITECH_HYPERACTIVE + "].dbo.SP_Send_Data_To_Hyperconvert_API7 @BoxRfid = '" + value.BoxRfid + "'";
 
             }
-            else if (value.BoxBarcode == "")
+            if (value.BoxBarcode != "")
             {
                 _Qry = "EXEC [" + WSM.Conn.DB.DataBaseName.HITECH_HYPERACTIVE + "].dbo.SP_Send_Data_To_Hyperconvert_API7 @BoxBarcode = '" + value.BoxBarcode + "'";
             }
@@ -396,7 +403,7 @@ namespace HyperActive.Controllers
                 JSONresult = JSONresult.Replace(":\"_", ":\"");
                 //JSONresult = JSONresult.Replace("}}", "}");
                 JSONresult = JSONresult.Replace("{\"root\":", "");
-                JSONresult = JSONresult.Replace("\"_\",", "");
+                JSONresult = JSONresult.Replace("\"_\",", "\"\"");
                 JSONresult = JSONresult.Substring(0, JSONresult.Length - 1);
             }
             catch (Exception ex)
@@ -431,8 +438,8 @@ namespace HyperActive.Controllers
 
         // Start GetBoxInfo API_8 : Finish Box Status
         [HttpPost]
-        [Route("api/GetBoxInfo/")]
-        public HttpResponseMessage GetBoxInfo([FromBody] APIBoxInfo value)
+        [Route("api/FinishBoxStatus/")]
+        public HttpResponseMessage FinishBoxStatus([FromBody] APIBoxInfo value)
         {
             string _Qry = "";
             string jsondata = "";
@@ -537,7 +544,80 @@ namespace HyperActive.Controllers
             }
         } // End GetBoxInfo API_8 : Finish Box Status
 
+
         // -------------------------------------------------------------------------------------------------------------------
+
+
+        // // Start GetStationInOut API_10 : Out Sourse Status WSM -> SM
+        [HttpPost]
+        [Route("api/OutSourseStatus/")]
+        public HttpResponseMessage OutSourseStatus([FromBody] APIOutSourseStatus value)
+        {
+            string _Qry = "";
+            string JSONresult = "";
+            XmlDocument docXML = new XmlDocument();
+            WSM.Conn.SQLConn Cnn = new WSM.Conn.SQLConn();
+            DataTable dts = new DataTable();
+            dts.Columns.Add("Status", typeof(string));
+            dts.Columns.Add("Message", typeof(string));
+
+            if (value.BundleBarcode == "" )
+            {
+                dts.Rows.Add(new Object[] { 1, "Please send Send Supl Barcode for get information!!!" });
+                JSONresult = JsonConvert.SerializeObject(dts);
+                return new HttpResponseMessage
+                {
+                    StatusCode = HttpStatusCode.NotAcceptable,
+                    Content = new StringContent(JSONresult, System.Text.Encoding.UTF8, "application/json")
+                };
+            }
+
+            if (value.BundleBarcode != "")
+            {
+                _Qry = "EXEC [" + WSM.Conn.DB.DataBaseName.HITECH_HYPERACTIVE + "].dbo.SP_Send_Data_To_Hyperconvert_API10 @BarcodeSendSuplNo = '" + value.BundleBarcode + "'";
+
+            }
+            
+            try
+            {
+                docXML = Cnn.GetDataXML(_Qry, WSM.Conn.DB.DataBaseName.HITECH_HYPERACTIVE);
+                JSONresult = JsonConvert.SerializeObject(docXML);
+                //JsonConvert.SerializeXmlNode(docXML); //, Newtonsoft.Json.Formatting.Indented
+                JSONresult = JSONresult.Replace("\"[]\"", "[]");
+                JSONresult = JSONresult.Replace("[[],", "[");
+                JSONresult = JSONresult.Replace(":\"_", ":\"");
+                //JSONresult = JSONresult.Replace("}}", "}");
+                JSONresult = JSONresult.Replace("{\"root\":", "");
+                JSONresult = JSONresult.Replace("\"_\",", "\"\"");
+                JSONresult = JSONresult.Substring(0, JSONresult.Length - 1);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return new HttpResponseMessage
+                {
+                    StatusCode = HttpStatusCode.NotAcceptable,
+                    Content = new StringContent(JSONresult, System.Text.Encoding.UTF8, "application/json")
+                };
+            }
+
+            if (JSONresult.Length > 0)
+            {
+                return new HttpResponseMessage
+                {
+                    StatusCode = HttpStatusCode.Accepted,
+                    Content = new StringContent(JSONresult, System.Text.Encoding.UTF8, "application/json")
+                };
+            }
+            else
+            {
+                return new HttpResponseMessage
+                {
+                    StatusCode = HttpStatusCode.NotAcceptable,
+                    Content = new StringContent(JSONresult, System.Text.Encoding.UTF8, "application/json")
+                };
+            }
+        } // End GetStationInOut API_10 : Out Sourse Status WSM -> SM
 
 
     } // End Class

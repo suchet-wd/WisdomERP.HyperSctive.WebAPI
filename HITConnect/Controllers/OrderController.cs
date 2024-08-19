@@ -52,7 +52,7 @@ namespace HyperActive.Controllers
                     JSONresult = JSONresult.Replace(":\"_", ":\"");
                     //JSONresult = JSONresult.Replace("}}", "}");
                     JSONresult = JSONresult.Replace("{\"root\":", "");
-                    JSONresult = JSONresult.Replace("\"_\",", "");
+                    JSONresult = JSONresult.Replace("\"_\",", "\"\",");
                     JSONresult = JSONresult.Replace("AssortQuantity\":{", "AssortQuantity\":[{");
                     JSONresult = JSONresult.Replace("},\"ProductOperation", "}],\"ProductOperation");
                     JSONresult = JSONresult.Substring(0, JSONresult.Length - 1);
@@ -141,6 +141,7 @@ namespace HyperActive.Controllers
                     JSONresult = JSONresult.Replace("\"Route\": \"[]\",", "\"Route\": [],");                    // Case Null
                     JSONresult = JSONresult.Replace("PartDetail\":[\"[]\"],{", "PartDetail\":[],{");
                     JSONresult = JSONresult.Replace("\"PartDetail\":\"[]\",", "\"PartDetail\":[],");          // Case Null
+                    JSONresult = JSONresult.Replace("\"PartDetail\":\"[]\"}", "\"PartDetail\":[]}");          // Case Null
                     JSONresult = JSONresult.Replace("[{\"Station\":null,\"FactoryNo\":null}]", "[]");
                     JSONresult = JSONresult.Substring(0, JSONresult.Length - 1);
                 }
