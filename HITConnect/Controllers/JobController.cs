@@ -4,12 +4,13 @@ using System.Collections.Generic;
 using System.Data;
 using System.Net;
 using System.Net.Http;
+using System.Net.NetworkInformation;
 using System.Web.Http;
 using System.Xml;
 
 namespace HyperActive.Controllers
 {
-    public class JobController : ApiController
+    public class SupportController : ApiController
     {
 
         // Start GetWaitingJob
@@ -27,14 +28,10 @@ namespace HyperActive.Controllers
             {
                 XmlDocument docXML = Cnn.GetDataXML(_Qry, WSM.Conn.DB.DataBaseName.HITECH_HYPERACTIVE);
                 JSONresult = JsonConvert.SerializeObject(docXML);
-                ////JsonConvert.SerializeXmlNode(docXML); //, Newtonsoft.Json.Formatting.Indented
-                //JSONresult = JSONresult.Replace("\"[]\"", "[]");
-                //JSONresult = JSONresult.Replace("[[],", "[");
-                //JSONresult = JSONresult.Replace(":\"_", ":\"");
-                ////JSONresult = JSONresult.Replace("}}", "}");
-                //JSONresult = JSONresult.Replace("{\"root\":", "");
-                //JSONresult = JSONresult.Replace("\"_\",", "\"\",");
-                //JSONresult = JSONresult.Substring(0, JSONresult.Length - 1);
+                JSONresult = JSONresult.Replace("{\"root\":", "");
+                JSONresult = JSONresult.Substring(0, JSONresult.Length - 1);
+
+
             }
             catch (Exception ex)
             {
@@ -64,6 +61,107 @@ namespace HyperActive.Controllers
             }
         } // End GetWaitingJob
 
+
+        // Start GetAPI9byState2
+        [HttpPost]
+        [Route("api/GetAPI9byState2/")]
+        public HttpResponseMessage GetAPI9byState2()
+        {
+            string _Qry = "";
+            string JSONresult = "";
+            //XmlDocument docXML = new XmlDocument();
+            WSM.Conn.SQLConn Cnn = new WSM.Conn.SQLConn();
+
+            _Qry = "EXEC [" + WSM.Conn.DB.DataBaseName.HITECH_HYPERACTIVE + "].dbo.[SP_Send_Data_To_Hyperconvert_API9byState2]  ";
+            try
+            {
+                XmlDocument docXML = Cnn.GetDataXML(_Qry, WSM.Conn.DB.DataBaseName.HITECH_HYPERACTIVE);
+                JSONresult = JsonConvert.SerializeObject(docXML);
+                JSONresult = JSONresult.Replace("{\"root\":", "");
+                JSONresult = JSONresult.Substring(0, JSONresult.Length - 1);
+                JSONresult = JSONresult.Replace("PackResults\":[\"[]\",", "PackResults\":[");
+                JSONresult = JSONresult.Replace("\":\"_\",", "\":\"\",");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return new HttpResponseMessage
+                {
+                    StatusCode = HttpStatusCode.NotAcceptable,
+                    Content = new StringContent(JSONresult, System.Text.Encoding.UTF8, "application/json")
+                };
+            }
+
+            if (JSONresult.Length > 0)
+            {
+                return new HttpResponseMessage
+                {
+                    StatusCode = HttpStatusCode.Accepted,
+                    Content = new StringContent(JSONresult, System.Text.Encoding.UTF8, "application/json")
+                };
+            }
+            else
+            {
+                return new HttpResponseMessage
+                {
+                    StatusCode = HttpStatusCode.NotAcceptable,
+                    Content = new StringContent(JSONresult, System.Text.Encoding.UTF8, "application/json")
+                };
+            }
+        } // End GetAPI9byState2
+
+        // Start GetPackResultsByPeriod
+        [HttpPost]
+        [Route("api/GetAPI9byPeriod/")]
+        public HttpResponseMessage GetAPI9byPeriod()
+        {
+            string _Qry = "";
+            string JSONresult = "";
+            //XmlDocument docXML = new XmlDocument();
+            WSM.Conn.SQLConn Cnn = new WSM.Conn.SQLConn();
+
+            _Qry = "EXEC [" + WSM.Conn.DB.DataBaseName.HITECH_HYPERACTIVE + "].dbo.[SP_Send_Data_To_Hyperconvert_API9byPeriod]  ";
+            try
+            {
+                XmlDocument docXML = Cnn.GetDataXML(_Qry, WSM.Conn.DB.DataBaseName.HITECH_HYPERACTIVE);
+                JSONresult = JsonConvert.SerializeObject(docXML);
+                JSONresult = JSONresult.Replace("{\"root\":", "");
+                JSONresult = JSONresult.Substring(0, JSONresult.Length - 1);
+                JSONresult = JSONresult.Replace("PackResults\":[\"[]\",", "PackResults\":[");
+                JSONresult = JSONresult.Replace("\":\"_\",", "\":\"\",");
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return new HttpResponseMessage
+                {
+                    StatusCode = HttpStatusCode.NotAcceptable,
+                    Content = new StringContent(JSONresult, System.Text.Encoding.UTF8, "application/json")
+                };
+            }
+
+            if (JSONresult.Length > 0)
+            {
+                return new HttpResponseMessage
+                {
+                    StatusCode = HttpStatusCode.Accepted,
+                    Content = new StringContent(JSONresult, System.Text.Encoding.UTF8, "application/json")
+                };
+            }
+            else
+            {
+                return new HttpResponseMessage
+                {
+                    StatusCode = HttpStatusCode.NotAcceptable,
+                    Content = new StringContent(JSONresult, System.Text.Encoding.UTF8, "application/json")
+                };
+            }
+        } // End GetPackResultsByPeriod
+
+
+
+        
 
         //// Start GetBoxInfo API_9 : Pack Results GetPackResultsByPeriod
         //[HttpPost]

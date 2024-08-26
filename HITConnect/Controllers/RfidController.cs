@@ -233,6 +233,8 @@ namespace HyperActive.Controllers
                 JSONresult = JSONresult.Replace("{\"root\":", "");
                 JSONresult = JSONresult.Replace("\"_\",", "\"\"");
                 JSONresult = JSONresult.Substring(0, JSONresult.Length - 1);
+                JSONresult = JSONresult.Replace("}]}", "}]");
+                JSONresult = JSONresult.Replace("{\"DefectDetails\":[", "[");
 
             }
             catch (Exception ex)
@@ -590,6 +592,7 @@ namespace HyperActive.Controllers
                 JSONresult = JSONresult.Replace("{\"root\":", "");
                 JSONresult = JSONresult.Replace("\"_\",", "\"\"");
                 JSONresult = JSONresult.Substring(0, JSONresult.Length - 1);
+                JSONresult = "[" + JSONresult + "]";
             }
             catch (Exception ex)
             {

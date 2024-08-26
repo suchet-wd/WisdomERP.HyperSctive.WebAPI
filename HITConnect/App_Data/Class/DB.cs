@@ -120,6 +120,9 @@ namespace WSM.Conn
         public static string AppService { get; set; }
         public static string AppServicePath { get; set; }
         public static string AppServiceName { get; set; }
+        public static string APIURL { get; set; }
+        public static string APIIP { get; set; }
+
 
         public static string ConnectionString(DataBaseName DbName)
         {

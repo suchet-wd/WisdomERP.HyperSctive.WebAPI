@@ -61,6 +61,8 @@ namespace HITConnect
             WSM.Conn.DB.ServerName = System.Configuration.ConfigurationManager.AppSettings["SERVERNAME"];
             WSM.Conn.DB.UserName = System.Configuration.ConfigurationManager.AppSettings["username"];
             WSM.Conn.DB.UserPassword = WSM.Conn.DB.FuncDecryptDataServer(System.Configuration.ConfigurationManager.AppSettings["password"]);
+            WSM.Conn.DB.APIURL = System.Configuration.ConfigurationManager.AppSettings["APIURL"];
+            WSM.Conn.DB.APIIP = System.Configuration.ConfigurationManager.AppSettings["APIIP"];
 
             string dbName = null;
             int i = 0;

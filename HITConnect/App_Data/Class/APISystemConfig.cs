@@ -29,4 +29,14 @@ namespace HyperActive
         [JsonProperty("SendDateTo")]
         public string SendDateTo { get; set; }
     }
+
+    public class APIGetPeriod
+    {
+
+        [JsonProperty("DateFrom")]
+        public string DateFrom { get; set; }
+
+        [JsonProperty("DateTo")]
+        public string DateTo { get; set; }
+    }
 }
