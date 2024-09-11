@@ -222,7 +222,8 @@ namespace HyperActive.Controllers
                 };
             }
 
-            _Qry = "EXEC [" + WSM.Conn.DB.DataBaseName.HITECH_HYPERACTIVE + "].dbo.SP_Send_Data_To_Hyperconvert_API6 @BundleBarCode = '" + value.BundleBarCode + "'";
+            _Qry = "EXEC [" + WSM.Conn.DB.DataBaseName.HITECH_HYPERACTIVE + "].dbo.SP_Send_Data_To_Hyperconvert_API6 ";
+            _Qry += " @BundleBarCode = '" + value.BundleBarCode + "'";
             try
             {
                 docXML = Cnn.GetDataXML(_Qry, WSM.Conn.DB.DataBaseName.HITECH_HYPERACTIVE);
@@ -231,7 +232,7 @@ namespace HyperActive.Controllers
                 JSONresult = JSONresult.Replace("\"[]\"", "[]");
                 JSONresult = JSONresult.Replace("[[],", "[");
                 JSONresult = JSONresult.Replace("{\"root\":", "");
-                JSONresult = JSONresult.Replace("\"_\",", "\"\"");
+                JSONresult = JSONresult.Replace("\"_\",", "\"\",");
                 JSONresult = JSONresult.Substring(0, JSONresult.Length - 1);
                 JSONresult = JSONresult.Replace("}]}", "}]");
                 JSONresult = JSONresult.Replace("{\"DefectDetails\":[", "[");

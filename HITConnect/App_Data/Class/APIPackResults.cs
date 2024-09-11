@@ -14,8 +14,8 @@ namespace HyperActive
 
     public class APIPackResults
     {
-        [JsonProperty("StateGetAll", Required = Required.Always)]
-        public string StateGetAll { get; set; }
+        //[JsonProperty("StateGetAll", Required = Required.Always)]
+        //public string StateGetAll { get; set; }
 
         [JsonProperty("DateStart")]
         public string DateStart { get; set; }
